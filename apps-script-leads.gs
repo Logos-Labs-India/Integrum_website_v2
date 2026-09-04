@@ -43,6 +43,26 @@ var CV_FOLDER    = 'Integrum CVs';              // created on first upload
 var NOTIFY_EMAIL = 'info@integrumenergy.in';    // general enquiries; '' disables emails
 var HR_EMAIL     = 'HR@integrumenergy.in';      // careers enquiries + CVs
 
+// Fixed column order/labels for every field either form can send. Any field
+// not listed here still gets its own column, appended after these — so the
+// sheet never drops data, it just keeps these ones in a stable place.
+var FIELD_ORDER = ['submitted_at','form','reason','name','company','email','phone',
+  'role','industry','consumption','location','state','notes','help',
+  'resume_name','resume_file','resume_size','page','route_to'];
+var FIELD_LABELS = {
+  submitted_at: 'Submitted At', form: 'Form', reason: 'Reason', name: 'Name',
+  company: 'Company', email: 'Email', phone: 'Phone', role: 'Role Applied For',
+  industry: 'Industry', consumption: 'Annual Consumption', location: 'Location',
+  state: 'State', notes: 'Notes', help: 'Message',
+  resume_name: 'Resume File Name', resume_file: 'Resume Link', resume_size: 'Resume Size (bytes)',
+  page: 'Page', route_to: 'Routed To (email)'
+};
+function headerForKey_(k) { return FIELD_LABELS[k] || k; }
+function keyForHeader_(h) {
+  for (var k in FIELD_LABELS) if (FIELD_LABELS[k] === h) return k;
+  return h; // unrecognised header — its label is the raw field key
+}
+
 /* ------------------------------------------------------------------ */
 
 function doPost(e) {
@@ -73,18 +93,19 @@ function doPost(e) {
 
     var sheet = getSheet_();
 
-    // ---- header row, grown as new fields appear ----
+    // ---- header row: fixed order for known fields, grown for new ones ----
     var lastCol = sheet.getLastColumn();
-    var headers = (sheet.getLastRow() > 0 && lastCol > 0)
+    var headerLabels = (sheet.getLastRow() > 0 && lastCol > 0)
       ? sheet.getRange(1, 1, 1, lastCol).getValues()[0].filter(String)
       : [];
+    var keys = headerLabels.map(keyForHeader_);
     var added = false;
     Object.keys(data).forEach(function (k) {
-      if (headers.indexOf(k) === -1) { headers.push(k); added = true; }
+      if (keys.indexOf(k) === -1) { keys.push(k); headerLabels.push(headerForKey_(k)); added = true; }
     });
     if (added || sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-      sheet.getRange(1, 1, 1, headers.length)
+      sheet.getRange(1, 1, 1, headerLabels.length).setValues([headerLabels]);
+      sheet.getRange(1, 1, 1, headerLabels.length)
            .setFontWeight('bold')
            .setBackground('#014976')
            .setFontColor('#ffffff');
@@ -92,16 +113,16 @@ function doPost(e) {
     }
 
     // ---- the row itself ----
-    var row = headers.map(function (h) {
-      return data[h] !== undefined && data[h] !== null ? data[h] : '';
+    var row = keys.map(function (k) {
+      return data[k] !== undefined && data[k] !== null ? data[k] : '';
     });
     sheet.appendRow(row);
 
     // ---- notification email (never blocks the save) ----
     if (NOTIFY_EMAIL) {
       try {
-        var body = headers.map(function (h) {
-          return h + ': ' + (data[h] || '');
+        var body = keys.map(function (k) {
+          return headerForKey_(k) + ': ' + (data[k] || '');
         }).join('\n');
         // careers submissions (and their CVs) go to HR, everything else to info
         var to = (data.route_to && String(data.route_to).indexOf('@') !== -1)
@@ -147,4 +168,39 @@ function json(obj) {
 function testInsert() {
   var sheet = getSheet_();
   sheet.appendRow(['Editor test — delete this row', new Date()]);
+}
+
+/**
+ * Optional: run this once from the Apps Script editor (select "setupHeaders"
+ * and press Run) to lay down the full set of column headers immediately,
+ * before any real submission arrives. Safe to run even if the sheet already
+ * has rows — it only touches row 1, and only adds columns, never removes any.
+ */
+function setupHeaders() {
+  var sheet = getSheet_();
+
+  // Check A1 directly rather than getLastRow()/getLastColumn() — those can
+  // report a phantom non-empty extent from formatting alone (e.g. a bold/
+  // coloured cell left over from a previous run whose value was cleared),
+  // which produced a mismatched range width here. A1's actual value is
+  // unambiguous: blank means "no headers written yet".
+  var a1Empty = !String(sheet.getRange(1, 1).getValue() || '').trim();
+
+  var labels, keys;
+  if (a1Empty) {
+    keys = FIELD_ORDER.slice();
+    labels = keys.map(headerForKey_);
+  } else {
+    var lastCol = Math.max(1, sheet.getLastColumn());
+    labels = sheet.getRange(1, 1, 1, lastCol).getValues()[0].filter(String);
+    keys = labels.map(keyForHeader_);
+    FIELD_ORDER.forEach(function (k) {
+      if (keys.indexOf(k) === -1) { keys.push(k); labels.push(headerForKey_(k)); }
+    });
+  }
+
+  var range = sheet.getRange(1, 1, 1, labels.length);
+  range.setValues([labels]);
+  range.setFontWeight('bold').setBackground('#014976').setFontColor('#ffffff');
+  sheet.setFrozenRows(1);
 }

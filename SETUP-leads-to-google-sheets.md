@@ -25,6 +25,13 @@ permissions when asked. A row saying "Editor test — delete this row" should
 appear in the sheet. Delete it. This proves the script can reach the sheet
 before you deploy anything.
 
+While you're in the editor, also run `setupHeaders` once (same dropdown,
+press **Run**). It writes all 19 column headers into row 1 immediately —
+Submitted At, Form, Reason, Name, Company, Email, Phone, Role Applied For,
+Industry, Annual Consumption, Location, State, Notes, Message, Resume File
+Name, Resume Link, Resume Size, Page, Routed To — so the sheet looks correct
+before your first real submission, not after it.
+
 ## 3. Deploy it
 
 1. Click **Deploy → New deployment**.
@@ -89,13 +96,22 @@ exact line to copy once you've tested successfully.
 
 ## Fields you'll see as columns
 
+The script now writes these as fixed, labelled columns (in this order) instead
+of raw field names growing in whatever order submissions happen to arrive:
+
 | Column | Meaning |
 |---|---|
-| `form` | Which form it came from |
-| `submitted_at` | ISO timestamp |
-| `page` | Page the visitor was on |
-| `name`, `company`, `email`, `phone` | Contact details |
-| `industry`, `consumption`, `location`, `state` | Enquiry form only |
-| `reason`, `role` | Contact form — enquiry type and job role |
-| `resume_name`, `resume_size`, `resume_file` | CV filename, bytes, Drive link |
-| `notes` / `help` | Free-text message |
+| Submitted At | ISO timestamp |
+| Form | Which form it came from |
+| Reason | Contact form only — enquiry type (buyer, investor, talent/careers, etc.) |
+| Name, Company, Email, Phone | Contact details |
+| Role Applied For | Contact form, careers only |
+| Industry, Annual Consumption, Location, State | Customer enquiry form only |
+| Notes | Customer enquiry free-text |
+| Message | Contact form free-text |
+| Resume File Name, Resume Link, Resume Size (bytes) | CV upload — Drive link is what you'll actually open |
+| Page | Page the visitor was on |
+| Routed To (email) | Which inbox got the notification — HR or info |
+
+Any field not in this list still gets its own column automatically, just
+appended after these — nothing is ever dropped.
