@@ -7,7 +7,7 @@ const ABOUT_STATS = [
   { ic:"bolt",    v:"719",      u:"mn", k:"Green units generated to date (kWh)" },
   { ic:"shield",  v:"5,10,949", u:"",   k:"Tonnes of CO₂ avoided to date" },
   { ic:"trendUp", v:"2,11,066", u:"",   k:"Tonnes of CO₂ avoided in FY25–26" },
-  { ic:"factory", v:"229",      u:"+",  k:"MW of renewable capacity enabled" },
+  { ic:"factory", v:"264.89",   u:" MW", k:"Commissioned capacity" },
 ];
 
 /* CO₂ avoided — client data. Annual generation (kWh) × emission factor (0.710 kg CO₂/kWh) / 1000 */
@@ -50,7 +50,7 @@ const EVOLUTION = [
        Maharashtra and Tamil Nadu, but the INOX GFL case documents a Gujarat
        project, so the real count is unconfirmed. */
 const TODAY = [
-  { v:"229", u:"+", k:"Commissioned capacity", note:"MW" },
+  { v:"264.89", u:" MW", k:"Commissioned capacity", note:"Operating" },
   { v:"155", u:"+", k:"Hybrid + hybridisation", note:"85 hybrid + 70 hybridisation" },
   { v:"34", u:"+", k:"Trusted partners", note:"Customers served" },
   { v:"719", u:" mn", k:"Green units generated", note:"kWh to date" },
@@ -106,17 +106,17 @@ const LEADERS = [
   { photo:"assets/anand-lahoti.png", hex:"#014976", name:"Anand Lahoti", role:"Managing Director & Chief Executive Officer",
     bio:"With strong business acumen, Anand was, in his earlier avatar, the first in India to champion the equity investment-driven group captive model in 2016. He is highly skilled in investment banking, solution structuring, and project and asset management. He started his career as an investment banker with a boutique investment bank, where he worked for nearly 5 years. He currently has approximately 19 years of experience in the RE sector.",
     creds:"MBA, IBS Hyderabad · B.Com, St. Xavier's College, Kolkata" },
-  { photo:"assets/puneet-goel.png", hex:"#1C6FB5", name:"Puneet Goel", role:"Whole Time Director & Chief Operating Officer",
+  { photo:"assets/ldr-puneet-goel.png", hex:"#1C6FB5", name:"Puneet Goel", role:"Whole Time Director & Chief Operating Officer",
     bio:"With deep expertise and a strong track record of building new businesses, Puneet has been instrumental in scaling up two eminent power trading companies in the country. He brings deep knowledge of the energy industry, with 27 years of experience in consulting, financing, product development, and organisation scaling, alongside strong power trading and solutions skills and relationships across the industry.",
     creds:"Engineer, IIT (BHU) · MBA, IIM Lucknow" },
-  { photo:"assets/pramod-gupta.png", hex:"#12A594", name:"Pramod Gupta", role:"President – Business Strategy & Chief Financial Officer",
+  { photo:"assets/ldr-pramod-gupta.png", hex:"#12A594", name:"Pramod Gupta", role:"President – Business Strategy & Chief Financial Officer",
     bio:"A professional CEO and former CFO with over 30 years of experience across finance, strategy, operations, and business transformation in the manufacturing, BFSI (insurance), EdTech, and consulting sectors. With deep expertise in capital raising, private placements, IPO preparedness, governance, and investor relations, he has led fundraising exceeding INR 2.5 billion and successfully taken organisations through IPOs, working closely with private equity investors, boards, and regulators.",
     creds:"Chartered Accountant · Six Sigma Black Belt · IICA-certified Independent Director · PG Digital Business, MIT Sloan & Columbia Business School · MDP, IIM Calcutta" },
 ];
 
 /* Senior Management Personnel */
 const SENIOR = [
-  { photo:"assets/ranganatha-hr.png", hex:"#E0951A", name:"Ranganatha HR", role:"Executive Director – Engineering & Projects",
+  { photo:"assets/ldr-ranganatha-hr.png", hex:"#E0951A", name:"Ranganatha HR", role:"Executive Director – Engineering & Projects",
     bio:"Ranganatha brings over 14 years of experience across India's leading power and renewable energy organisations, including Tata Power, Reliance Energy, Conergy, Bosch, and Atria Power, with deep expertise in engineering execution, project development, and operational optimisation across solar, wind, and hybrid renewable platforms. At Atria Power he led the solar vertical and successfully hybridised existing wind assets, improving asset utilisation and long-term returns. His career reflects strong capabilities in end-to-end project delivery, project coordination, technology selection, and scaling renewable energy infrastructure under complex operating environments.",
     creds:"Mechanical Engineer" },
   { photo:"assets/kg-vijayvargiya.png", hex:"#1D9E75", name:"K G Vijayvargiya", role:"President, Sales",
@@ -128,8 +128,8 @@ const SENIOR = [
   { photo:"assets/rachana-chawla.png", hex:"#C2542F", name:"Rachana Chawla", role:"Vice President, Human Resources",
     bio:"An HR professional with over 20 years of experience in HR management, having previously worked with Wipro Infotech, Reliance Retail and Tata Motors, alongside development-sector organisations including SOS Children's Villages of India, Railway Children India, Evidence Action, Smile Foundation and Selco Foundation. She has been heading human resources for the last five years and has served on the Internal Complaints Committee for PoSH at several organisations. Her expertise lies in culture building, streamlining HR processes, strong employee relations and enabling high-performance teams.",
     creds:"B.Com · Master's in Management Studies, University of Mumbai" },
-  { photo:"", hex:"#1F8F63", name:"Dinesh Manrai", role:"Business Head, Green Homes",
-    bio:"A seasoned techno-commercial leader with over 24 years of experience across engineering, technical sales, product management, operations, projects and business development. He brings extensive experience serving diverse industrial sectors, including petroleum, petrochemicals, chemicals, fertilisers and power, with strong expertise in customer solutions and technical sales. Over the course of his career he has held leadership roles spanning product management, manufacturing operations, project execution and regional sales, including responsibility for sales operations across multiple cities in South India. He joined Integrum in July 2026.",
+  { photo:"assets/ldr-dinesh-manrai.png", hex:"#1F8F63", name:"Dinesh Manrai", role:"Business Head, Green Homes",
+    bio:"A seasoned techno-commercial leader with over 24 years of experience across business development, technical sales, product management, operations & projects. He brings extensive experience in serving diverse industrial sectors, including automobile and their ancillaries, steel, foundry, heavy fabrication, petroleum, petrochemicals, chemicals, fertilisers and power, with strong expertise in customer solutions and technical sales. Over the course of his career, he has held leadership roles in sales, operations & product management. He joined Integrum in August 2026, bringing strong business understanding, industry knowledge, customer relationships and techno-commercial expertise to support Integrum's growth in the renewable energy sector.",
     creds:"" },
 ];
 
@@ -140,7 +140,7 @@ function About({ nav }) {
     <div className="page-fade about-page lane-accent" style={{ "--p-color":"var(--amber)" }}>
       {/* ---- hero ---- */}
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(40px,5vw,68px)" }}>
-        <VideoBG srcs={VID.site} starts={[8, 0, 0]} poster="assets/hero-poster.png"
+        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png"
           overlay="linear-gradient(120deg, rgba(8,23,42,.94) 40%, rgba(8,23,42,.60) 100%)" pos="center 50%"/>
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}>
@@ -149,13 +149,70 @@ function About({ nav }) {
           <div style={{ maxWidth:860, marginTop:20 }}>
             <span className="eyebrow eyebrow-light">About Integrum Energy</span>
             <h1 style={{ color:"#fff", fontSize:"clamp(36px,5vw,60px)", letterSpacing:"-.035em", marginTop:16, lineHeight:1.02 }}>Integrating energy solutions for businesses.</h1>
-            <p style={{ color:"#C9D6E4", fontSize:19, marginTop:20, maxWidth:700, lineHeight:1.6 }}>Integrated Energy. Enduring Value. One accountable partner across strategy, development, execution, operations and power markets.</p>
+            <p style={{ color:"#C9D6E4", fontSize:19, marginTop:20, maxWidth:700, lineHeight:1.6 }}>Integrated energy. Enduring value. One accountable partner across strategy, development, execution, operations and power markets.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ---- purpose, vision, mission ---- */}
+      <section className="section" style={{ paddingTop:"clamp(40px,5vw,72px)" }}>
+        <div className="shell">
+          <Reveal className="sec-head">
+            <span className="eyebrow">Purpose, vision &amp; mission</span>
+            <h2>Integrated energy. Enduring value.</h2>
+          </Reveal>
+          <div className="vmv-grid">
+            <Reveal className="vmv-card is-purpose">
+              <span className="vmv-k">Our purpose</span>
+              <p>To accelerate the transition to clean energy by making sustainable energy reliable, accessible and value-accretive through integrated energy solutions for businesses and communities.</p>
+            </Reveal>
+            <Reveal delay={70} className="vmv-card">
+              <span className="vmv-k">Vision</span>
+              <p>To be a trusted energy partner delivering intelligent and integrated energy solutions for a sustainable future.</p>
+            </Reveal>
+            <Reveal delay={140} className="vmv-card">
+              <span className="vmv-k">Mission</span>
+              <p>To deliver innovative, reliable and cost-efficient clean energy solutions through integrated execution, operational excellence and long-term partnerships.</p>
+            </Reveal>
+          </div>
+
+          <Reveal>
+            <h3 className="fam-title">Our values</h3>
+            <div className="val-grid">
+              {VALUES.map((v,i)=>(
+                <div className="val-card" key={i}>
+                  <span className="val-n">{String(i+1).padStart(2,"0")}</span>
+                  <h4>{v.k}</h4>
+                  <p>{v.d}</p>
+                </div>
+              ))}
+            </div>
+            <p className="plat-note">These six values represent Integrum's foundation — agility, ethics, innovation, customer centricity, people focus, and financial discipline — forming the cultural core that drives us to long-term success.</p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---- strategic pillars ---- */}
+      <section className="section" style={{ background:"var(--surface-2)" }}>
+        <div className="shell">
+          <Reveal className="sec-head">
+            <span className="eyebrow">Strategic pillars</span>
+            <h2>The execution drivers behind the vision.</h2>
+            <p className="lead">Each pillar is mapped to organizational KPIs and performance metrics.</p>
+          </Reveal>
+          <div className="pillar-grid">
+            {PILLARS.map((p,i)=>(
+              <Reveal key={i} delay={i*50} className="pillar-card">
+                <h4>{p.k}</h4>
+                <p>{p.d}</p>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ---- why we exist ---- */}
-      <section className="section" style={{ paddingTop:"clamp(40px,5vw,72px)" }}>
+      <section className="section">
         <div className="shell">
           <Reveal className="sec-head">
             <span className="eyebrow">Why we exist</span>
@@ -214,7 +271,7 @@ function About({ nav }) {
         <div className="shell">
           <Reveal className="sec-head">
             <span className="eyebrow">How we're different</span>
-            <h2>Make to Requisition and Long-Term Partnership.</h2>
+            <h2>Make to requisition and long-term partnership.</h2>
           </Reveal>
           <div className="diff-grid">
             {DIFFERENT.map((d,i)=>(
@@ -222,63 +279,6 @@ function About({ nav }) {
                 <span className="diff-ico">{I[d.ic]({width:20,height:20})}</span>
                 <h4>{d.k}</h4>
                 <p>{d.d}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---- purpose, vision, mission ---- */}
-      <section className="section" style={{ background:"var(--surface-2)" }}>
-        <div className="shell">
-          <Reveal className="sec-head">
-            <span className="eyebrow">Purpose, vision &amp; mission</span>
-            <h2>Integrated Energy. Enduring Value.</h2>
-          </Reveal>
-          <div className="vmv-grid">
-            <Reveal className="vmv-card is-purpose">
-              <span className="vmv-k">Our purpose</span>
-              <p>To accelerate the transition to clean energy by making sustainable energy reliable, accessible and value-accretive through integrated energy solutions for businesses and communities.</p>
-            </Reveal>
-            <Reveal delay={70} className="vmv-card">
-              <span className="vmv-k">Vision</span>
-              <p>To be a trusted energy partner delivering intelligent and integrated energy solutions for a sustainable future.</p>
-            </Reveal>
-            <Reveal delay={140} className="vmv-card">
-              <span className="vmv-k">Mission</span>
-              <p>To deliver innovative, reliable and cost-efficient clean energy solutions through integrated execution, operational excellence and long-term partnerships.</p>
-            </Reveal>
-          </div>
-
-          <Reveal>
-            <h3 className="fam-title">Our values</h3>
-            <div className="val-grid">
-              {VALUES.map((v,i)=>(
-                <div className="val-card" key={i}>
-                  <span className="val-n">{String(i+1).padStart(2,"0")}</span>
-                  <h4>{v.k}</h4>
-                  <p>{v.d}</p>
-                </div>
-              ))}
-            </div>
-            <p className="plat-note">These six values represent Integrum's foundation — agility, ethics, innovation, customer centricity, people focus, and financial discipline — forming the cultural core that drives us to long-term success.</p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ---- strategic pillars ---- */}
-      <section className="section">
-        <div className="shell">
-          <Reveal className="sec-head">
-            <span className="eyebrow">Strategic pillars</span>
-            <h2>The execution drivers behind the vision.</h2>
-            <p className="lead">Each pillar is mapped to organizational KPIs and performance metrics.</p>
-          </Reveal>
-          <div className="pillar-grid">
-            {PILLARS.map((p,i)=>(
-              <Reveal key={i} delay={i*50} className="pillar-card">
-                <h4>{p.k}</h4>
-                <p>{p.d}</p>
               </Reveal>
             ))}
           </div>
@@ -464,8 +464,6 @@ function About({ nav }) {
               { y:"2024", t:"Company of the Year: Projects in Wind and Hybrid Energy", o:"India Wind Energy Forum Leadership Awards 2024" },
               { y:"2022", t:"Best C&I Hybrid Project Award", o:"SolarQuarter C&I Energy Leadership Awards 2022" },
               { y:"2022", t:"Best Design & Engineering Hybrid Award", o:"SolarQuarter C&I Energy Leadership Awards 2022" },
-              { y:"—", t:"Great Place to Work® Certified", o:"Great Place to Work Institute" },
-              { y:"—", t:"ISO 9001:2015 & ISO 14001:2015 certified", o:"Quality and environmental management systems" },
             ].map((a,i)=>(
               <Reveal key={i} delay={i*60} className="award-item">
                 <span className="ai-y">{a.y}</span>
@@ -507,24 +505,33 @@ function About({ nav }) {
         </div>
       </section>
 
-      {/* ---- certifications & downloads ---- */}
-      <section className="section">
+      {/* ---- certifications (certificates shown inline, no downloads) ---- */}
+      <section className="section" id="certifications">
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">Certifications &amp; policies</span>
-            <h2>Recognition and published policy.</h2>
+            <span className="eyebrow">Certifications</span>
+            <h2>Independently assessed, and current.</h2>
+            <p className="lead">Our workplace and quality-management certifications, issued by external assessors.</p>
           </Reveal>
-          <div className="dl-row">
-            <a className="dl-card" href="assets/Integrum-GPTW-Certificate.pdf" target="_blank" rel="noopener noreferrer">
-              <span className="dl-ic">{I.award({width:22,height:22})}</span>
-              <span className="dl-t">Great Place to Work® Certification</span>
-              <span className="dl-m">PDF · view or download</span>
-            </a>
-            <a className="dl-card" href="assets/Integrum-Vision-Mission-Values.docx" target="_blank" rel="noopener noreferrer" download>
-              <span className="dl-ic">{I.doc({width:22,height:22})}</span>
-              <span className="dl-t">Vision, Mission &amp; Values policy</span>
-              <span className="dl-m">DOCX · download (PDF version pending)</span>
-            </a>
+          <div className="cert-row">
+            <Reveal className="cert-card">
+              <div className="cert-shot">
+                <img src="assets/cert-gptw.png" alt="Great Place to Work Certified certificate for Integrum Energy Infrastructure Limited, valid March 2026 to March 2027" loading="lazy"/>
+              </div>
+              <div className="cert-meta">
+                <h4>Great Place to Work&reg; Certified</h4>
+                <p>Great Place to Work&reg; India &middot; valid March 2026 to March 2027</p>
+              </div>
+            </Reveal>
+            <Reveal delay={80} className="cert-card">
+              <div className="cert-shot">
+                <img src="assets/cert-iso.png" alt="ISO 9001:2015 quality management system certificate for Integrum Energy Infrastructure Limited" loading="lazy"/>
+              </div>
+              <div className="cert-meta">
+                <h4>ISO 9001:2015</h4>
+                <p>Quality management system</p>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>

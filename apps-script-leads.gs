@@ -43,26 +43,6 @@ var CV_FOLDER    = 'Integrum CVs';              // created on first upload
 var NOTIFY_EMAIL = 'info@integrumenergy.in';    // general enquiries; '' disables emails
 var HR_EMAIL     = 'HR@integrumenergy.in';      // careers enquiries + CVs
 
-// Fixed column order/labels for every field either form can send. Any field
-// not listed here still gets its own column, appended after these — so the
-// sheet never drops data, it just keeps these ones in a stable place.
-var FIELD_ORDER = ['submitted_at','form','reason','name','company','email','phone',
-  'role','industry','consumption','location','state','notes','help',
-  'resume_name','resume_file','resume_size','page','route_to'];
-var FIELD_LABELS = {
-  submitted_at: 'Submitted At', form: 'Form', reason: 'Reason', name: 'Name',
-  company: 'Company', email: 'Email', phone: 'Phone', role: 'Role Applied For',
-  industry: 'Industry', consumption: 'Annual Consumption', location: 'Location',
-  state: 'State', notes: 'Notes', help: 'Message',
-  resume_name: 'Resume File Name', resume_file: 'Resume Link', resume_size: 'Resume Size (bytes)',
-  page: 'Page', route_to: 'Routed To (email)'
-};
-function headerForKey_(k) { return FIELD_LABELS[k] || k; }
-function keyForHeader_(h) {
-  for (var k in FIELD_LABELS) if (FIELD_LABELS[k] === h) return k;
-  return h; // unrecognised header — its label is the raw field key
-}
-
 /* ------------------------------------------------------------------ */
 
 function doPost(e) {
@@ -93,36 +73,61 @@ function doPost(e) {
 
     var sheet = getSheet_();
 
-    // ---- header row: fixed order for known fields, grown for new ones ----
-    var lastCol = sheet.getLastColumn();
-    var headerLabels = (sheet.getLastRow() > 0 && lastCol > 0)
-      ? sheet.getRange(1, 1, 1, lastCol).getValues()[0].filter(String)
+    // ---- header row ----
+    // Existing headers are matched LOOSELY: "Submitted At", "submitted_at" and
+    // "submittedat" are treated as the same column. Without this, a header row
+    // typed by hand in the sheet never matches the payload's snake_case keys,
+    // so those columns stay permanently blank while the script silently adds a
+    // second set of columns further right — which looks like "the form isn't
+    // saving" even though every row is being written.
+    var lastCol  = sheet.getLastColumn();
+    var existing = (sheet.getLastRow() > 0 && lastCol > 0)
+      ? sheet.getRange(1, 1, 1, lastCol).getValues()[0]
       : [];
-    var keys = headerLabels.map(keyForHeader_);
-    var added = false;
-    Object.keys(data).forEach(function (k) {
-      if (keys.indexOf(k) === -1) { keys.push(k); headerLabels.push(headerForKey_(k)); added = true; }
+    while (existing.length && !String(existing[existing.length - 1]).trim()) existing.pop();
+
+    var headers = existing.map(function (h) { return String(h); });
+    var slots   = headers.map(function (h) { return norm_(h); });   // parallel lookup keys
+    var added   = false;
+
+    // Preferred column order for a fresh sheet, so the common fields lead.
+    var ORDER = ['submitted_at','form','reason','name','company','email','phone',
+                 'role','industry','consumption','location','state','notes','help',
+                 'resume_name','resume_file','page','route_to'];
+    var keys = Object.keys(data).sort(function (a, b) {
+      var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+
+    keys.forEach(function (k) {
+      if (slots.indexOf(norm_(k)) === -1) {
+        headers.push(label_(k));
+        slots.push(norm_(k));
+        added = true;
+      }
     });
     if (added || sheet.getLastRow() === 0) {
-      sheet.getRange(1, 1, 1, headerLabels.length).setValues([headerLabels]);
-      sheet.getRange(1, 1, 1, headerLabels.length)
+      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+      sheet.getRange(1, 1, 1, headers.length)
            .setFontWeight('bold')
            .setBackground('#014976')
            .setFontColor('#ffffff');
       sheet.setFrozenRows(1);
     }
 
-    // ---- the row itself ----
-    var row = keys.map(function (k) {
-      return data[k] !== undefined && data[k] !== null ? data[k] : '';
+    // ---- the row itself, aligned to whatever the header row actually says ----
+    var byNorm = {};
+    Object.keys(data).forEach(function (k) { byNorm[norm_(k)] = data[k]; });
+    var row = slots.map(function (s) {
+      return byNorm[s] !== undefined && byNorm[s] !== null ? byNorm[s] : '';
     });
     sheet.appendRow(row);
 
     // ---- notification email (never blocks the save) ----
     if (NOTIFY_EMAIL) {
       try {
-        var body = keys.map(function (k) {
-          return headerForKey_(k) + ': ' + (data[k] || '');
+        var body = headers.map(function (h) {
+          return h + ': ' + (data[h] || '');
         }).join('\n');
         // careers submissions (and their CVs) go to HR, everything else to info
         var to = (data.route_to && String(data.route_to).indexOf('@') !== -1)
@@ -149,6 +154,50 @@ function doGet() {
   return json({ ok: true, status: 'Integrum lead endpoint is live' });
 }
 
+// "Submitted At" / "submitted_at" / "submittedat" all reduce to the same key.
+function norm_(s) {
+  var k = String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+  return ALIAS_[k] || k;
+}
+
+// Headers whose wording in the sheet differs from the payload key.
+var ALIAS_ = {
+  roleappliedfor: 'role',
+  appliedfor:     'role',
+  position:       'role',
+  workemail:      'email',
+  emailaddress:   'email',
+  phonenumber:    'phone',
+  mobile:         'phone',
+  contactnumber:  'phone',
+  companyname:    'company',
+  fullname:       'name',
+  annualconsumption:  'consumption',
+  averageannualconsumption: 'consumption',
+  message:        'help',
+  howcanwehelp:   'help',
+  enquirytype:    'reason',
+  formname:       'form',
+  date:           'submittedat',
+  submittedon:    'submittedat',
+  timestamp:      'submittedat',
+  cv:             'resumefile',
+  resume:         'resumefile',
+};
+
+// Friendly column label for a new field.
+function label_(k) {
+  var MAP = {
+    submitted_at:'Submitted At', form:'Form', reason:'Reason', name:'Name',
+    company:'Company', email:'Email', phone:'Phone', role:'Role Applied For',
+    industry:'Industry', consumption:'Annual Consumption', location:'Location',
+    state:'State', notes:'Notes', help:'Message', resume_name:'CV File',
+    resume_file:'CV Link', page:'Page', route_to:'Routed To',
+  };
+  if (MAP[k]) return MAP[k];
+  return String(k).replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+}
+
 function getSheet_() {
   var ss = SpreadsheetApp.openById(SHEET_ID);
   return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
@@ -168,39 +217,4 @@ function json(obj) {
 function testInsert() {
   var sheet = getSheet_();
   sheet.appendRow(['Editor test — delete this row', new Date()]);
-}
-
-/**
- * Optional: run this once from the Apps Script editor (select "setupHeaders"
- * and press Run) to lay down the full set of column headers immediately,
- * before any real submission arrives. Safe to run even if the sheet already
- * has rows — it only touches row 1, and only adds columns, never removes any.
- */
-function setupHeaders() {
-  var sheet = getSheet_();
-
-  // Check A1 directly rather than getLastRow()/getLastColumn() — those can
-  // report a phantom non-empty extent from formatting alone (e.g. a bold/
-  // coloured cell left over from a previous run whose value was cleared),
-  // which produced a mismatched range width here. A1's actual value is
-  // unambiguous: blank means "no headers written yet".
-  var a1Empty = !String(sheet.getRange(1, 1).getValue() || '').trim();
-
-  var labels, keys;
-  if (a1Empty) {
-    keys = FIELD_ORDER.slice();
-    labels = keys.map(headerForKey_);
-  } else {
-    var lastCol = Math.max(1, sheet.getLastColumn());
-    labels = sheet.getRange(1, 1, 1, lastCol).getValues()[0].filter(String);
-    keys = labels.map(keyForHeader_);
-    FIELD_ORDER.forEach(function (k) {
-      if (keys.indexOf(k) === -1) { keys.push(k); labels.push(headerForKey_(k)); }
-    });
-  }
-
-  var range = sheet.getRange(1, 1, 1, labels.length);
-  range.setValues([labels]);
-  range.setFontWeight('bold').setBackground('#014976').setFontColor('#ffffff');
-  sheet.setFrozenRows(1);
 }

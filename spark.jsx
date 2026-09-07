@@ -132,9 +132,6 @@ function SparkPage({ nav, sub }) {
       <section className="spark-hero">
         <div className="spark-hero-glow" aria-hidden="true"></div>
         <div className="shell">
-          <div className="breadcrumb" style={{ color:"#9FC1DC" }}>
-            <a onClick={()=>nav("home")} style={{ cursor:"pointer", color:"#BFD8EC" }}>Home</a> <span>/</span> <span>How we partner</span>
-          </div>
           <span className="eyebrow" style={{ color:"#F5B81C", marginTop:18, display:"inline-flex" }}>The SPARK framework</span>
           <h1>Every megawatt begins with a <span className="sp-word">SPARK</span>.</h1>
           <p className="spark-hero-sub">Most contractors build and walk away. SPARK is how Integrum stays accountable across the entire arc — Scan, Plan, Acquire, Run and Keep optimising — so performance risk never gets split across vendors who blame each other.</p>

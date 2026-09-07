@@ -93,7 +93,7 @@ function SavingsCalculator({ compact = false, onCase }) {
 
   return (
     <div className="calc">
-      <h3>Calculate Your Renewable Energy Savings in 30 Seconds.</h3>
+      <h3>Calculate your renewable energy savings in 30 seconds.</h3>
       <p className="calc-sub">Same model we'd run in stage S of SPARK — order-of-magnitude, no email required.</p>
       <div className="calc-fields" style={compact ? null : { gridTemplateColumns: "1fr 1fr" }}>
         <div className="field">
@@ -135,10 +135,10 @@ function SavingsCalculator({ compact = false, onCase }) {
 
 /* ---------- LIGHT SPLIT HERO (turbine video) ---------- */
 function Hero({ nav }) {
-  const heroStats = [ {v:"229",u:"+ MW",k:"commissioned"}, {v:"34",u:"+",k:"trusted partners"}, {v:"155",u:"+",k:"hybrid capacity"} ];
+  const heroStats = [ {v:"264.89",u:" MW",k:"commissioned capacity"}, {v:"34",u:"+",k:"trusted partners"}, {v:"155",u:"+",k:"hybrid capacity"} ];
   return (
     <section className="hero-l has-photo">
-      <VideoBG srcs={VID.site} starts={[8, 0, 0]} poster="assets/hero-poster.png" pos="center 45%"
+      <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png" pos="center 45%"
         overlay="linear-gradient(90deg, rgba(1,44,70,.68) 0%, rgba(1,52,79,.46) 40%, rgba(1,52,79,.42) 62%, rgba(1,44,70,.46) 100%), linear-gradient(180deg, transparent 45%, rgba(1,44,70,.34) 100%)"/>
       <div className="shell hero-l-inner">
         <div className="hero-l-copy">
@@ -407,19 +407,25 @@ const SEASON = [
 ];
 
 function SeasonChart() {
-  const W = 640, H = 300, PL = 46, PR = 12, PT = 24, PB = 46, MAX = 500;
+  // No y-axis numbers (matching the cost chart) and the legend sits inside the
+  // plot, so all three charts in the row have the same external structure.
+  const W = 640, H = 300, PL = 16, PR = 14, PT = 44, PB = 40, MAX = 500;
   const iw = W - PL - PR, ih = H - PT - PB;
   const slot = iw / SEASON.length;
-  const bw = slot * 0.30;                       // two separate bars per month
+  const bw = slot * 0.30;
   const y = (v) => PT + ih - (v / MAX) * ih;
   return (
     <figure className="chart-img chart-svg">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Month-wise hybrid wind and solar generation shown as separate bars">
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Month-wise hybrid generation: solar and wind shown as separate bars">
+        <g className="sc-key">
+          <rect x={PL} y={12} width={11} height={11} rx="2.5" fill="#F5B81C"/>
+          <text x={PL+17} y={21.5}>Solar</text>
+          <rect x={PL+66} y={12} width={11} height={11} rx="2.5" fill="#014976"/>
+          <text x={PL+83} y={21.5}>Wind</text>
+          <text x={W-PR} y={21.5} textAnchor="end" className="sc-unit">Thousand kWh / month</text>
+        </g>
         {[0,125,250,375,500].map(g=>(
-          <g key={g}>
-            <line x1={PL} x2={W-PR} y1={y(g)} y2={y(g)} stroke="var(--hairline)" strokeWidth="1"/>
-            <text x={PL-8} y={y(g)+4} className="sc-ax" textAnchor="end">{g}</text>
-          </g>
+          <line key={g} x1={PL} x2={W-PR} y1={y(g)} y2={y(g)} stroke="var(--hairline)" strokeWidth="1"/>
         ))}
         {SEASON.map((p,i)=>{
           const cx = PL + i*slot + slot/2;
@@ -427,17 +433,12 @@ function SeasonChart() {
             <g key={p.m}>
               <rect x={cx-bw-2} y={y(p.s)} width={bw} height={PT+ih-y(p.s)} rx="2.5" fill="#F5B81C"/>
               <rect x={cx+2}    y={y(p.w)} width={bw} height={PT+ih-y(p.w)} rx="2.5" fill="#014976"/>
-              <text x={cx} y={H-26} className="sc-ax" textAnchor="middle">{p.m}</text>
+              <text x={cx} y={H-18} className="sc-ax" textAnchor="middle">{p.m}</text>
             </g>
           );
         })}
         <line x1={PL} x2={W-PR} y1={PT+ih} y2={PT+ih} stroke="var(--hairline-2)" strokeWidth="1.2"/>
-        <text x={PL} y={H-6} className="sc-cap">Generation, thousand kWh per month</text>
       </svg>
-      <div className="sc-legend">
-        <span><i style={{ background:"#F5B81C" }}></i>Solar</span>
-        <span><i style={{ background:"#014976" }}></i>Wind</span>
-      </div>
       <figcaption>Actual month-wise generation from an operating hybrid plant. Wind more than doubles through the monsoon exactly as solar falls to its lowest, and solar holds steady through the dry months when wind drops away.</figcaption>
     </figure>
   );
@@ -658,7 +659,7 @@ const EPC_ROWS = [
   ["Project performance focus",             "Customer energy-cost focus"],
 ];
 function WhyIntegrum({ nav }) {
-  const badges = ["ISO 9001:2015","ISO 14001:2015","Great Place to Work","Company of the Year 2024"];
+  const badges = ["ISO 9001:2015","Great Place to Work","Company of the Year 2024"];
   return (
     <section className="section why-sec">
       <div className="shell">

@@ -33,28 +33,17 @@ const CAREER_AWARDS = [
   "Industry recognitions",
 ];
 
-const CAREER_ROLES = [
-  { role:"Project Development Manager", team:"Development", loc:"Bengaluru", type:"Full-time",
-    blurb:"Own site identification, feasibility and approvals for hybrid wind + solar projects across target states." },
-  { role:"Electrical Design Engineer", team:"Engineering", loc:"Bengaluru", type:"Full-time",
-    blurb:"Design HV/EHV evacuation, plant layouts and BOS for utility-scale hybrid and BESS projects." },
-  { role:"Energy Solutions Analyst", team:"Commercial", loc:"Bengaluru", type:"Full-time",
-    blurb:"Model client load profiles, tariffs and open-access economics to structure CAPEX, group-captive and EaaS deals." },
-  { role:"O&M / Asset Manager", team:"Operations", loc:"Site-based", type:"Full-time",
-    blurb:"Run plant performance, vendor and settlement management against contracted availability and generation guarantees." },
-  { role:"Platform / Data Engineer", team:"Energy Intelligence", loc:"Bengaluru", type:"Full-time",
-    blurb:"Build the live monitoring, forecasting and banking-ledger features behind the Energy Intelligence Platform." },
-];
 
 function Careers({ nav }) {
   const [team, setTeam] = useStateC("All");
+  const [openJD, setOpenJD] = useStateC(null);
   const teams = ["All", ...Array.from(new Set(CAREER_ROLES.map(r=>r.team)))];
   const roles = team==="All" ? CAREER_ROLES : CAREER_ROLES.filter(r=>r.team===team);
   return (
     <div className="page-fade lane-accent" style={{ "--p-color":"var(--amber)" }}>
       {/* hero */}
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(40px,5vw,68px)" }}>
-        <VideoBG srcs={VID.site} starts={[8, 0, 0]} poster="assets/hero-poster.png"
+        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png"
           overlay="linear-gradient(120deg, rgba(8,23,42,.94) 38%, rgba(8,23,42,.55) 100%)" pos="center 46%"/>
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}>
@@ -215,11 +204,57 @@ function Careers({ nav }) {
                     <div className="role-tags">
                       <span className="role-tag">{I.compass({width:13,height:13})} {r.team}</span>
                       <span className="role-tag">{r.loc}</span>
+                      {r.exp && <span className="role-tag">{r.exp}</span>}
                       <span className="role-tag">{r.type}</span>
                     </div>
                   </div>
-                  <button className="btn btn-nav-cta" onClick={()=>nav("contact/careers")}>Apply now {I.arrow()}</button>
+                  <div className="role-actions">
+                    <button className="btn btn-ghost role-jd-btn" aria-expanded={openJD===r.id} onClick={()=>setOpenJD(openJD===r.id?null:r.id)}>
+                      {openJD===r.id ? "Hide details" : "View full JD"}
+                    </button>
+                    <button className="btn btn-nav-cta" onClick={()=>nav("contact/careers")}>Apply now {I.arrow()}</button>
+                  </div>
                 </div>
+                {openJD===r.id && (
+                  <div className="role-jd slidein">
+                    {r.reports && <div className="jd-meta"><span>Reports to</span><strong>{r.reports}</strong></div>}
+                    {r.purpose && <p className="jd-purpose">{r.purpose}</p>}
+                    {(r.groups||[]).map((g,gi)=>(
+                      <div className="jd-block" key={gi}>
+                        <h5>{g.h}</h5>
+                        <ul>{g.items.map((it,ii)=>(<li key={ii}>{I.check({width:14,height:14})}<span>{it}</span></li>))}</ul>
+                      </div>
+                    ))}
+                    <div className="jd-cols">
+                      {r.quals && r.quals.length > 0 && (
+                        <div className="jd-block">
+                          <h5>Qualifications &amp; experience</h5>
+                          <ul>{r.quals.map((q,qi)=>(<li key={qi}>{I.check({width:14,height:14})}<span>{q}</span></li>))}</ul>
+                        </div>
+                      )}
+                      {r.skills && r.skills.length > 0 && (
+                        <div className="jd-block">
+                          <h5>Key skills</h5>
+                          <div className="jd-chips">{r.skills.map((sk,si)=>(<span key={si}>{sk}</span>))}</div>
+                        </div>
+                      )}
+                    </div>
+                    {r.preferred && r.preferred.length > 0 && (
+                      <div className="jd-block">
+                        <h5>Preferred</h5>
+                        <ul>{r.preferred.map((p,pi)=>(<li key={pi}>{I.check({width:14,height:14})}<span>{p}</span></li>))}</ul>
+                      </div>
+                    )}
+                    {r.profile && (
+                      <div className="jd-profile">
+                        <span className="jd-profile-k">Ideal candidate</span>
+                        <p>{r.profile}</p>
+                      </div>
+                    )}
+                    {r.jdPending && <p className="jd-pending">Detailed job description to follow — apply and our HR team will share the full brief.</p>}
+                    <button className="btn btn-nav-cta" style={{ marginTop:20 }} onClick={()=>nav("contact/careers")}>Apply for this role {I.arrow()}</button>
+                  </div>
+                )}
               </Reveal>
             ))}
           </div>
@@ -247,4 +282,4 @@ function Careers({ nav }) {
   );
 }
 
-Object.assign(window, { Careers, CAREER_ROLES });
+Object.assign(window, { Careers });

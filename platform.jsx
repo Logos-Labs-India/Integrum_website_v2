@@ -130,16 +130,28 @@ function Platform({ nav }) {
       {/* hero */}
       <section className="plat-hero">
         <div className="plat-hero-glow" aria-hidden="true"></div>
-        <div className="shell">
-          <div className="breadcrumb" style={{ color:"#9FC1DC" }}>
-            <a onClick={()=>nav("home")} style={{ cursor:"pointer", color:"#BFD8EC" }}>Home</a> <span>/</span> <span>Platform</span>
+        <div className="shell plat-hero-grid">
+          <div>
+            <div className="breadcrumb" style={{ color:"#9FC1DC" }}>
+              <a onClick={()=>nav("home")} style={{ cursor:"pointer", color:"#BFD8EC" }}>Home</a> <span>/</span> <span>Platform</span>
+            </div>
+            <span className="eyebrow" style={{ color:"var(--solar)", marginTop:18, display:"inline-flex" }}>Design · Develop · Execute · Operate · Optimise</span>
+            <h1>One energy platform.<br/>Built around the customer outcome.</h1>
+            <p className="plat-hero-sub">From strategy and project development to execution, operations and power markets — Integrum brings the capabilities together under one accountable platform.</p>
+            <div style={{ display:"flex", gap:14, flexWrap:"wrap", marginTop:28 }}>
+              <button className="btn btn-solar btn-lg" onClick={()=>scrollToEnquiry()}>Bring us your energy challenge {I.arrow()}</button>
+              <button className="btn btn-ghost-light btn-lg" onClick={()=>nav("dashboard")}>Customer login</button>
+            </div>
           </div>
-          <span className="eyebrow" style={{ color:"var(--solar)", marginTop:18, display:"inline-flex" }}>Design · Develop · Execute · Operate · Optimise</span>
-          <h1>One energy platform.<br/>Built around the customer outcome.</h1>
-          <p className="plat-hero-sub">From strategy and project development to execution, operations and power markets — Integrum brings the capabilities together under one accountable platform.</p>
-          <div style={{ display:"flex", gap:14, flexWrap:"wrap", marginTop:28 }}>
-            <button className="btn btn-solar btn-lg" onClick={()=>scrollToEnquiry()}>Bring us your energy challenge {I.arrow()}</button>
-            <button className="btn btn-ghost-light btn-lg" onClick={()=>nav("dashboard")}>Customer login</button>
+          <div className="plat-hero-shot">
+            <div className="phs-win">
+              <div className="phs-bar"><span></span><span></span><span></span><em>Daily generation vs consumption</em></div>
+              <button className="phs-img" onClick={()=>setZoom("assets/plat-generation.png")} title="Click to enlarge">
+                <img src="assets/plat-generation.png" alt="Platform view: daily generation by time-of-day block against total consumption" loading="eager"/>
+                <span className="mk-zoom">{I.search({width:15,height:15})} Enlarge</span>
+              </button>
+            </div>
+            <span className="phs-note">Live view from the Energy Intelligence platform</span>
           </div>
         </div>
       </section>
@@ -257,11 +269,11 @@ function Platform({ nav }) {
         </div>
       </section>
 
-      {/* emerging businesses + cross-platform examples */}
+      {/* businesses + cross-platform examples */}
       <section className="section" style={{ background:"var(--surface-2)" }}>
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">Emerging businesses</span>
+            <span className="eyebrow">Businesses</span>
             <h2>Five businesses on one platform.</h2>
           </Reveal>
           <div className="biz-grid">
@@ -297,18 +309,15 @@ function Platform({ nav }) {
             <h2 className="eip-h">Your energy. Visible. Intelligent. Always on.</h2>
             <p className="eip-p">The Integrum Energy Intelligence Platform transforms energy data into actionable business intelligence. Built for modern enterprises, it unifies renewable energy operations, power procurement, forecasting, battery intelligence, market participation, and regulatory compliance into a single digital ecosystem.</p>
             <p className="eip-p">Whether you are managing captive assets, open access power, hybrid renewable portfolios, or battery storage, the platform enables smarter decisions that reduce energy costs, improve reliability, and maximize renewable energy utilization.</p>
-            <button className="btn btn-nav-cta btn-lg" style={{ marginTop:26 }} onClick={()=>scrollToEnquiry()}>Request a platform demo {I.arrow()}</button>
+            <button className="btn btn-nav-cta btn-lg" style={{ marginTop:26 }} onClick={()=>nav("contact")}>Request a platform demo {I.arrow()}</button>
           </Reveal>
           <Reveal delay={110} className="eip-mock">
             <div className="mk-win">
               <div className="mk-bar"><span></span><span></span><span></span><em>Energy Intelligence · Generation vs consumption</em></div>
-              <button className="mk-shot" onClick={()=>setZoom(true)} title="Click to enlarge">
-                <img src="assets/dash-gen-vs-consumption-plot.png" alt="Energy Intelligence dashboard: monthly generation versus consumption with banking settlement" loading="lazy"/>
+              <button className="mk-shot" onClick={()=>setZoom("assets/plat-settlement.png")} title="Click to enlarge">
+                <img src="assets/plat-settlement.png" alt="Energy Intelligence dashboard: monthly generation, consumption, banking settlement, lapsed units and grid consumption" loading="lazy"/>
                 <span className="mk-zoom">{I.search({width:15,height:15})} Enlarge</span>
               </button>
-              <div className="mk-leg">
-                {DASH_LEGEND.map((l,i)=>(<span key={i}><i style={{ background:l[0] }}></i>{l[1]}</span>))}
-              </div>
             </div>
             <span className="eip-mock-note">Live view from the Energy Intelligence platform · click the chart to view it full size</span>
           </Reveal>
@@ -369,7 +378,7 @@ function Platform({ nav }) {
       <section className="section">
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">Savings calculators</span>
+            <span className="eyebrow">Financial modelling</span>
             <h2>Quantify the financial value of renewable energy.</h2>
             <p className="lead">Evaluate renewable energy opportunities using intelligent financial calculators designed specifically for commercial and industrial consumers. Generate realistic savings estimates based on your energy profile, consumption patterns, tariff structures, and investment preferences.</p>
           </Reveal>
@@ -388,8 +397,8 @@ function Platform({ nav }) {
         <div className="shot-lb" onClick={()=>setZoom(false)}>
           <button className="shot-lb-x" onClick={()=>setZoom(false)} aria-label="Close">{I.x()}</button>
           <figure onClick={e=>e.stopPropagation()}>
-            <img src="assets/dash-gen-vs-consumption.png" alt="Energy Intelligence dashboard, full view"/>
-            <figcaption>Energy Intelligence · generation vs consumption with banking settlement</figcaption>
+            <img src={typeof zoom === "string" ? zoom : "assets/plat-settlement.png"} alt="Energy Intelligence platform view, full size"/>
+            <figcaption>Energy Intelligence platform view</figcaption>
           </figure>
         </div>
       )}

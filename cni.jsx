@@ -366,7 +366,7 @@ function CnILane({ nav }) {
       {/* sticky CTA */}
       <div className="sticky-cta">
         <div className="shell sticky-cta-inner">
-          <div className="sc-text">Bring us last month's bill. <b>We'll show you next year's.</b></div>
+          <div className="sc-text"><b>Bring us your energy challenge.</b></div>
           <button className="btn btn-nav-cta" onClick={()=>nav("platform#energy-challenge")}>Talk to an energy advisor {I.arrow()}</button>
         </div>
       </div>

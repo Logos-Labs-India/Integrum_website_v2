@@ -309,9 +309,10 @@ const INDIA_VB = `0 0 ${INDIA_W} ${INDIA_H}`;
 const TOPO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json";
 /* project sites by real coordinates — projected with the same projection as the outline */
 const PROJECT_REGIONS = [
-  { name: "Maharashtra", lng: 75.4, lat: 19.4, n: 12, color: "#005B96", off: [[16,-12],[-12,10],[8,20]] },
-  { name: "Karnataka",   lng: 76.2, lat: 14.8, n: 14, color: "#0A6FB0", off: [[14,-10],[-10,12],[6,20]] },
-  { name: "Tamil Nadu",  lng: 78.3, lat: 11.0, n: 7,  color: "#1D9E75", off: [[10,-9],[-8,11]] },
+  { name: "Gujarat",     lng: 71.5, lat: 22.6, n: 4,  color: "#E0A100", glow: "#F0C000", off: [[16,-12],[-12,10],[8,20]] },
+  { name: "Maharashtra", lng: 75.4, lat: 19.4, n: 12, color: "#005B96", glow: "#5FE0B5", off: [[14,-10],[-10,12],[6,18]] },
+  { name: "Karnataka",   lng: 76.2, lat: 14.8, n: 14, color: "#0A6FB0", glow: "#4AA8E8", off: [[14,-10],[-10,12],[6,20]] },
+  { name: "Tamil Nadu",  lng: 78.3, lat: 11.0, n: 7,  color: "#1D9E75", glow: "#8FE3B8", off: [[10,-9],[-8,11]] },
 ];
 
 let _indiaGeoCache = null;
@@ -330,7 +331,23 @@ function useIndiaGeo() {
         const proj = window.d3.geoMercator().fitExtent([[10,10],[INDIA_W-10,INDIA_H-10]], india);
         const d = window.d3.geoPath(proj)(india);
         const pins = PROJECT_REGIONS.map(r=>{ const [x,y] = proj([r.lng, r.lat]); return { ...r, x, y }; });
-        _indiaGeoCache = { d, pins };
+        // Dot matrix sampled from the REAL outline: a grid point is kept only
+        // when it falls inside the country path, so the dotted silhouette is
+        // still true geography rather than a drawn approximation.
+        const dots = [];
+        try {
+          const step = 7.2;
+          const cv = document.createElement("canvas");
+          cv.width = INDIA_W; cv.height = INDIA_H;
+          const ctx = cv.getContext("2d");
+          const p2d = new Path2D(d);
+          for (let y = 6; y < INDIA_H - 4; y += step) {
+            for (let x = 6; x < INDIA_W - 4; x += step) {
+              if (ctx.isPointInPath(p2d, x, y)) dots.push([x, y]);
+            }
+          }
+        } catch (e) {}
+        _indiaGeoCache = { d, pins, dots };
         if (alive) setGeo(_indiaGeoCache);
       } catch (e) { /* map stays empty rather than showing wrong geography */ }
     })();
@@ -367,30 +384,56 @@ function IndiaMap({ height = 380, interactive = true }) {
   );
 }
 
-/* ---------- elegant DARK projects map (glowing India silhouette + pins) ---------- */
+/* ---------- DARK projects map — dot-matrix India sampled from real geometry ---------- */
 function ProjectsMapDark({ height = 420 }) {
   const [hover, setHover] = useState(null);
   const geo = useIndiaGeo();
-  const glows = ["#5FE0B5", "#F0C000", "#4AA8E8"];
-  const regions = (geo ? geo.pins : []).map((r, i) => ({ ...r, glow: glows[i] || "#5FE0B5" }));
+  const regions = (geo ? geo.pins : []).map(r => ({ ...r, glow: r.glow || r.color || "#5FE0B5" }));
+  const dots = geo && geo.dots ? geo.dots : [];
+  // dots pick up a tint from the nearest project cluster, so the operating
+  // states read as brighter regions of the matrix without any outline
+  const tint = (x, y) => {
+    let best = null, bd = Infinity;
+    for (const r of regions) {
+      const d2 = (x - r.x) ** 2 + (y - r.y) ** 2;
+      if (d2 < bd) { bd = d2; best = r; }
+    }
+    const near = Math.sqrt(bd);
+    if (!best || near > 78) return { c: "#5C7EA0", o: 0.34 };
+    const t = 1 - near / 78;
+    return { c: best.glow, o: 0.30 + t * 0.62 };
+  };
   return (
     <div className="map-wrap" style={{ height }}>
       <svg viewBox={INDIA_VB} preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "100%", overflow: "visible" }}>
         <defs>
-          <filter id="pinglow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          {glows.map((g, i) => (<radialGradient id={`halo${i}`} key={i}><stop offset="0" stopColor={g} stopOpacity="0.42"/><stop offset="100%" stopColor={g} stopOpacity="0"/></radialGradient>))}
+          <filter id="pinglow" x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          {regions.map((rg, i) => (<radialGradient id={`halo${i}`} key={i}><stop offset="0" stopColor={rg.glow} stopOpacity="0.34"/><stop offset="100%" stopColor={rg.glow} stopOpacity="0"/></radialGradient>))}
         </defs>
-        {geo && <path d={geo.d} fill="rgba(120,175,225,.09)" stroke="rgba(140,190,235,.50)" strokeWidth="1.2" strokeLinejoin="round"/>}
-        {regions.map((rg, i) => (<circle key={i} cx={rg.x} cy={rg.y} r={hover === rg.name ? 46 : 36} fill={`url(#halo${i})`} style={{ transition: "r .3s ease" }}/>))}
-        {regions.map((rg) => (
-          <g key={rg.name+"p"} className="map-pin" onMouseEnter={() => setHover(rg.name)} onMouseLeave={() => setHover(null)} style={{ cursor: "pointer" }}>
-            {rg.off.map((o,j)=>(<rect key={j} x={rg.x+o[0]-4} y={rg.y+o[1]-4} width="8" height="8" rx="2" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.6)" strokeWidth="1.1"/>))}
-            <rect x={rg.x-8} y={rg.y-8} width="16" height="16" rx="3" fill={rg.glow} filter="url(#pinglow)"/>
-          </g>
+        {regions.map((rg, i) => (
+          <circle key={"h"+i} cx={rg.x} cy={rg.y} r={hover === rg.name ? 58 : 46} fill={`url(#halo${i})`} style={{ transition: "r .3s ease" }}/>
         ))}
+        <g>
+          {dots.map(([x, y], i) => { const t = tint(x, y);
+            return <rect key={i} x={x - 1.6} y={y - 1.6} width="3.2" height="3.2" rx="0.9" fill={t.c} opacity={t.o}/>; })}
+        </g>
+        {regions.map((rg) => {
+          const on = hover === rg.name;
+          return (
+            <g key={rg.name+"p"} className="map-pin" onMouseEnter={() => setHover(rg.name)} onMouseLeave={() => setHover(null)} style={{ cursor: "pointer" }}>
+              {rg.off.map((o,j)=>(
+                <rect key={j} x={rg.x+o[0]-4.5} y={rg.y+o[1]-4.5} width="9" height="9" rx="2.5"
+                  fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.72)" strokeWidth="1.1"/>
+              ))}
+              <rect x={rg.x-9} y={rg.y-9} width="18" height="18" rx="4"
+                fill={on ? rg.glow : "rgba(255,255,255,.94)"} stroke={rg.glow} strokeWidth={on ? 0 : 1.6}
+                filter="url(#pinglow)" style={{ transition:"fill .2s ease" }}/>
+            </g>
+          );
+        })}
       </svg>
       {hover && (() => { const r = regions.find(x => x.name === hover);
-        return <div className="map-tooltip" style={{ left: `${(r.x/INDIA_W)*100}%`, top: `${(r.y/INDIA_H)*100}%` }}><div className="mt-t">{r.name}</div><div className="mt-m num">{r.n} hybrid projects</div></div>; })()}
+        return <div className="map-tooltip" style={{ left: `${(r.x/INDIA_W)*100}%`, top: `${(r.y/INDIA_H)*100}%` }}><div className="mt-t">{r.name}</div>{r.n ? <div className="mt-m num">{r.n} hybrid projects</div> : null}</div>; })()}
     </div>
   );
 }
@@ -458,90 +501,130 @@ function VideoBG({ src, srcs, starts, poster, overlay, style }) {
   const multi = list.length > 1;
   const offs = starts || [];
   const ov = overlay || "linear-gradient(155deg, rgba(8,23,42,.90), rgba(11,31,58,.95))";
-  const aRef = useRef(null), bRef = useRef(null);
-  const [front, setFront] = useState(0);          // which element is visible: 0=a, 1=b
-  const [ready, setReady] = useState(false);       // first frame painted → drop the poster
-  const idxRef = useRef(0);                        // clip index currently on the front element
-  const busyRef = useRef(false);                   // a transition is in flight → ignore stray events
 
-  const seekStart = (v, i) => { try { v.currentTime = offs[i] || 0; } catch(e){} };
-  const kick = (v) => { v.muted = true; v.defaultMuted = true; const p = v.play(); if (p && p.catch) p.catch(()=>{}); };
-  // load a clip into an element without disturbing anything that's visible
-  const warm = (v, i) => {
-    if (!v || !multi) return;
-    const url = list[i];
-    if (v.dataset.clip === String(i) && v.readyState >= 2) return;
-    v.dataset.clip = String(i);
-    v.src = url; v.preload = "auto"; v.load();
+  // ONE <video> per clip, each keeping its own src for the page's lifetime.
+  // Nothing is ever re-pointed at a different file, which removes the whole
+  // class of recycling bugs: two layers can't hold the same clip, a layer
+  // can't be asked to play something it hasn't buffered, and after the first
+  // pass every clip is already decoded so the loop is seamless.
+  const refs = useRef([]);
+  const [idx, setIdx] = useState(0);
+  const [ready, setReady] = useState(false);
+  const idxRef = useRef(0);
+  const busyRef = useRef(false);
+
+  const startOf = (i) => offs[i] || 0;
+  const rewind = (v, i) => { try { v.currentTime = startOf(i); } catch (e) {} };
+  const play = (v) => { if (!v) return; v.muted = true; v.defaultMuted = true; const p = v.play(); if (p && p.catch) p.catch(()=>{}); };
+
+  // Show clip i: only ever called once that clip's own element can play.
+  const show = (i) => {
+    const v = refs.current[i]; if (!v) return;
+    idxRef.current = i;
+    rewind(v, i);
+    play(v);
+    setIdx(i);
+    // stop and re-arm the others so a later turn starts instantly
+    refs.current.forEach((o, j) => {
+      if (!o || j === i) return;
+      setTimeout(() => { o.pause(); rewind(o, j); }, 700);
+    });
+    // make sure the following clip is downloading
+    const nx = refs.current[(i + 1) % list.length];
+    if (nx && nx.preload !== "auto") nx.preload = "auto";
+    busyRef.current = false;
   };
 
-  // boot the first clip on the A element, then warm clip 2 onto B
-  useEffect(() => {
-    const a = aRef.current; if (!a) return;
-    a.dataset.clip = "0";
-    a.src = list[0];
-    a.load();
-    const onLoaded = () => {
-      seekStart(a, 0); kick(a); setReady(true);
-      if (multi) warm(bRef.current, 1 % list.length);
+  // Advance to the next clip that is actually playable. If the immediate next
+  // one hasn't buffered we wait for it briefly, then skip past it rather than
+  // switching to a blank element or freezing on the current clip.
+  const advance = (from) => {
+    if (!multi || busyRef.current) return;
+    if (from !== idxRef.current) return;
+    busyRef.current = true;
+    const next = (from + 1) % list.length;
+    const v = refs.current[next];
+    if (!v) { busyRef.current = false; return; }
+    if (v.readyState >= 2) { show(next); return; }
+
+    // not buffered yet: nudge the download and wait for it
+    try { v.preload = "auto"; if (v.readyState === 0) v.load(); } catch (e) {}
+    let done = false;
+    const go = () => {
+      if (done) return; done = true;
+      v.removeEventListener("canplay", go);
+      v.removeEventListener("loadeddata", go);
+      clearTimeout(timer);
+      show(next);
     };
-    a.addEventListener("loadeddata", onLoaded);
-    return () => a.removeEventListener("loadeddata", onLoaded);
+    v.addEventListener("canplay", go);
+    v.addEventListener("loadeddata", go);
+    const timer = setTimeout(() => {
+      if (done) return; done = true;
+      v.removeEventListener("canplay", go);
+      v.removeEventListener("loadeddata", go);
+      if (v.readyState >= 2) { show(next); return; }
+      // still nothing: hop to whichever later clip IS ready, else keep the
+      // current one playing rather than showing an empty layer
+      for (let k = 2; k <= list.length; k++) {
+        const j = (from + k) % list.length;
+        const c2 = refs.current[j];
+        if (c2 && c2.readyState >= 2) { show(j); return; }
+      }
+      const cur = refs.current[from];
+      if (cur) { rewind(cur, from); play(cur); }
+      busyRef.current = false;
+    }, 4000);
+  };
+
+  // boot: play clip 0, begin buffering clip 1
+  useEffect(() => {
+    const v = refs.current[0]; if (!v) return;
+    const onLoaded = () => { rewind(v, 0); play(v); setReady(true); };
+    if (v.readyState >= 2) onLoaded();
+    else v.addEventListener("loadeddata", onLoaded);
+    const nx = refs.current[1];
+    if (nx) nx.preload = "auto";
+    return () => v.removeEventListener("loadeddata", onLoaded);
   }, []);
 
-  // pause when off-screen
+  // Watchdog: 'ended' is unreliable on background video, so drive the sequence
+  // from the visible clip's own position instead.
   useEffect(() => {
-    const host = aRef.current && aRef.current.parentNode; if (!host) return;
-    const io = new IntersectionObserver(([e]) => {
-      [aRef.current, bRef.current].forEach(v => {
+    if (!multi) return;
+    const id = setInterval(() => {
+      const i = idxRef.current;
+      const v = refs.current[i];
+      if (!v || busyRef.current || !v.duration || isNaN(v.duration)) return;
+      if (v.currentTime >= v.duration - 0.35) advance(i);
+    }, 250);
+    return () => clearInterval(id);
+  }, [multi, list.length]);
+
+  // pause everything off-screen, resume the visible clip on return
+  useEffect(() => {
+    const host = refs.current[0] && refs.current[0].parentNode; if (!host) return;
+    const io = new IntersectionObserver(([ev]) => {
+      refs.current.forEach((v, j) => {
         if (!v) return;
-        if (e.isIntersecting) { if (v === (front ? bRef.current : aRef.current)) kick(v); }
+        if (ev.isIntersecting) { if (j === idxRef.current) play(v); }
         else v.pause();
       });
     }, { threshold: 0.05 });
     io.observe(host);
     return () => io.disconnect();
-  }, [front]);
+  }, []);
 
-  // when the visible clip ends, crossfade to the other element with the next clip.
-  // The outgoing element is left completely untouched until the fade has finished.
-  const handleEnded = (which) => () => {
-    if (!multi) return;
-    if (which !== front) return;            // stray event from the hidden element
-    if (busyRef.current) return;            // already transitioning
-    busyRef.current = true;
-    const cur = which === 0 ? aRef.current : bRef.current;
-    const nxt = which === 0 ? bRef.current : aRef.current;
-    if (!nxt) { busyRef.current = false; return; }
-    const nextIdx = (idxRef.current + 1) % list.length;
-    const afterIdx = (nextIdx + 1) % list.length;
-    const start = () => {
-      idxRef.current = nextIdx;
-      seekStart(nxt, nextIdx);
-      kick(nxt);
-      setFront(which === 0 ? 1 : 0);
-      // only once the crossfade is over: stop the old clip and give it the NEXT one
-      setTimeout(() => {
-        if (cur) { cur.pause(); warm(cur, afterIdx); }
-        busyRef.current = false;
-      }, 700);
-    };
-    if (nxt.dataset.clip === String(nextIdx) && nxt.readyState >= 2) start();
-    else {
-      warm(nxt, nextIdx);
-      const once = () => { nxt.removeEventListener("loadeddata", once); start(); };
-      nxt.addEventListener("loadeddata", once);
-    }
-  };
-
-  const vStyle = (mine) => ({ opacity: front === mine ? 1 : 0, transition: "opacity .6s ease" });
   return (
     <div aria-hidden="true" className="photo-bg" style={style}>
       {poster && !ready && <div className="photo-bg-img" style={{ backgroundImage: `url(${poster})`, backgroundPosition: "center" }} />}
-      <video ref={aRef} className="video-bg-el" style={vStyle(0)} muted playsInline
-        loop={!multi} preload="auto" onEnded={handleEnded(0)} onError={handleEnded(0)} />
-      <video ref={bRef} className="video-bg-el" style={vStyle(1)} muted playsInline
-        preload="auto" onEnded={handleEnded(1)} onError={handleEnded(1)} />
+      {list.map((u, i) => (
+        <video key={u} ref={el => { refs.current[i] = el; }} className="video-bg-el"
+          style={{ opacity: idx === i ? 1 : 0, transition: "opacity .6s ease" }}
+          src={u} muted playsInline loop={!multi}
+          preload={i === 0 ? "auto" : "metadata"}
+          onEnded={() => advance(i)} onError={() => advance(i)} />
+      ))}
       <div className="photo-bg-ov" style={{ background: ov }} />
     </div>
   );
@@ -553,7 +636,8 @@ const VID = {
   solar:   "https://videos.pexels.com/video-files/7442016/7442016-hd_1920_1080_25fps.mp4",   // drone over solar farm
   wind:    "https://videos.pexels.com/video-files/9789422/9789422-hd_1920_1080_30fps.mp4",   // desert wind turbines
   // real Integrum site footage — played in sequence as one continuous loop
-  site:    ["assets/site-1.mp4", "assets/site-2.mp4", "assets/site-3.mp4"],
+  // real Integrum site footage, wind first then solar; played as one loop
+  site:    ["assets/site-3.mp4", "assets/site-1.mp4", "assets/site-2.mp4"],
 };
 
 Object.assign(window, {

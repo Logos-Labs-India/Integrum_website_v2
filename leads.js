@@ -14,7 +14,7 @@
      · Google Sheets  Apps Script web-app URL (see SETUP note below)
      · Any webhook    that accepts a JSON POST
    ============================================================ */
-window.LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxtIpOauUYpgZKRt3RRyJlNCogWsV9ALqC03zK-9SAtUwSHM1NJJL7EbyYk0M5P-fQqTw/exec";
+window.LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxtIpOauUYpgZKRt3RRyJlNCogWsV9ALqC03zK-9SAtUwSHM1NJJL7EbyYk0M5P-fQqTw/exec";   // Integrum website leads → Google Sheet
 
 // Lets you trial an endpoint from the #leads screen before committing it to
 // this file. Only affects the browser it was set in — production still needs

@@ -302,7 +302,7 @@ function CaseIndex({ nav }) {
   return (
     <div className="page-fade lane-accent" style={{ "--p-color":"var(--amber)" }}>
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(36px,4vw,56px)" }}>
-        <VideoBG srcs={VID.site} starts={[8, 0, 0]} poster="assets/hero-poster.png" overlay="linear-gradient(120deg, rgba(8,23,42,.94) 38%, rgba(8,23,42,.62) 100%)" pos="center 50%"/>
+        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png" overlay="linear-gradient(120deg, rgba(8,23,42,.94) 38%, rgba(8,23,42,.62) 100%)" pos="center 50%"/>
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}><a onClick={()=>nav("home")} style={{cursor:"pointer",color:"#9FB7CF"}}>Home</a> {I.arrow({width:13,height:13})} <span>Case studies</span></div>
           <div style={{ maxWidth:760, marginTop:20 }}>

@@ -91,7 +91,7 @@ const PAGES = {
 const PAGE_META = {
   home:      ["Integrum Energy | Wind + Solar Hybrid Power for Industry in India", "Wind + solar hybrid plants for India's industrial businesses — lower, predictable power costs and a credible path to 100% renewable (RE 100)."],
   cni:       ["Cut Your Industrial Power Bill — Wind + Solar Hybrid | Integrum Energy", "Hybrid wind + solar, open access, group captive, BESS and EaaS — engineered to take your industrial tariff toward ₹3 per unit."],
-  case:      ["Case Studies — Renewable Power for Steel, Cement & More | Integrum Energy", "Real engagements across steel and cement: from 100% conventional to RE 100, and power cost cut from ₹7 to ₹3 per unit."],
+  case:      ["Knowledge Hub — Renewable Power for Steel, Cement & More | Integrum Energy", "Real engagements across steel and cement: from 100% conventional to RE 100, and power cost cut from ₹7 to ₹3 per unit."],
   about:     ["About Integrum Energy — Our Story, Impact & Leadership", "Integrum Energy harnesses renewable energy for India's industry, opening a ~70 GW hybrid market. Meet our team and our impact."],
   investors: ["Investors — Snapshot, Financials & Governance | Integrum Energy", "Investor snapshot, financials and governance for Integrum Energy Infrastructure Ltd."],
   dashboard: ["Energy Intelligence Platform | Integrum Energy", "Track live generation, savings and open-access power across your plants on the Integrum Energy Intelligence platform."],
@@ -107,7 +107,7 @@ const PAGE_META = {
 const NAV_LINKS = [
   { label:"Solutions", page:"cni" },
   { label:"Platform", page:"platform" },
-  { label:"Case studies", page:"case" },
+  { label:"Knowledge Hub", page:"case" },
   { label:"Investors", page:"investors" },
   { label:"Company", page:"about" },
   { label:"People", page:"careers" },
@@ -122,7 +122,7 @@ function buildSearchIndex() {
     { label:"Home", desc:"Overview & live generation", go:"home", kind:"Page" },
     { label:"Solutions", desc:"Cut your energy bill — hybrid, storage, EaaS", go:"cni", kind:"Page" },
     { label:"Platform", desc:"Energy Intelligence dashboard", go:"dashboard", kind:"Page" },
-    { label:"Case studies", desc:"Proof across steel, cement & more sectors", go:"case", kind:"Page" },
+    { label:"Knowledge Hub", desc:"Case studies and client outcomes", go:"case", kind:"Page" },
     { label:"Investors", desc:"Snapshot, financials & governance", go:"investors", kind:"Page" },
     { label:"Company", desc:"Our story, impact & leadership", go:"about", kind:"Page" },
     { label:"Contact an advisor", desc:"Talk to a consultant", go:"contact", kind:"Page" },
@@ -230,11 +230,11 @@ function Nav({ page, nav, onSearch }) {
 function Footer({ nav }) {
   const cols = [
     { h:"Solutions", links:[["Cut my energy bill","cni"],["Hybrid wind + solar","cni"],["Energy storage · BESS","cni"],["CAPEX · OPEX · EaaS","cni"]] },
-    { h:"Platform", links:[["Energy Intelligence","dashboard"],["Customer login","dashboard"],["Savings calculator","cni"],["Open access tracker","dashboard"]] },
+    { h:"Platform", links:[["Energy Intelligence","dashboard"],["Customer login","dashboard"],["Open access tracker","dashboard"]] },
     { h:"Investors", links:[["Investor snapshot","investors"],["Financials & filings","investors"],["Governance","investors"],["ESG / BRSR","investors"]] },
-    { h:"Company", links:[["Case studies","case"],["The SPARK difference","spark"],["People","careers"],["Contact","contact"]] },
+    { h:"Company", links:[["Knowledge Hub","case"],["The SPARK difference","spark"],["People","careers"],["Contact","contact"]] },
   ];
-  const badges = ["ISO 9001:2015","ISO 14001:2015","Great Place to Work","Company of the Year 2024"];
+  const badges = ["ISO 9001:2015","Great Place to Work","Company of the Year 2024"];
   return (
     <footer className="footer">
       <div className="shell">
