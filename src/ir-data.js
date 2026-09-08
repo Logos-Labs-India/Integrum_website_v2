@@ -188,7 +188,7 @@ const IR_META = {
   esg:           ["Investors — ESG & Sustainability | Integrum Energy", "Sustainability reporting, safety performance and ESG policies."],
 };
 
-Object.assign(window, {
+export {
   IR_STAGE, IR_SECTIONS, IR_KPIS, IR_DOCS, IR_BOARD, IR_COMMITTEES,
   IR_MATRIX, IR_DISCLOSURES, IR_OPS, IR_CONTACT, IR_META,
-});
+};

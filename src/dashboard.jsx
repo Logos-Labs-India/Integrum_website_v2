@@ -1,6 +1,9 @@
 /* ============================================================
    dashboard.jsx — customer login + sample dashboard
    ============================================================ */
+import React, { useState } from "react";
+import { I, IMG, PhotoBG, isFilled, isPhone, isEmail, GenerationChart, BessRing } from "./dataviz.jsx";
+
 function Dashboard({ nav }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [mode, setMode] = useState("signin");   // signin | signup | forgot
@@ -219,4 +222,4 @@ function DashboardApp({ nav, onLogout }) {
   );
 }
 
-Object.assign(window, { Dashboard });
+export { Dashboard };

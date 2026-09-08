@@ -1,6 +1,9 @@
 /* ============================================================
    cni.jsx — C&I buyer landing (deepest lane)
    ============================================================ */
+import { useState } from "react";
+import { I, Reveal, IMG } from "./dataviz.jsx";
+
 const INDUSTRY_DATA = {
   "Metals & mining": { tariff:"Lower ₹/kWh", saving:"Higher RE penetration", re:"Tariff visibility",
     challenge:"Arc furnaces and crushers run continuous, high-load shifts — energy is often your single largest controllable cost.",
@@ -374,4 +377,4 @@ function CnILane({ nav }) {
   );
 }
 
-Object.assign(window, { CnILane, INDUSTRY_DATA });
+export { CnILane, INDUSTRY_DATA };

@@ -1,6 +1,8 @@
 /* ============================================================
    spark.jsx — full SPARK framework page (5 stages, deep-linked)
    ============================================================ */
+import React from "react";
+import { I } from "./dataviz.jsx";
 const { useState: useStateH, useEffect } = React;
 
 const SPARK_FULL = [
@@ -220,4 +222,4 @@ function SparkPage({ nav, sub }) {
   );
 }
 
-Object.assign(window, { SparkPage, SPARK_FULL });
+export { SparkPage, SPARK_FULL };

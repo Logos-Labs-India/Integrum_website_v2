@@ -12,6 +12,12 @@
 
    All content comes from ir-data.js — this file holds no data.
    ============================================================ */
+import React, { useState, useEffect, useMemo } from "react";
+import { I, Reveal, ProjectsMapDark } from "./dataviz.jsx";
+import {
+  IR_STAGE, IR_SECTIONS, IR_KPIS, IR_DOCS, IR_BOARD, IR_COMMITTEES,
+  IR_MATRIX, IR_DISCLOSURES, IR_OPS, IR_CONTACT,
+} from "./ir-data.js";
 
 /* ---------- helpers ---------- */
 const IR_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -39,7 +45,7 @@ const irSection = (key) => IR_SECTIONS.find(s => s.key === key) || IR_SECTIONS[0
 
 /* A row marked from:"listing" exists only once the company is listed. While
    IR_STAGE is "preipo" it renders as a locked placeholder instead of a file. */
-const irLocked = (d) => window.IR_STAGE !== "listed" && d && d.from === "listing";
+const irLocked = (d) => IR_STAGE !== "listed" && d && d.from === "listing";
 
 /* ---------- one document row ---------- */
 function IRDocRow({ d }) {
@@ -197,7 +203,7 @@ function IRDisclosures() {
               <td className="sr num">{i+1}</td>
               <td>{r.p}</td>
               <td className="rt">
-                {(r.a === "doc" || (r.a === "listing" && window.IR_STAGE === "listed"))
+                {(r.a === "doc" || (r.a === "listing" && IR_STAGE === "listed"))
                   ? <a className="ir-link" href={r.url || "#"} onClick={e=>{ if (!r.url) e.preventDefault(); }}>View {I.link({ width:13, height:13 })}</a>
                   : r.a === "listing" ? <span className="ir-lock">On listing</span>
                   : r.a === "pending" ? <span className="muted">—</span>
@@ -381,4 +387,4 @@ function Investors({ nav, sub }) {
   );
 }
 
-Object.assign(window, { Investors });
+export { Investors };

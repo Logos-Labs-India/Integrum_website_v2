@@ -3,6 +3,11 @@
    Content sourced from integrumenergy.in/case-studies (paraphrased,
    no proprietary numbers invented beyond what the client states).
    ============================================================ */
+import { useState } from "react";
+import { I, VID, VideoBG, IMG, PhotoBG, Reveal } from "./dataviz.jsx";
+import { CAREER_ROLES } from "./jobs.jsx";
+import { validateName, validateEmail, validatePhone, submitLead, uploadCareerResume } from "./leads.js";
+
 const CASES = [
   {
     id:"khayati-steel",
@@ -513,7 +518,7 @@ function Contact({ nav, sub }) {
     : preset.indexOf("media") !== -1 ? "Media / press"
     : reasons[0];
   const [reason, setReason] = useState(initial);
-  const [role, setRole] = useState((window.CAREER_ROLES && preset.indexOf("career") !== -1) ? "" : "");
+  const [role, setRole] = useState((CAREER_ROLES && preset.indexOf("career") !== -1) ? "" : "");
   const [resume, setResume] = useState(null);      // { name, size, data } once read
   const [resumeErr, setResumeErr] = useState(null);
   const [sent, setSent] = useState(false);
@@ -539,10 +544,17 @@ function Contact({ nav, sub }) {
       resume_size: resume ? resume.size : "",
       resume_file: resume ? resume.data : "",
     }));
+    if (reason === "Talent / careers" && resume && resume.file) {
+      // Extra path: also lands the resume in S3 and emails HR directly.
+      // Best-effort — the Google Sheets submission above is already the
+      // system of record, so a failure here doesn't block "sent" below.
+      try { await uploadCareerResume(resume.file, { name:f.name, email:f.email, phone:f.phone, company:f.company, role, help:f.help }); }
+      catch (e2) { /* non-fatal */ }
+    }
     setBusy(false);
     setSent(true);
   };
-  const openRoles = (window.CAREER_ROLES || []).map(r=>r.role);
+  const openRoles = (CAREER_ROLES || []).map(r=>r.role);
   return (
     <div className="page-fade lane-accent" style={{ "--p-color":"#014976", "--accent":"#014976", "--accent-deep":"#013A5E", "--accent-soft":"#D8E7F1" }}>
       <section className="page-hero">
@@ -613,7 +625,7 @@ function Contact({ nav, sub }) {
                                 r.onerror = () => rej(new Error("read failed"));
                                 r.readAsDataURL(file);
                               });
-                              setResume({ name:file.name, size:file.size, type:file.type, data });
+                              setResume({ name:file.name, size:file.size, type:file.type, data, file });
                             } catch (e2) {
                               setResume(null);
                               setResumeErr("Couldn't read that file — please try again or email it to HR@integrumenergy.in");
@@ -641,4 +653,4 @@ function Contact({ nav, sub }) {
 const labelStyle = { fontSize:13, fontWeight:600, color:"var(--ink-2)" };
 const inputStyle = { width:"100%", padding:"12px 14px", borderRadius:11, border:"1px solid var(--hairline-2)", background:"var(--surface)", color:"var(--ink)", fontFamily:"var(--font-sans)", fontSize:15, outline:"none", marginTop:7 };
 
-Object.assign(window, { CaseStudy, Contact, CASES });
+export { CaseStudy, Contact, CASES };

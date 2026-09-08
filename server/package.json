@@ -1,0 +1,21 @@
+{
+  "name": "integrum-careers-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend for the Talent/Careers resume upload (S3) and HR email notification (SES).",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "verify-aws": "node scripts/verify-aws.js",
+    "resend-link": "node scripts/get-resume-link.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.687.0",
+    "@aws-sdk/client-ses": "^3.687.0",
+    "@aws-sdk/s3-request-presigner": "^3.687.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "multer": "^2.0.0"
+  }
+}

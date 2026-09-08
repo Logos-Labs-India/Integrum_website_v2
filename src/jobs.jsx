@@ -346,4 +346,4 @@ const CAREER_ROLES = [
   },
 ];
 
-Object.assign(window, { CAREER_ROLES });
+export { CAREER_ROLES };

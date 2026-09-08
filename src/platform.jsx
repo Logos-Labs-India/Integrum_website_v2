@@ -1,6 +1,10 @@
 /* ============================================================
    platform.jsx — Platform page: capabilities Integrum brings
    ============================================================ */
+import React from "react";
+import { I, Reveal } from "./dataviz.jsx";
+import { SparkSection } from "./home.jsx";
+import { CustomerEnquiry } from "./enquiry.jsx";
 const { useState: useStateP } = React;
 
 const PLAT_LAYERS = [
@@ -413,4 +417,4 @@ function Platform({ nav }) {
   );
 }
 
-Object.assign(window, { Platform });
+export { Platform };

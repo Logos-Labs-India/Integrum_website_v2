@@ -2,6 +2,8 @@
    legal.jsx — Terms of Use, Privacy Policy & Disclaimer
    Content supplied by the client (existing integrumenergy.in)
    ============================================================ */
+import React from "react";
+import { I } from "./dataviz.jsx";
 const CO_NAME = "Integrum Energy Infrastructure Private Limited";
 const CO_ADDR = "736, 2nd Floor, 3rd Block, Koramangala, Bengaluru 560034";
 
@@ -240,4 +242,4 @@ function Legal({ nav, kind = "terms" }) {
   );
 }
 
-Object.assign(window, { Legal, LEGAL_CONTENT });
+export { Legal, LEGAL_CONTENT };

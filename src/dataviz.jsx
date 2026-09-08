@@ -1,8 +1,9 @@
 /* ============================================================
    dataviz.jsx — hooks, icons, charts, counters, India map
-   Exposes components on window for other babel scripts.
    ============================================================ */
-const { useState, useEffect, useRef, useMemo } = React;
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import * as d3 from "d3";
+import * as topojson from "topojson-client";
 
 /* ---------- hooks ---------- */
 function useInView(opts) {
@@ -323,13 +324,12 @@ function useIndiaGeo() {
     let alive = true;
     (async ()=>{
       try {
-        if (!window.d3 || !window.topojson) return;
         const topo = await fetch(TOPO_URL).then(r=>r.json());
-        const fc = window.topojson.feature(topo, topo.objects.countries);
+        const fc = topojson.feature(topo, topo.objects.countries);
         const india = fc.features.find(f => f.id === "356" || f.properties?.name === "India");
         if (!india) return;
-        const proj = window.d3.geoMercator().fitExtent([[10,10],[INDIA_W-10,INDIA_H-10]], india);
-        const d = window.d3.geoPath(proj)(india);
+        const proj = d3.geoMercator().fitExtent([[10,10],[INDIA_W-10,INDIA_H-10]], india);
+        const d = d3.geoPath(proj)(india);
         const pins = PROJECT_REGIONS.map(r=>{ const [x,y] = proj([r.lng, r.lat]); return { ...r, x, y }; });
         // Dot matrix sampled from the REAL outline: a grid point is kept only
         // when it falls inside the country path, so the dotted silhouette is
@@ -640,10 +640,9 @@ const VID = {
   site:    ["assets/site-3.mp4", "assets/site-1.mp4", "assets/site-2.mp4"],
 };
 
-Object.assign(window, {
-  React, useState, useEffect, useRef, useMemo,
+export {
   useInView, Reveal, useCountUp, I, LogoMark,
   Sparkline, LiveCounter, CostCurveChart, GenerationChart, IndiaMap, Donut, BessRing,
   IMG, VID, PhotoBG, VideoBG, ProjectsMapDark,
   isEmail, isPhone, isFilled,
-});
+};

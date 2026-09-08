@@ -2,16 +2,34 @@
    app.jsx — router shell, nav, footer, mount (loads last)
    LIGHT THEME · blue primary
    ============================================================ */
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { I } from "./dataviz.jsx";
+import { Home } from "./home.jsx";
+import { CnILane } from "./cni.jsx";
+import { Investors } from "./investors.jsx";
+import { Dashboard } from "./dashboard.jsx";
+import { CaseStudy, Contact, CASES } from "./casestudy.jsx";
+import { About } from "./about.jsx";
+import { SparkPage } from "./spark.jsx";
+import { Platform } from "./platform.jsx";
+import { Careers } from "./careers.jsx";
+import { Legal } from "./legal.jsx";
+import { useTweaks, TweaksPanel, TweakSection, TweakColor } from "./tweaks-panel.jsx";
+import {
+  activeEndpoint, isVerified, readLeads, downloadLeadsCSV, clearLeads,
+  setTestEndpoint, testEndpoint,
+} from "./leads.js"; // also sets window.LEADS_ENDPOINT / window.CAREERS_API_ENDPOINT as a side effect
+
 function LeadsAdmin() {
   const [tick, setTick] = useState(0);
-  const [url, setUrl] = useState(window.activeEndpoint ? activeEndpoint() : "");
+  const [url, setUrl] = useState(activeEndpoint ? activeEndpoint() : "");
   const [test, setTest] = useState(null);      // null | "busy" | {ok,error}
-  const rows = (window.readLeads ? readLeads() : []).slice().reverse();
+  const rows = (readLeads ? readLeads() : []).slice().reverse();
   const cols = ["submitted_at","form","name","company","email","phone","industry","consumption","location","state","reason","role","resume_name","notes","help"];
   const inCode = !!window.LEADS_ENDPOINT;
-  const isSet = !!(window.activeEndpoint && activeEndpoint());
+  const isSet = !!(activeEndpoint && activeEndpoint());
   // "live" requires a delivery that actually succeeded — never just a saved string
-  const live = isSet && !!(window.isVerified && isVerified());
+  const live = isSet && !!(isVerified && isVerified());
   const unproven = isSet && !live;
   return (
     <div className="page-fade">
@@ -127,7 +145,7 @@ function buildSearchIndex() {
     { label:"Company", desc:"Our story, impact & leadership", go:"about", kind:"Page" },
     { label:"Contact an advisor", desc:"Talk to a consultant", go:"contact", kind:"Page" },
   ];
-  const cases = (window.CASES || []).map(c => ({ label:c.title, desc:c.chip, go:"case/"+c.id, kind:"Case study" }));
+  const cases = (CASES || []).map(c => ({ label:c.title, desc:c.chip, go:"case/"+c.id, kind:"Case study" }));
   return base.concat(cases);
 }
 
@@ -359,4 +377,4 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+export default App;

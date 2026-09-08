@@ -1,6 +1,8 @@
 /* ============================================================
    home.jsx — the router homepage (7 sections) + persona re-skin
    ============================================================ */
+import React from "react";
+import { I, VID, VideoBG, Reveal, IMG, PhotoBG } from "./dataviz.jsx";
 const { useState: useStateH, useEffect: useEffectH, useRef: useRefH } = React;
 
 const PERSONAS = [
@@ -740,4 +742,4 @@ function Home({ nav }) {
   );
 }
 
-Object.assign(window, { Home, PersonaRouterBand, SavingsCalculator, SparkSection, PERSONAS, SPARK, PROOF, STATES, INDUSTRIES });
+export { Home, PersonaRouterBand, SavingsCalculator, SparkSection, PERSONAS, SPARK, PROOF, STATES, INDUSTRIES };

@@ -2,6 +2,7 @@
    about.jsx — Company / About Integrum Energy
    Flow per client brief · VMV content from the VMV policy doc
    ============================================================ */
+import { I, VID, VideoBG, Reveal } from "./dataviz.jsx";
 
 const ABOUT_STATS = [
   { ic:"bolt",    v:"719",      u:"mn", k:"Green units generated to date (kWh)" },
@@ -90,15 +91,20 @@ const PRINCIPLES = [
   { k:"Build for the long term", d:"Decisions are evaluated over the asset lifecycle, not just project CAPEX." },
 ];
 
-/* company timeline — dates AWAITING CLIENT CONFIRMATION */
+/* company timeline — client-supplied (Company Timeline.xlsx) */
 const TIMELINE = [
-  { y:"—", k:"Founded" },
-  { y:"—", k:"First major C&I project" },
-  { y:"—", k:"Expansion into wind / hybrid" },
-  { y:"—", k:"O&M platform created" },
-  { y:"—", k:"Energy-as-a-Service launched" },
-  { y:"—", k:"Power markets / trading launched" },
-  { y:"Today", k:"An integrated energy platform" },
+  { y:"2021", k:"Incorporation of our company", d:"Certificate of incorporation dated February 26, 2021." },
+  { y:"2021", k:"Operations commenced in Karnataka", d:"Consultancy and balance of plant (BOP) assignments, expanding to end-to-end turnkey execution, then Gujarat with our first wind projects of 10 MW cumulatively." },
+  { y:"2022", k:"First project commissioned", d:"A 9 MW / 13.5 MWp solar installation executed on a BOP basis, hybridising an existing wind power plant in Karnataka." },
+  { y:"2023", k:"Expanded to Maharashtra", d:"Secured our first order in the state." },
+  { y:"2024", k:"Single largest order to date", d:"A 70 MWp solar project in the state of Gujarat." },
+  { y:"2025", k:"Crossed 100 MW commissioned", d:"Cumulative commissioned capacity passed 100 MW." },
+  { y:"2025", k:"First central PSU contract", d:"A 50 MW wind power project." },
+  { y:"2025", k:"IPP model operations began", d:"Through our subsidiary Integrum Green Assets Private Limited, supplying power under our first long-term power purchase agreement, executed for a tenure of 25 years." },
+  { y:"2026", k:"Energy-as-a-Service launched", d:"Operations commenced under the EaaS model through our subsidiary Integrum Energy Services Private Limited." },
+  { y:"2026", k:"Green Homes incorporated", d:"Integrum Green Homes Private Limited and its subsidiary Integrum (KN1) Green Homes Private Limited, to undertake our first pilot project under the virtual net metering (VNM) model." },
+  { y:"2026", k:"Order book crossed ₹1,000 crore", d:"" },
+  { y:"2026", k:"Extended operations to Tamil Nadu", d:"" },
 ];
 
 /* Key Management Personnel */
@@ -438,7 +444,7 @@ function About({ nav }) {
           <Reveal className="sec-head">
             <span className="eyebrow">Company timeline</span>
             <h2>How we got here.</h2>
-            <p className="lead">Milestone dates are being confirmed and will be published shortly.</p>
+            <p className="lead">From incorporation in 2021 to an integrated energy platform.</p>
           </Reveal>
           <div className="tl-rail">
             {TIMELINE.map((t,i)=>(
@@ -446,6 +452,7 @@ function About({ nav }) {
                 <span className="tl-dot" aria-hidden="true"></span>
                 <span className="tl-y">{t.y}</span>
                 <span className="tl-k">{t.k}</span>
+                {t.d && <span className="tl-d">{t.d}</span>}
               </Reveal>
             ))}
           </div>
@@ -554,4 +561,4 @@ function About({ nav }) {
   );
 }
 
-Object.assign(window, { About });
+export { About };

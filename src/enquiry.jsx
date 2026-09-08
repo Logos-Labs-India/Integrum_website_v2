@@ -2,6 +2,9 @@
    enquiry.jsx — dedicated customer enquiry form (Solutions / Platform)
    Captures industry, average annual consumption, location and state.
    ============================================================ */
+import React from "react";
+import { I } from "./dataviz.jsx";
+import { validateName, validateEmail, validatePhone, submitLead } from "./leads.js";
 const { useState: useStateE } = React;
 
 const ENQ_INDUSTRIES = [
@@ -112,4 +115,4 @@ function CustomerEnquiry({ nav, variant = "light" }) {
   );
 }
 
-Object.assign(window, { CustomerEnquiry, ENQ_INDUSTRIES, ENQ_STATES, ENQ_CONSUMPTION });
+export { CustomerEnquiry, ENQ_INDUSTRIES, ENQ_STATES, ENQ_CONSUMPTION };

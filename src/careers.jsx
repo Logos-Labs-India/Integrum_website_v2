@@ -2,6 +2,9 @@
    careers.jsx — Careers / People (Life at Integrum, open roles)
    Section structure per client content sheet (People page).
    ============================================================ */
+import React from "react";
+import { I, VID, VideoBG, Reveal } from "./dataviz.jsx";
+import { CAREER_ROLES } from "./jobs.jsx";
 const { useState: useStateC } = React;
 
 const CAREER_VALUES = [
@@ -282,4 +285,4 @@ function Careers({ nav }) {
   );
 }
 
-Object.assign(window, { Careers });
+export { Careers };

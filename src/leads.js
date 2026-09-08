@@ -16,6 +16,13 @@
    ============================================================ */
 window.LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxtIpOauUYpgZKRt3RRyJlNCogWsV9ALqC03zK-9SAtUwSHM1NJJL7EbyYk0M5P-fQqTw/exec";   // Integrum website leads → Google Sheet
 
+// Careers-only: in addition to the Google Sheets lead above, a Talent/careers
+// submission with a resume also posts the file to this backend, which
+// uploads it to S3 and emails HR directly (see src/server.js). Point this at
+// wherever that Node server is deployed; leave empty to skip this extra step
+// (the Google Sheets copy — including the Drive-hosted resume — still works).
+window.CAREERS_API_ENDPOINT = "http://localhost:4000/api/careers/apply";
+
 // Lets you trial an endpoint from the #leads screen before committing it to
 // this file. Only affects the browser it was set in — production still needs
 // the URL above.
@@ -170,6 +177,30 @@ async function postLead(url, lead) {
   }
 }
 
+// Careers-only extra step: uploads the resume straight to the S3 + SES
+// backend (window.CAREERS_API_ENDPOINT). Independent of submitLead above —
+// its failure never blocks the Google Sheets submission or the success screen.
+async function uploadCareerResume(file, fields) {
+  const endpoint = window.CAREERS_API_ENDPOINT;
+  if (!endpoint || !file) return { ok: false, error: "not configured" };
+  try {
+    const fd = new FormData();
+    fd.append("resume", file, file.name);
+    fd.append("name", fields.name || "");
+    fd.append("email", fields.email || "");
+    fd.append("phone", fields.phone || "");
+    fd.append("company", fields.company || "");
+    fd.append("role", fields.role || "");
+    fd.append("help", fields.help || "");
+    const res = await fetch(endpoint, { method: "POST", body: fd });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.ok) throw new Error(json.error || ("HTTP " + res.status));
+    return { ok: true, resumeLink: json.resumeLink };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
+}
+
 // Sends a throwaway row so the connection can be proven before go-live.
 async function testEndpoint(url) {
   if (!url) return { ok: false, error: "Enter an endpoint URL first" };
@@ -186,8 +217,8 @@ async function testEndpoint(url) {
     : { ok: false, error: res.error || "No response from that URL" };
 }
 
-Object.assign(window, {
-  submitLead, validateEmail, validatePhone, validateName,
+export {
+  submitLead, uploadCareerResume, validateEmail, validatePhone, validateName,
   readLeads, clearLeads, downloadLeadsCSV, leadsToCSV,
   activeEndpoint, setTestEndpoint, testEndpoint, isVerified,
-});
+};
