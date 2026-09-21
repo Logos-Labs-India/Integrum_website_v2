@@ -17,4 +17,7 @@ export const mailer = nodemailer.createTransport({
 });
 
 export const NOTIFY_FROM = process.env.SES_FROM_EMAIL;
-export const NOTIFY_TO = process.env.HR_EMAIL;
+
+// Used only when a submission doesn't specify its own route_to (or specifies
+// something that isn't a valid email) — see notifyLead.js.
+export const FALLBACK_NOTIFY_TO = process.env.HR_EMAIL;

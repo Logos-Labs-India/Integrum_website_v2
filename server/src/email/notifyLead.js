@@ -1,4 +1,5 @@
-import { mailer, NOTIFY_FROM, NOTIFY_TO } from "./client.js";
+import { mailer, NOTIFY_FROM, FALLBACK_NOTIFY_TO } from "./client.js";
+import { isValidEmail } from "../validate.js";
 
 // Fields shown in the main details table, in display order. Internal/
 // technical fields (resume_bucket, resume_key, page, route_to) are handled
@@ -95,9 +96,16 @@ function formatHtml(row, resumeName) {
 // lead itself was saved (same "never lose the lead" rule as the rest of
 // the API).
 //
+// The recipient is taken from the submission's own `route_to` field (each
+// form picks its own — e.g. Careers@... for a job application, info@... for
+// a general enquiry), since that varies per submission rather than being one
+// fixed address. Falls back to FALLBACK_NOTIFY_TO (HR_EMAIL) when a
+// submission has no route_to, or it isn't a valid email address.
+//
 // `attachment`, when given, is { filename, contentType, buffer }.
 export async function notifyLead(row, attachment) {
-  if (!NOTIFY_FROM || !NOTIFY_TO) {
+  const to = isValidEmail(row.route_to) ? row.route_to : FALLBACK_NOTIFY_TO;
+  if (!NOTIFY_FROM || !to) {
     console.warn("notifyLead: SES_FROM_EMAIL/HR_EMAIL not configured — skipping email");
     return;
   }
@@ -105,7 +113,7 @@ export async function notifyLead(row, attachment) {
   try {
     await mailer.sendMail({
       from: `Integrum Energy Website <${NOTIFY_FROM}>`,
-      to: NOTIFY_TO,
+      to,
       replyTo: row.email || undefined,
       subject: `New enquiry — ${row.name || "Website visitor"} (${row.form || "Form"})`,
       text: formatText(row, resumeName),

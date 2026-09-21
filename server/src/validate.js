@@ -5,7 +5,7 @@
 
 const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 
-function isValidEmail(raw) {
+export function isValidEmail(raw) {
   return EMAIL_RE.test(String(raw || "").trim().toLowerCase());
 }
 
