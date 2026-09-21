@@ -2,22 +2,24 @@
    enquiry.jsx — dedicated customer enquiry form (Solutions / Platform)
    Captures industry, average annual consumption, location and state.
    ============================================================ */
-const { useState: useStateE } = React;
+import { useState as useStateE } from "react";
+import { I } from "./dataviz";
+import { validateName, validateEmail, validatePhone, submitLead } from "./leads";
 
-const ENQ_INDUSTRIES = [
+export const ENQ_INDUSTRIES = [
   "Steel & metals","Graphite & metals","Cement","Automotive","Chemicals","Healthcare",
   "Textiles","Paper & packaging","Food & beverage","Commercial real estate","Jewellery retail","Other",
 ];
-const ENQ_STATES = [
+export const ENQ_STATES = [
   "Karnataka","Maharashtra","Tamil Nadu","Gujarat","Rajasthan","Telangana",
   "Andhra Pradesh","Madhya Pradesh","Uttar Pradesh","Haryana","Punjab","Other",
 ];
-const ENQ_CONSUMPTION = [
+export const ENQ_CONSUMPTION = [
   "Under 5 million units / yr","5–20 million units / yr","20–50 million units / yr",
   "50–100 million units / yr","Over 100 million units / yr","Not sure yet",
 ];
 
-function CustomerEnquiry({ nav, variant = "light" }) {
+export function CustomerEnquiry({ nav, variant = "light" }) {
   const [f, setF] = useStateE({ name:"", company:"", email:"", phone:"", industry:"", consumption:"", location:"", state:"", notes:"" });
   const [err, setErr] = useStateE({});
   const [sent, setSent] = useStateE(false);
@@ -111,5 +113,3 @@ function CustomerEnquiry({ nav, variant = "light" }) {
     </div>
   );
 }
-
-Object.assign(window, { CustomerEnquiry, ENQ_INDUSTRIES, ENQ_STATES, ENQ_CONSUMPTION });

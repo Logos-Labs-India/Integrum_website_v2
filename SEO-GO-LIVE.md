@@ -50,28 +50,33 @@
 4. **Bing Webmaster Tools** — import from Search Console in one click. Bing's index feeds
    several AI answer engines.
 
-## The one real gap: client-side rendering
+## The one remaining gap: no pre-rendered HTML
 
-Every page renders in the browser from `home.jsx`, `platform.jsx` etc., and routes are
-hash URLs (`/#platform`). Two consequences:
+The site moved from an in-browser Babel/no-build setup to a real Vite build (see
+`DEPLOYMENT.md`). Two of the three items formerly listed here are already done:
+
+- **Routes are real paths**, not hash fragments — `/cni`, `/platform`, `/investors`
+  etc. are genuine URLs handled by React Router, each independently linkable and
+  indexable as its own address.
+- **In-browser Babel is gone.** `src/*.jsx` is compiled at build time by Vite;
+  the browser only ever downloads plain, minified JS — this was the largest LCP
+  cost on the site and no longer exists.
+
+What's still true: every route still renders its content **client-side** — the
+server sends the same `index.html` shell for every path, and React fills it in
+after the JS bundle loads. Two consequences:
 
 - Crawlers that do not execute JavaScript see only the `<noscript>` block. Most AI
   crawlers fall in this group.
-- A fragment is not a separate URL to Google, so the whole site competes as one page.
-  `/#cni` cannot rank for "industrial solar Karnataka" independently of the homepage.
+- A slower/blocked JS load delays when a crawler (or a visitor) sees real content,
+  even though the URL itself is now correct and indexable on its own.
 
-This does not block launch — launch today, the homepage will index. But the highest-impact
-SEO work after launch is converting to real paths with pre-rendered HTML:
-
-- `/`, `/solutions`, `/platform`, `/knowledge-hub`, `/investors`, `/company`, `/people`,
-  `/contact` as descriptive slugs
-- each served as static HTML containing its own copy, title, description and canonical
-- the React app hydrating on top for interactivity
-
-Pre-rendering also fixes Core Web Vitals. Babel currently transpiles all page files in the
-visitor's browser on first load, which is the largest LCP cost on the site. Removing
-in-browser Babel (pre-compiling the JSX at build time) is the second post-launch item, and
-is worth more than any further on-page tuning.
+This does not block launch — launch today, every route will index once crawled.
+The highest-impact SEO work after launch is now narrower than before: add
+pre-rendering (static HTML per route, generated at build time, with the same
+React app hydrating on top for interactivity) — e.g. a prerender step in the
+Vite build. The URL structure and build pipeline needed for that already exist;
+this is purely an additive step on top of them.
 
 ## Also worth adding after launch
 

@@ -27,15 +27,16 @@
 
    No JSX editing is required to add, remove or reorder documents.
    ============================================================ */
+import { FIG } from "./figures";
 
 /* "listed" shows every row. "preipo" locks rows marked from:"listing". */
-const IR_STAGE = "listed";
+export const IR_STAGE = "listed";
 
 /* No demo content in this build, so the placeholder banner stays off. */
-window.IR_DEMO = false;
+export const IR_DEMO = false;
 
 /* ---------- top-level sections (drive the pill subnav + routes) ---------- */
-const IR_SECTIONS = [
+export const IR_SECTIONS = [
   { key:"snapshot", label:"Snapshot", kind:"snapshot",
     title:"Investor relations",
     blurb:"Financial results, regulatory filings, governance documents and company announcements." },
@@ -107,7 +108,7 @@ const IR_SECTIONS = [
 /* ---------- hero figures ----------
    v = value · u = unit · k = label · d = qualifier line beneath.
    The tile strip is hidden entirely while this list is empty.        */
-const IR_KPIS = [
+export const IR_KPIS = [
   { v:FIG.commissioned, u:" MW", k:"Commissioned capacity",        d:"Operating" },
   { v:FIG.ongoing,      u:" MW", k:"Ongoing projects",             d:"Under development" },
   { v:FIG.co2Total,     u:" t",  k:"CO₂ avoided",                  d:"Cumulative" },
@@ -118,7 +119,7 @@ const IR_KPIS = [
    Short headline claims, shown as pill badges next to the hero copy —
    distinct from IR_KPIS (which are number tiles). The chip strip is
    hidden entirely while this list is empty.                          */
-const IR_HIGHLIGHTS = [
+export const IR_HIGHLIGHTS = [
   "Profitable (PAT+) from day one",
   "Crossed ₹500 Cr within 50 months of commencing business",
   "Customers include Fortune 500 companies",
@@ -127,32 +128,32 @@ const IR_HIGHLIGHTS = [
 
 /* ---------- documents ----------
    Empty. See the header of this file for the row format.             */
-const IR_DOCS = [
+export const IR_DOCS = [
   { sec:"announcements", grp:"meetings", d:"2026-09-02", fy:"FY27",
     t:"Notice of Extra-Ordinary General Meeting — 2 September 2026",
-    url:"assets/IEIL-EGM-2-September-2026.pdf", size:"1.9 MB" },
+    url:"/assets/IEIL-EGM-2-September-2026.pdf", size:"1.9 MB" },
   { sec:"announcements", grp:"meetings", d:"2026-08-14", fy:"FY26",
     t:"Notice of the 5th Annual General Meeting — FY 2025-26",
-    url:"assets/IEIL-5th-AGM-Notice-2025-26.pdf", size:"748 KB" },
+    url:"/assets/IEIL-5th-AGM-Notice-2025-26.pdf", size:"748 KB" },
 ];
 
 /* ---------- board & committees ----------
    Add directors once appointments are confirmed:
      { n:"Full name", r:"Designation", t:"Executive|Independent|Nominee",
        b:"One or two lines of biography." }                           */
-const IR_BOARD = [];
+export const IR_BOARD = [];
 
 /* Committee names, and one row per director: "C" chair, "M" member, "" none.
    IR_MATRIX rows must line up with the IR_COMMITTEES order.          */
-const IR_COMMITTEES = [];
-const IR_MATRIX = [];
+export const IR_COMMITTEES = [];
+export const IR_MATRIX = [];
 
 /* ---------- statutory disclosures ----------
    The SEBI LODR Regulation 46 checklist. The particulars are the regulatory
    list itself, not sample data. Set a:"doc" and the row shows a View link
    once the document is uploaded; "pending" shows a dash; "na" shows
    "Not applicable" for rows answered by text rather than a file.     */
-const IR_DISCLOSURES = [
+export const IR_DISCLOSURES = [
   { p:"Terms and conditions of appointment of independent directors", a:"pending" },
   { p:"Details of familiarisation programmes imparted to independent directors", a:"pending" },
   { p:"Email address for grievance redressal — compliance@integrumenergy.in", a:"na" },
@@ -176,10 +177,10 @@ const IR_DISCLOSURES = [
    Empty until the figures are verified. Format:
      { l:"Operational capacity", v:000, max:000, c:"#3E6FD6", s:"MW" }
    The card is hidden entirely while this list is empty.              */
-const IR_OPS = [];
+export const IR_OPS = [];
 
 /* ---------- IR contact ---------- */
-const IR_CONTACT = {
+export const IR_CONTACT = {
   name:"Investor Relations",
   role:"Integrum Energy Infrastructure Ltd.",
   email:"compliance@integrumenergy.in",
@@ -188,7 +189,7 @@ const IR_CONTACT = {
 };
 
 /* ---------- per-route SEO ---------- */
-const IR_META = {
+export const IR_META = {
   snapshot:      ["Investor Relations | Integrum Energy", "Financial results, regulatory filings, governance documents and announcements from Integrum Energy Infrastructure Ltd."],
   financials:    ["Investors — Financials | Integrum Energy", "Quarterly results, annual financial statements, annual reports and credit ratings."],
   announcements: ["Investors — Corporate Announcements | Integrum Energy", "Stock exchange filings, board meeting outcomes and general meeting notices."],
@@ -198,8 +199,3 @@ const IR_META = {
   offer:         ["Investors — Offer & IPO | Integrum Energy", "Offer documents, issue filings and utilisation of issue proceeds."],
   esg:           ["Investors — ESG & Sustainability | Integrum Energy", "Sustainability reporting, safety performance and ESG policies."],
 };
-
-Object.assign(window, {
-  IR_STAGE, IR_SECTIONS, IR_KPIS, IR_HIGHLIGHTS, IR_DOCS, IR_BOARD, IR_COMMITTEES,
-  IR_MATRIX, IR_DISCLOSURES, IR_OPS, IR_CONTACT, IR_META,
-});

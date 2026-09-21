@@ -1,9 +1,11 @@
 /* ============================================================
    home.jsx — the router homepage (7 sections) + persona re-skin
    ============================================================ */
-const { useState: useStateH, useEffect: useEffectH, useRef: useRefH } = React;
+import { useState as useStateH, useEffect as useEffectH, useRef as useRefH } from "react";
+import { Reveal, I, IMG, PhotoBG, VideoBG, VID } from "./dataviz";
+import { FIG } from "./figures";
 
-const PERSONAS = [
+export const PERSONAS = [
   { id:"cost", icon:"bolt", title:"Reduce your energy bill", tag:"Show me my savings potential", lane:"contact", primary:true,
     hex:"var(--amber)", deep:"var(--amber-deep)", soft:"var(--amber-soft)",
     promise:"See where your energy cost can go, and what that's worth to your plant.", next:"Talk to an energy advisor" },
@@ -15,7 +17,7 @@ const PERSONAS = [
     promise:"Commissioned capacity, order book, governance and disclosures — in one place.", next:"Track Our Financial Growth" },
 ];
 
-const SPARK = [
+export const SPARK = [
   { L:"S", title:"Scan", one:"Identify and validate the right opportunity.", line:"Understand load, tariff, regulations, sites and constraints.", dur:"Pre-project",
     does:"We assess target states and the regulatory framework, identify consumers and their demand profile, evaluate sites, generation potential and risks, then acquire land and secure approvals to reserve the best sites — proven sites with existing PSS capacity.",
     get:"An investment-ready opportunity with validated economics and reduced development risk." },
@@ -41,7 +43,7 @@ const OUTCOMES = [
 ];
 
 /* measured outcomes — context + intervention + outcome, in three buckets */
-const PROOF = [
+export const PROOF = [
   { client:"Graphite manufacturer", sector:"Graphite & metals", go:"case/graphite-india", img:"windField",
     context:"₹84 Cr annual power cost against ~8 crore units a year, spread across all operating hours.",
     intervention:"Wind + solar + open access optimisation — 18.9 MW wind and 8.8 MW solar, sized on the hourly load profile.",
@@ -65,10 +67,10 @@ const PROOF = [
 ];
 
 /* ---------- savings calculator (shared with C&I lane) ---------- */
-const STATES = ["Karnataka","Maharashtra","Tamil Nadu","Gujarat","Rajasthan","Telangana","Madhya Pradesh","Andhra Pradesh"];
-const INDUSTRIES = ["Steel & metals","Graphite & metals","Automotive","Chemicals","Healthcare","Cement","Commercial real estate"];
+export const STATES = ["Karnataka","Maharashtra","Tamil Nadu","Gujarat","Rajasthan","Telangana","Madhya Pradesh","Andhra Pradesh"];
+export const INDUSTRIES = ["Steel & metals","Graphite & metals","Automotive","Chemicals","Healthcare","Cement","Commercial real estate"];
 
-function SavingsCalculator({ compact = false, onCase }) {
+export function SavingsCalculator({ compact = false, onCase }) {
   const [st, setSt] = useStateH("Karnataka");
   const [bill, setBill] = useStateH("");
   const [load, setLoad] = useStateH("");
@@ -140,7 +142,7 @@ function Hero({ nav }) {
   ];
   return (
     <section className="hero-l has-photo">
-      <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png" pos="center 45%"
+      <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="/assets/hero-poster.png" pos="center 45%"
         overlay="linear-gradient(90deg, rgba(1,44,70,.68) 0%, rgba(1,52,79,.46) 40%, rgba(1,52,79,.42) 62%, rgba(1,44,70,.46) 100%), linear-gradient(180deg, transparent 45%, rgba(1,44,70,.34) 100%)"/>
       <div className="shell hero-l-inner">
         <div className="hero-l-copy">
@@ -207,7 +209,7 @@ function WhatWeDo({ nav }) {
 }
 
 /* ---------- PERSONA ROUTER BAND (own light band under hero) ---------- */
-function PersonaRouterBand({ nav }) {
+export function PersonaRouterBand({ nav }) {
   const go = (per) => {
     if (per.scroll) { const el=document.getElementById(per.scroll); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }
     else nav(per.lane);
@@ -515,7 +517,7 @@ function CostStory({ nav }) {
                   <h3>Your cost steps down. The discom's keeps climbing.</h3>
                 </div>
                 <figure className="chart-img">
-                  <img src="assets/chart-cost-25yr-nofigures.png" alt="Total cost with Integrum versus discom cost across 25 years" loading="lazy"/>
+                  <img src="/assets/chart-cost-25yr-nofigures.png" alt="Total cost with Integrum versus discom cost across 25 years" loading="lazy"/>
                   <figcaption>The discom bill keeps climbing year on year. A hybrid plant carries build-phase cost early, then steps down sharply post-debt and stays low for the asset's life.</figcaption>
                 </figure>
               </div>
@@ -532,7 +534,7 @@ function CostStory({ nav }) {
                   <h3>Solar peaks in 7 hours. Wind runs all day.</h3>
                 </div>
                 <figure className="chart-img">
-                  <img src="assets/chart-tod-profile.png" alt="Time-of-day generation profile: solar delivers 80% of its power in seven hours while wind generates through the day" loading="lazy"/>
+                  <img src="/assets/chart-tod-profile.png" alt="Time-of-day generation profile: solar delivers 80% of its power in seven hours while wind generates through the day" loading="lazy"/>
                   <figcaption>Solar generates about 80% of its power in roughly seven hours; wind generates through the day. Combining them fills the gaps either source leaves alone.</figcaption>
                 </figure>
               </div>
@@ -567,7 +569,7 @@ function CostStory({ nav }) {
 
 /* ---------- SPARK (compact clickable stepper → full page) ---------- */
 const SPARK_HEX = ["#014976","#0A6FB0","#12A594","#1F8F63","#E0951A"];
-function SparkSection({ nav, note }) {
+export function SparkSection({ nav, note }) {
   return (
     <section className="section spark-sec" id="spark">
       <div className="shell">
@@ -726,7 +728,7 @@ function OneAsk({ nav }) {
   );
 }
 
-function Home({ nav }) {
+export function Home({ nav }) {
   return (
     <div className="page-fade">
       <Hero nav={nav}/>
@@ -741,5 +743,3 @@ function Home({ nav }) {
     </div>
   );
 }
-
-Object.assign(window, { Home, PersonaRouterBand, SavingsCalculator, SparkSection, PERSONAS, SPARK, PROOF, STATES, INDUSTRIES });

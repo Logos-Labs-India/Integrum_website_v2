@@ -3,7 +3,13 @@
    Content sourced from integrumenergy.in/case-studies (paraphrased,
    no proprietary numbers invented beyond what the client states).
    ============================================================ */
-const CASES = [
+import { useState } from "react";
+import { I, Reveal, IMG, VideoBG, VID, PhotoBG } from "./dataviz";
+import { articleById, ArticlesSection, ArticleDetail } from "./articles";
+import { validateName, validateEmail, validatePhone, submitLead } from "./leads";
+import { CAREER_ROLES } from "./jobs";
+
+export const CASES = [
   {
     id:"khayati-steel",
     sector:"Renewable power",
@@ -249,7 +255,7 @@ function SteelTransitionChart() {
   );
 }
 
-function CaseStudy({ nav, sub }) {
+export function CaseStudy({ nav, sub }) {
   if (sub && sub.indexOf("article/") === 0) {
     const a = articleById(sub.slice(8));
     if (a) return <ArticleDetail nav={nav} a={a}/>;
@@ -306,7 +312,7 @@ function CaseIndex({ nav }) {
   return (
     <div className="page-fade lane-accent" style={{ "--p-color":"var(--amber)" }}>
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(36px,4vw,56px)" }}>
-        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png" overlay="linear-gradient(120deg, rgba(8,23,42,.82) 38%, rgba(8,23,42,.50) 100%)" pos="center 50%"/>
+        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="/assets/hero-poster.png" overlay="linear-gradient(120deg, rgba(8,23,42,.82) 38%, rgba(8,23,42,.50) 100%)" pos="center 50%"/>
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}><a onClick={()=>nav("home")} style={{cursor:"pointer",color:"#9FB7CF"}}>Home</a> {I.arrow({width:13,height:13})} <span>Case studies</span></div>
           <div style={{ maxWidth:760, marginTop:20 }}>
@@ -511,7 +517,7 @@ function CaseDetail({ nav, c, idx }) {
 }
 
 /* ---------- Contact (partner + advisor lane) ---------- */
-function Contact({ nav, sub }) {
+export function Contact({ nav, sub }) {
   const reasons = ["I'm a C&I buyer","Investor / analyst","OEM / supplier","Talent / careers","Media / press","ESG / sustainability","Other"];
   const preset = (sub||"").toLowerCase();
   const initial = preset.indexOf("career") !== -1 || preset.indexOf("talent") !== -1 ? "Talent / careers"
@@ -520,7 +526,7 @@ function Contact({ nav, sub }) {
     : preset.indexOf("media") !== -1 ? "Media / press"
     : reasons[0];
   const [reason, setReason] = useState(initial);
-  const [role, setRole] = useState((window.CAREER_ROLES && preset.indexOf("career") !== -1) ? "" : "");
+  const [role, setRole] = useState((CAREER_ROLES && preset.indexOf("career") !== -1) ? "" : "");
   const [resume, setResume] = useState(null);      // { name, size, data } once read
   const [resumeErr, setResumeErr] = useState(null);
   const [sent, setSent] = useState(false);
@@ -549,7 +555,7 @@ function Contact({ nav, sub }) {
     setBusy(false);
     setSent(true);
   };
-  const openRoles = (window.CAREER_ROLES || []).map(r=>r.role);
+  const openRoles = (CAREER_ROLES || []).map(r=>r.role);
   return (
     <div className="page-fade lane-accent" style={{ "--p-color":"#014976", "--accent":"#014976", "--accent-deep":"#013A5E", "--accent-soft":"#D8E7F1" }}>
       <section className="page-hero">
@@ -648,4 +654,3 @@ function Contact({ nav, sub }) {
 const labelStyle = { fontSize:13, fontWeight:600, color:"var(--ink-2)" };
 const inputStyle = { width:"100%", padding:"12px 14px", borderRadius:11, border:"1px solid var(--hairline-2)", background:"var(--surface)", color:"var(--ink)", fontFamily:"var(--font-sans)", fontSize:15, outline:"none", marginTop:7 };
 
-Object.assign(window, { CaseStudy, Contact, CASES });

@@ -12,6 +12,12 @@
 
    All content comes from ir-data.js — this file holds no data.
    ============================================================ */
+import React, { useState, useEffect, useMemo } from "react";
+import { I, Reveal, ProjectsMapDark, PROJECT_REGIONS } from "./dataviz";
+import {
+  IR_STAGE, IR_SECTIONS, IR_KPIS, IR_HIGHLIGHTS, IR_DOCS, IR_BOARD,
+  IR_COMMITTEES, IR_MATRIX, IR_DISCLOSURES, IR_OPS, IR_CONTACT,
+} from "./ir-data";
 
 /* ---------- helpers ---------- */
 const IR_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -39,7 +45,7 @@ const irSection = (key) => IR_SECTIONS.find(s => s.key === key) || IR_SECTIONS[0
 
 /* A row marked from:"listing" exists only once the company is listed. While
    IR_STAGE is "preipo" it renders as a locked placeholder instead of a file. */
-const irLocked = (d) => window.IR_STAGE !== "listed" && d && d.from === "listing";
+const irLocked = (d) => IR_STAGE !== "listed" && d && d.from === "listing";
 
 /* ---------- one document row ---------- */
 function IRDocRow({ d }) {
@@ -197,7 +203,7 @@ function IRDisclosures() {
               <td className="sr num">{i+1}</td>
               <td>{r.p}</td>
               <td className="rt">
-                {(r.a === "doc" || (r.a === "listing" && window.IR_STAGE === "listed"))
+                {(r.a === "doc" || (r.a === "listing" && IR_STAGE === "listed"))
                   ? <a className="ir-link" href={r.url || "#"} onClick={e=>{ if (!r.url) e.preventDefault(); }}>View {I.link({ width:13, height:13 })}</a>
                   : r.a === "listing" ? <span className="ir-lock">On listing</span>
                   : r.a === "pending" ? <span className="muted">—</span>
@@ -322,7 +328,7 @@ function IRRail() {
 /* ============================================================
    page shell
    ============================================================ */
-function Investors({ nav, sub }) {
+export function Investors({ nav, sub }) {
   const sec = irSection(sub);
   const groups = sec.groups || [];
   const [grp, setGrp] = useState(groups[0] ? groups[0].key : null);
@@ -405,4 +411,3 @@ function Investors({ nav, sub }) {
   );
 }
 
-Object.assign(window, { Investors });

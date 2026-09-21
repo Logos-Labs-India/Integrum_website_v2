@@ -1,9 +1,10 @@
 /* ============================================================
    spark.jsx — full SPARK framework page (5 stages, deep-linked)
    ============================================================ */
-const { useState: useStateH, useEffect } = React;
+import React, { useState as useStateH, useEffect } from "react";
+import { I } from "./dataviz";
 
-const SPARK_FULL = [
+export const SPARK_FULL = [
   { id:"s", L:"S", hex:"#014976", soft:"#DCEAF4", name:"Scan & Develop", phase:"Pre-project",
     img:"https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=72",
     tagline:"Find the right opportunity — and prove it's real.",
@@ -25,7 +26,7 @@ const SPARK_FULL = [
     ],
     outcome:"An investment-ready opportunity with validated economics and reduced development risk." },
   { id:"p", L:"P", hex:"#0A6FB0", soft:"#D8EAF7", name:"Plan & Design", phase:"~2 months",
-    img:"assets/spark-plan-design.jpg",
+    img:"/assets/spark-plan-design.jpg",
     tagline:"Structure the deal and engineer it to be bankable.",
     objective:"Structure the project and prepare it for execution — commercially and technically.",
     activities:[
@@ -98,7 +99,7 @@ const SPARK_FULL = [
     outcome:"Maximized lifetime value, improved returns and sustained operational excellence." },
 ];
 
-function SparkPage({ nav, sub }) {
+export function SparkPage({ nav, sub }) {
   const [active, setActive] = useStateH(sub || "s");
   const scrollToStage = (id, smooth=true) => {
     const el = document.getElementById("spark-sec-"+id);
@@ -220,5 +221,3 @@ function SparkPage({ nav, sub }) {
     </div>
   );
 }
-
-Object.assign(window, { SparkPage, SPARK_FULL });

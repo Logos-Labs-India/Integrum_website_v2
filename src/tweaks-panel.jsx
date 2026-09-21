@@ -55,6 +55,7 @@
 // controls inside the panel if a tweak calls for UI they don't cover.
 /* END USAGE */
 // ─────────────────────────────────────────────────────────────────────────────
+import React from "react";
 
 const __TWEAKS_STYLE = `
   .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
@@ -169,7 +170,7 @@ const __TWEAKS_STYLE = `
 // ── useTweaks ───────────────────────────────────────────────────────────────
 // Single source of truth for tweak values. setTweak persists via the host
 // (__edit_mode_set_keys → host rewrites the EDITMODE block on disk).
-function useTweaks(defaults) {
+export function useTweaks(defaults) {
   const [values, setValues] = React.useState(defaults);
   // Accepts either setTweak('key', value) or setTweak({ key: value, ... }) so a
   // useState-style call doesn't write a "[object Object]" key into the persisted
@@ -193,7 +194,7 @@ function useTweaks(defaults) {
 // The close button posts __edit_mode_dismissed so the host's toolbar toggle
 // flips off in lockstep; the host echoes __deactivate_edit_mode back which
 // is what actually hides the panel.
-function TweaksPanel({ title = 'Tweaks', children }) {
+export function TweaksPanel({ title = 'Tweaks', children }) {
   const [open, setOpen] = React.useState(false);
   const dragRef = React.useRef(null);
   const offsetRef = React.useRef({ x: 16, y: 16 });
@@ -285,7 +286,7 @@ function TweaksPanel({ title = 'Tweaks', children }) {
 
 // ── Layout helpers ──────────────────────────────────────────────────────────
 
-function TweakSection({ label, children }) {
+export function TweakSection({ label, children }) {
   return (
     <>
       <div className="twk-sect">{label}</div>
@@ -294,7 +295,7 @@ function TweakSection({ label, children }) {
   );
 }
 
-function TweakRow({ label, value, children, inline = false }) {
+export function TweakRow({ label, value, children, inline = false }) {
   return (
     <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
       <div className="twk-lbl">
@@ -308,7 +309,7 @@ function TweakRow({ label, value, children, inline = false }) {
 
 // ── Controls ────────────────────────────────────────────────────────────────
 
-function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+export function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
   return (
     <TweakRow label={label} value={`${value}${unit}`}>
       <input type="range" className="twk-slider" min={min} max={max} step={step}
@@ -317,7 +318,7 @@ function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', on
   );
 }
 
-function TweakToggle({ label, value, onChange }) {
+export function TweakToggle({ label, value, onChange }) {
   return (
     <div className="twk-row twk-row-h">
       <div className="twk-lbl"><span>{label}</span></div>
@@ -328,7 +329,7 @@ function TweakToggle({ label, value, onChange }) {
   );
 }
 
-function TweakRadio({ label, value, options, onChange }) {
+export function TweakRadio({ label, value, options, onChange }) {
   const trackRef = React.useRef(null);
   const [dragging, setDragging] = React.useState(false);
   // The active value is read by pointer-move handlers attached for the lifetime
@@ -400,7 +401,7 @@ function TweakRadio({ label, value, options, onChange }) {
   );
 }
 
-function TweakSelect({ label, value, options, onChange }) {
+export function TweakSelect({ label, value, options, onChange }) {
   return (
     <TweakRow label={label}>
       <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
@@ -414,7 +415,7 @@ function TweakSelect({ label, value, options, onChange }) {
   );
 }
 
-function TweakText({ label, value, placeholder, onChange }) {
+export function TweakText({ label, value, placeholder, onChange }) {
   return (
     <TweakRow label={label}>
       <input className="twk-field" type="text" value={value} placeholder={placeholder}
@@ -423,7 +424,7 @@ function TweakText({ label, value, placeholder, onChange }) {
   );
 }
 
-function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+export function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
   const clamp = (n) => {
     if (min != null && n < min) return min;
     if (max != null && n > max) return max;
@@ -483,7 +484,7 @@ const __TwkCheck = ({ light }) => (
 // rest stacked in a sharp column on the right. onChange emits the
 // option in the shape it was passed (string stays string, array stays array).
 // Without options it falls back to the native color input for back-compat.
-function TweakColor({ label, value, options, onChange }) {
+export function TweakColor({ label, value, options, onChange }) {
   if (!options || !options.length) {
     return (
       <div className="twk-row twk-row-h">
@@ -526,15 +527,10 @@ function TweakColor({ label, value, options, onChange }) {
   );
 }
 
-function TweakButton({ label, onClick, secondary = false }) {
+export function TweakButton({ label, onClick, secondary = false }) {
   return (
     <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
             onClick={onClick}>{label}</button>
   );
 }
 
-Object.assign(window, {
-  useTweaks, TweaksPanel, TweakSection, TweakRow,
-  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
-  TweakText, TweakNumber, TweakColor, TweakButton,
-});

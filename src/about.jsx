@@ -2,8 +2,8 @@
    about.jsx — Company / About Integrum Energy
    Flow per client brief · VMV content from the VMV policy doc
    ============================================================ */
-
-/* company figures: FIG is defined globally in figures.js */
+import { I, Reveal, VideoBG, VID } from "./dataviz";
+import { FIG } from "./figures";
 
 const ABOUT_STATS = [
   { ic:"bolt",    v:FIG.greenUnitsMn, u:"mn",    k:"Green units generated to date (kWh)" },
@@ -102,44 +102,44 @@ const TIMELINE = [
 
 /* Key Management Personnel */
 const LEADERS = [
-  { photo:"assets/anand-lahoti.png", hex:"#014976", name:"Anand Lahoti", role:"Managing Director & Chief Executive Officer",
+  { photo:"/assets/anand-lahoti.png", hex:"#014976", name:"Anand Lahoti", role:"Managing Director & Chief Executive Officer",
     bio:"With strong business acumen, Anand was, in his earlier avatar, the first in India to champion the equity investment-driven group captive model in 2016. He is highly skilled in investment banking, solution structuring, and project and asset management. He started his career as an investment banker with a boutique investment bank, where he worked for nearly 5 years. He currently has approximately 19 years of experience in the RE sector.",
     creds:"MBA, IBS Hyderabad · B.Com, St. Xavier's College, Kolkata" },
-  { photo:"assets/ph-puneet-goel.png", hex:"#1C6FB5", name:"Puneet Goel", role:"Whole Time Director & Chief Operating Officer",
+  { photo:"/assets/ph-puneet-goel.png", hex:"#1C6FB5", name:"Puneet Goel", role:"Whole Time Director & Chief Operating Officer",
     bio:"With deep expertise and a strong track record of building new businesses, Puneet has been instrumental in scaling up two eminent power trading companies in the country. He brings deep knowledge of the energy industry, with 27 years of experience in consulting, financing, product development, and organisation scaling, alongside strong power trading and solutions skills and relationships across the industry.",
     creds:"Engineer, IIT (BHU) · MBA, IIM Lucknow" },
-  { photo:"assets/ph-pramod-gupta.png", hex:"#12A594", name:"Pramod Gupta", role:"President, Business Strategy & Chief Financial Officer",
+  { photo:"/assets/ph-pramod-gupta.png", hex:"#12A594", name:"Pramod Gupta", role:"President, Business Strategy & Chief Financial Officer",
     bio:"A professional CEO and former CFO with over 30 years of experience across finance, strategy, operations, and business transformation in the manufacturing, BFSI (insurance), EdTech, and consulting sectors. With deep expertise in capital raising, private placements, IPO preparedness, governance, and investor relations, he has led fundraising exceeding INR 2.5 billion and successfully taken organisations through IPOs, working closely with private equity investors, boards, and regulators.",
     creds:"Chartered Accountant · Six Sigma Black Belt · IICA-certified Independent Director · PG Digital Business, MIT Sloan & Columbia Business School · MDP, IIM Calcutta" },
 ];
 
 /* Senior Management Personnel */
 const SENIOR = [
-  { photo:"assets/ph-ranganatha-hr.png", hex:"#E0951A", name:"Ranganatha HR", role:"President, Projects",
+  { photo:"/assets/ph-ranganatha-hr.png", hex:"#E0951A", name:"Ranganatha HR", role:"President, Projects",
     bio:"Ranganatha brings over 14 years of experience across India's leading power and renewable energy organisations, including Tata Power, Reliance Energy, Conergy, Bosch, and Atria Power, with deep expertise in engineering execution, project development, and operational optimisation across solar, wind, and hybrid renewable platforms. At Atria Power he led the solar vertical and successfully hybridised existing wind assets, improving asset utilisation and long-term returns. His career reflects strong capabilities in end-to-end project delivery, project coordination, technology selection, and scaling renewable energy infrastructure under complex operating environments.",
     creds:"Mechanical Engineer" },
-  { photo:"assets/kg-vijayvargiya.png", hex:"#1D9E75", name:"K G Vijayvargiya", role:"President, Sales",
+  { photo:"/assets/kg-vijayvargiya.png", hex:"#1D9E75", name:"K G Vijayvargiya", role:"President, Sales",
     bio:"A seasoned business leader with 25+ years of techno-commercial experience and a proven track record of executive leadership in the energy sector, with a strong understanding of the renewable energy landscape across technical, financial and regulatory aspects. He leads marketing, sales and business development at Integrum, helping corporates switch to renewable power through wind, solar and hybrid projects, with rich experience across more than 1 GW of renewable projects. He previously worked with German and American MNCs including Krones, C. Illies, Milacron and Bergmann, overseeing business development, execution and after-sales, and is well networked across renewables, oil & gas, cement, metal, auto, food & beverage, textile, plastic, paper and packaging.",
     creds:"MBA International Business, ICFAI University · BE Mechanical, University of Rajasthan" },
-  { photo:"assets/sivaranjan-kumar.png", hex:"#0A6FB0", name:"T. Sivaranjan Kumar", role:"Vice President, Finance & Accounts",
+  { photo:"/assets/sivaranjan-kumar.png", hex:"#0A6FB0", name:"T. Sivaranjan Kumar", role:"Vice President, Finance & Accounts",
     bio:"An Associate Member of the Institute of Chartered Accountants of India with over 17 years of post-qualification experience in finance and accounts, corporate finance, treasury, financial reporting, budgeting, internal controls, corporate governance and regulatory compliance. With extensive experience across infrastructure, projects, real estate, engineering and education sectors, he brings strong expertise in financial planning and management, working capital optimisation, financial due diligence, process improvement, profitability analysis and cost optimisation. In his current role he focuses on strengthening financial controls and governance, driving efficient financial processes, supporting strategic decision-making and enabling sustainable business growth.",
     creds:"Chartered Accountant since 2009 · B.Com, Nagarjuna University · All India Best Performance in Mathematics, CA PE-I" },
-  { photo:"assets/rachana-chawla.png", hex:"#C2542F", name:"Rachana Chawla", role:"Vice President, Human Resources",
+  { photo:"/assets/rachana-chawla.png", hex:"#C2542F", name:"Rachana Chawla", role:"Vice President, Human Resources",
     bio:"An HR professional with over 20 years of experience in HR management, having previously worked with Wipro Infotech, Reliance Retail and Tata Motors, alongside development-sector organisations including SOS Children's Villages of India, Railway Children India, Evidence Action, Smile Foundation and Selco Foundation. She has been heading human resources for the last five years and has served on the Internal Complaints Committee for PoSH at several organisations. Her expertise lies in culture building, streamlining HR processes, strong employee relations and enabling high-performance teams.",
     creds:"B.Com · Master's in Management Studies, University of Mumbai" },
-  { photo:"assets/ph-dinesh-manrai.png", hex:"#1F8F63", name:"Dinesh Manrai", role:"Business Head, Green Homes",
+  { photo:"/assets/ph-dinesh-manrai.png", hex:"#1F8F63", name:"Dinesh Manrai", role:"Business Head, Green Homes",
     bio:"A seasoned techno-commercial leader with over 24 years of experience across business development, technical sales, product management, operations & projects. He brings extensive experience in serving diverse industrial sectors, including automobile and their ancillaries, steel, foundry, heavy fabrication, petroleum, petrochemicals, chemicals, fertilisers and power, with strong expertise in customer solutions and technical sales. Over the course of his career, he has held leadership roles in sales, operations & product management. He joined Integrum in August 2026, bringing strong business understanding, industry knowledge, customer relationships and techno-commercial expertise to support Integrum's growth in the renewable energy sector.",
     creds:"" },
 ];
 
 const initials = (n) => n.split(/\s+/).filter(w=>w.length>1).slice(0,2).map(w=>w[0]).join("");
 
-function About({ nav }) {
+export function About({ nav }) {
   return (
     <div className="page-fade about-page lane-accent" style={{ "--p-color":"var(--amber)" }}>
       {/* ---- hero ---- */}
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(40px,5vw,68px)" }}>
-        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png"
+        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="/assets/hero-poster.png"
           overlay="linear-gradient(120deg, rgba(8,23,42,.82) 40%, rgba(8,23,42,.48) 100%)" pos="center 50%"/>
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}>
@@ -478,7 +478,7 @@ function About({ nav }) {
           <Reveal>
             <div className="award-feature">
               <div className="award-photo">
-                <img src="assets/award-iwef-2024.png" alt="Integrum Energy receiving Company of the Year at the India Wind Energy Forum Leadership Awards 2024" loading="lazy"/>
+                <img src="/assets/award-iwef-2024.png" alt="Integrum Energy receiving Company of the Year at the India Wind Energy Forum Leadership Awards 2024" loading="lazy"/>
               </div>
               <div className="award-copy">
                 <span className="award-year">2024</span>
@@ -492,7 +492,7 @@ function About({ nav }) {
           <Reveal delay={90}>
             <div className="award-feature is-flip">
               <div className="award-photo">
-                <img src="assets/award-solarquarter-2022.jpeg" alt="Two SolarQuarter C&amp;I Energy Leadership Awards 2022 trophies received by Integrum Energy" loading="lazy"/>
+                <img src="/assets/award-solarquarter-2022.jpeg" alt="Two SolarQuarter C&amp;I Energy Leadership Awards 2022 trophies received by Integrum Energy" loading="lazy"/>
               </div>
               <div className="award-copy">
                 <span className="award-year">2022</span>
@@ -517,7 +517,7 @@ function About({ nav }) {
           <div className="cert-row">
             <Reveal className="cert-card">
               <div className="cert-shot">
-                <img src="assets/cert-gptw.png" alt="Great Place to Work Certified certificate for Integrum Energy Infrastructure Limited, valid March 2026 to March 2027" loading="lazy"/>
+                <img src="/assets/cert-gptw.png" alt="Great Place to Work Certified certificate for Integrum Energy Infrastructure Limited, valid March 2026 to March 2027" loading="lazy"/>
               </div>
               <div className="cert-meta">
                 <h4>Great Place to Work&reg; Certified</h4>
@@ -526,7 +526,7 @@ function About({ nav }) {
             </Reveal>
             <Reveal delay={80} className="cert-card">
               <div className="cert-shot">
-                <img src="assets/cert-iso.png" alt="ISO 9001:2015 quality management system certificate for Integrum Energy Infrastructure Limited" loading="lazy"/>
+                <img src="/assets/cert-iso.png" alt="ISO 9001:2015 quality management system certificate for Integrum Energy Infrastructure Limited" loading="lazy"/>
               </div>
               <div className="cert-meta">
                 <h4>ISO 9001:2015</h4>
@@ -555,4 +555,3 @@ function About({ nav }) {
   );
 }
 
-Object.assign(window, { About });

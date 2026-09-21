@@ -2,10 +2,12 @@
    legal.jsx — Terms of Use, Privacy Policy & Disclaimer
    Content supplied by the client (existing integrumenergy.in)
    ============================================================ */
+import React from "react";
+
 const CO_NAME = "Integrum Energy Infrastructure Private Limited";
 const CO_ADDR = "736, 2nd Floor, 3rd Block, Koramangala, Bengaluru 560034";
 
-const LEGAL_CONTENT = {
+export const LEGAL_CONTENT = {
   terms: {
     title: "Terms of Use",
     updated: "Last updated: August 26, 2022",
@@ -196,7 +198,7 @@ const LEGAL_CONTENT = {
   },
 };
 
-function Legal({ nav, kind = "terms" }) {
+export function Legal({ nav, kind = "terms" }) {
   const c = LEGAL_CONTENT[kind] || LEGAL_CONTENT.terms;
   return (
     <div className="page-fade">
@@ -240,4 +242,3 @@ function Legal({ nav, kind = "terms" }) {
   );
 }
 
-Object.assign(window, { Legal, LEGAL_CONTENT });

@@ -1,29 +1,29 @@
 /* ============================================================
    leads.js — form submission + lead capture
    ------------------------------------------------------------
-   ONE PLACE TO CONFIGURE. Paste your endpoint URL below and every
-   form on the site starts delivering to it. Until then, submissions
-   are stored in the browser and can be exported as CSV (#leads).
+   Every form on the site posts here, and submitLead() delivers to the
+   Integrum API (server/ — Postgres + S3 for résumés). Submissions are
+   also always stored in the browser first and can be exported as CSV
+   (#leads), so a delivery failure never loses a lead.
 
-   Attachments: CV uploads are base64-encoded into `resume_file`. Formspree and
-   Google Apps Script both accept this; the local backup stores a placeholder
-   instead of the blob so the browser quota isn't exhausted.
+   Attachments: CV uploads are base64-encoded into `resume_file`; the API
+   uploads them to S3 and stores the pointer, not the blob, in Postgres.
+   The local backup stores a placeholder instead of the blob so the
+   browser's storage quota isn't exhausted.
 
-   Supported endpoints (no code changes needed, just the URL):
-     · Formspree      https://formspree.io/f/xxxxxxx
-     · Google Sheets  Apps Script web-app URL (see SETUP note below)
-     · Any webhook    that accepts a JSON POST
+   API base URL comes from VITE_API_BASE_URL (see .env.example), defaulting
+   to http://localhost:4000 for local development.
    ============================================================ */
-window.LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxtIpOauUYpgZKRt3RRyJlNCogWsV9ALqC03zK-9SAtUwSHM1NJJL7EbyYk0M5P-fQqTw/exec";   // Integrum website leads → Google Sheet
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+export const LEADS_ENDPOINT = `${API_BASE_URL}/api/leads`;
 
-// Lets you trial an endpoint from the #leads screen before committing it to
-// this file. Only affects the browser it was set in — production still needs
-// the URL above.
-function activeEndpoint() {
-  try { return localStorage.getItem("integrum_leads_endpoint") || window.LEADS_ENDPOINT || ""; }
-  catch (e) { return window.LEADS_ENDPOINT || ""; }
+// Lets you trial an endpoint from the #leads screen before committing to the
+// default above. Only affects the browser it was set in.
+export function activeEndpoint() {
+  try { return localStorage.getItem("integrum_leads_endpoint") || LEADS_ENDPOINT || ""; }
+  catch (e) { return LEADS_ENDPOINT || ""; }
 }
-function setTestEndpoint(url) {
+export function setTestEndpoint(url) {
   try {
     if (url) localStorage.setItem("integrum_leads_endpoint", url);
     else localStorage.removeItem("integrum_leads_endpoint");
@@ -39,7 +39,7 @@ function setTestEndpoint(url) {
 function markVerified(url) {
   try { localStorage.setItem("integrum_leads_verified", url); } catch (e) {}
 }
-function isVerified() {
+export function isVerified() {
   try {
     const u = activeEndpoint();
     return !!u && localStorage.getItem("integrum_leads_verified") === u;
@@ -52,7 +52,7 @@ const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2
 const FREE_DOMAINS = ["gmail.com","yahoo.com","yahoo.in","hotmail.com","outlook.com","rediffmail.com","icloud.com","aol.com","proton.me","protonmail.com"];
 const DISPOSABLE = ["mailinator.com","tempmail.com","10minutemail.com","guerrillamail.com","yopmail.com","trashmail.com","sharklasers.com"];
 
-function validateEmail(raw, { requireWork = false } = {}) {
+export function validateEmail(raw, { requireWork = false } = {}) {
   const v = (raw || "").trim().toLowerCase();
   if (!v) return "Please enter your email";
   if (!EMAIL_RE.test(v)) return "Enter a valid email address";
@@ -64,7 +64,7 @@ function validateEmail(raw, { requireWork = false } = {}) {
 
 // Indian mobile numbers: 10 digits starting 6-9, optional +91 / 0 prefix.
 // Also accepts a general international form so overseas enquiries aren't blocked.
-function validatePhone(raw) {
+export function validatePhone(raw) {
   const v = (raw || "").trim();
   if (!v) return "Please enter your phone number";
   const digits = v.replace(/[^\d]/g, "");
@@ -79,7 +79,7 @@ function validatePhone(raw) {
   return null;
 }
 
-function validateName(raw) {
+export function validateName(raw) {
   const v = (raw || "").trim();
   if (!v) return "Please enter your name";
   if (v.length < 2) return "Please enter your full name";
@@ -90,7 +90,7 @@ function validateName(raw) {
 /* ---------- local store (fallback + audit trail) ---------- */
 const LS_KEY = "integrum_leads_v1";
 
-function readLeads() {
+export function readLeads() {
   try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }
   catch (e) { return []; }
 }
@@ -102,12 +102,12 @@ function storeLead(lead) {
   } catch (e) { /* storage full or blocked — the POST is the source of truth */ }
 }
 
-function clearLeads() {
+export function clearLeads() {
   try { localStorage.removeItem(LS_KEY); return true; }
   catch (e) { return false; }
 }
 
-function leadsToCSV() {
+export function leadsToCSV() {
   const rows = readLeads();
   if (!rows.length) return "";
   const cols = Array.from(rows.reduce((s, r) => { Object.keys(r).forEach(k => s.add(k)); return s; }, new Set()));
@@ -118,7 +118,7 @@ function leadsToCSV() {
   return [cols.join(",")].concat(rows.map(r => cols.map(c => esc(r[c])).join(","))).join("\n");
 }
 
-function downloadLeadsCSV() {
+export function downloadLeadsCSV() {
   const csv = leadsToCSV();
   if (!csv) { alert("No submissions stored in this browser yet."); return; }
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
@@ -131,7 +131,7 @@ function downloadLeadsCSV() {
 
 /* ---------- submission ---------- */
 // Always resolves. Returns { ok, stored, delivered, error }.
-async function submitLead(formName, data) {
+export async function submitLead(formName, data) {
   const lead = Object.assign({
     form: formName,
     submitted_at: new Date().toISOString(),
@@ -149,17 +149,12 @@ async function submitLead(formName, data) {
   return postLead(url, lead);
 }
 
-// Google Apps Script does not answer the CORS preflight that an
-// "application/json" content-type triggers, so posts to it must go as
-// text/plain (a "simple request"). The script still JSON.parses the body.
 async function postLead(url, lead) {
-  const isAppsScript = /script\.google\.com/.test(url);
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": isAppsScript ? "text/plain;charset=utf-8" : "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(lead),
-      redirect: "follow",
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
     markVerified(url);
@@ -171,7 +166,7 @@ async function postLead(url, lead) {
 }
 
 // Sends a throwaway row so the connection can be proven before go-live.
-async function testEndpoint(url) {
+export async function testEndpoint(url) {
   if (!url) return { ok: false, error: "Enter an endpoint URL first" };
   const res = await postLead(url, {
     form: "Connection test",
@@ -179,15 +174,10 @@ async function testEndpoint(url) {
     name: "Connection test",
     company: "Integrum website",
     email: "info@integrumenergy.in",
+    phone: "+911234567890",
     notes: "Delete this row — sent by the setup screen to verify delivery.",
   });
   return res.delivered
     ? { ok: true }
     : { ok: false, error: res.error || "No response from that URL" };
 }
-
-Object.assign(window, {
-  submitLead, validateEmail, validatePhone, validateName,
-  readLeads, clearLeads, downloadLeadsCSV, leadsToCSV,
-  activeEndpoint, setTestEndpoint, testEndpoint, isVerified,
-});

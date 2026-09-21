@@ -1,69 +1,53 @@
 # Deploying the Integrum Energy website on AWS
 
-This is a **static website**. There is no server, no build step, no Node, no database.
-Every page is one HTML file plus CSS, JavaScript and assets, all rendered in the
-browser. That makes deployment simple: copy the files to storage and serve them.
+This is a **built React app** (Vite + React Router). There's no backend and no
+database — `npm run build` produces a folder of static files (`dist/`), and
+deployment is still just "copy the files to storage and serve them." The
+difference from before is that there's now a build step, and because routes
+are real paths (`/investors`, `/case/khayati-steel`, not `#investors`), the
+host needs one SPA fallback rule so a direct hit on a nested path serves
+`index.html` instead of a 404.
 
-- **Entry point:** `index.html` — this is the only page. Everything else (Solutions,
-  Platform, Company, People, Investors, Knowledge Hub, SPARK, legal pages) is a
-  route inside it, addressed by URL hash, e.g. `#platform`, `#about`, `#investors`.
-- **No `npm install`, no `npm run build`.** Do not look for a `package.json` — there
-  isn't one, and nothing needs compiling.
+- **Build first:** `npm install` (once), then `npm run build`. This compiles
+  `src/` into `dist/` — that's the folder you upload, not the project root.
+- **Entry point:** `dist/index.html`. Every other route (Solutions, Platform,
+  Company, People, Investors, Knowledge Hub, SPARK, legal pages) is a real
+  path handled client-side by React Router once the bundle loads.
 - **Form submissions** go to a Google Apps Script Web App, not to your server.
-  See "Lead capture" below.
+  See "Lead capture" below. The endpoint URL lives in `src/leads.js` and is
+  baked into the bundle at build time — changing it means rebuilding.
 
 ---
 
-## 1. What to upload
+## 1. Build and what to upload
 
-Upload the **whole project folder except the files listed under "Do not upload"**.
-
-Required at the root:
-
-```
-index.html            entry point
-styles.css            design tokens, base, nav, footer
-components.css        section + component styles
-pages.css             page-specific styles
-leads.js              form submission → Google Sheet
-figures.js             company figures (single source, loads before everything)
-india-geo.js           India outline used by the operations map — loads before dataviz.jsx
-ir-data.js            investor page data (KPIs, filings, meetings)
-dataviz.jsx           icons, charts, video background, shared hooks
-tweaks-panel.jsx      required — app.jsx renders <TweaksPanel>
-home.jsx  cni.jsx  platform.jsx  spark.jsx
-about.jsx  careers.jsx  jobs.jsx  casestudy.jsx
-investors.jsx  dashboard.jsx  legal.jsx  enquiry.jsx
-app.jsx               router + nav + footer (must load last)
-robots.txt            crawler rules
-sitemap.xml           search-engine sitemap
-assets/               logos, photos, videos, certificates, PDFs
+```bash
+npm install
+npm run build
 ```
 
-### Do not upload
-
-These are working files, not part of the site:
+This produces `dist/`:
 
 ```
-uploads/                        client source material (PDFs, DOCX, XLSX, raw photos)
-screens/  screenshots/          design references
-apps-script-leads.gs            pasted into Google Sheets, not served
-SETUP-leads-to-google-sheets.md
-BACKEND-leads-options.md
-DEPLOYMENT.md                   this file
-.thumbnail
+dist/
+  index.html            entry point
+  assets/                hashed, fingerprinted JS/CSS bundles (from src/ + vite.config.js)
+  assets/                also contains the site's own images/videos/PDFs, copied verbatim
+                          from public/assets/ — same directory, both merge into one
+  robots.txt             crawler rules (from public/robots.txt)
+  sitemap.xml             search-engine sitemap (from public/sitemap.xml)
+  llms.txt                summary for answer engines (from public/llms.txt)
 ```
 
-Leaving `uploads/` out matters: it holds internal documents (leadership profiles,
-AGM notices, job descriptions) that should not be publicly reachable.
+Upload **the contents of `dist/`**, not the project source. `src/`,
+`node_modules/`, `uploads/`, `screens/`, `screenshots/`, `apps-script-leads.gs`
+and the `.md` files never need to leave your machine — they aren't part of
+`dist/` and don't need excluding from anything, since you're only uploading
+`dist/`'s contents in the first place.
 
-Two files are easy to miss because their names don't look essential:
-`ir-data.js` (the Investors page loses all its data without it) and
-`tweaks-panel.jsx` (`app.jsx` renders `<TweaksPanel>`, so a missing file throws
-`TweaksPanel is not defined` and the **entire site fails to render**, not just one
-page). The `aws s3 sync` command below copies everything except the excluded
-folders, so both are included automatically — this only matters if you upload
-files by hand.
+`uploads/` in particular must stay out of any deploy: it holds internal
+documents (leadership profiles, AGM notices, job descriptions) that should
+not be publicly reachable, and it was never part of the build input.
 
 ---
 
@@ -79,25 +63,20 @@ Static hosting with a CDN. Cheapest and fastest option.
 
 ### 2.2 Upload
 
-Using the AWS CLI from the project folder:
+From the project folder, after `npm run build`:
 
 ```bash
-aws s3 sync . s3://integrumenergy-site \
-  --delete \
-  --exclude ".*" \
-  --exclude "uploads/*" \
-  --exclude "screens/*" \
-  --exclude "screenshots/*" \
-  --exclude "*.gs" \
-  --exclude "*.md"
+aws s3 sync dist/ s3://integrumenergy-site --delete
 ```
 
-Then set longer caching on assets (optional but worthwhile):
+Then set longer caching on the hashed build assets (optional but worthwhile —
+safe because Vite fingerprints filenames, so a new build never collides with
+a cached old one):
 
 ```bash
 aws s3 cp s3://integrumenergy-site/assets s3://integrumenergy-site/assets \
   --recursive --metadata-directive REPLACE \
-  --cache-control "public, max-age=2592000"
+  --cache-control "public, max-age=31536000, immutable"
 ```
 
 ### 2.3 CloudFront distribution
@@ -109,9 +88,15 @@ aws s3 cp s3://integrumenergy-site/assets s3://integrumenergy-site/assets \
 4. **Viewer protocol policy:** *Redirect HTTP to HTTPS*
 5. **Default root object:** `index.html`
 6. **Compress objects automatically:** Yes
+7. **Custom error responses** (this is the part that matters now that routes
+   are real paths, not `#hash`): add two entries —
+   - HTTP error code `403` → Response page path `/index.html` → HTTP response code `200`
+   - HTTP error code `404` → Response page path `/index.html` → HTTP response code `200`
 
-Because the site is a single page addressed by hash, you do **not** need custom
-error-page rewrites. `#platform` never reaches the server — the browser handles it.
+   Without this, a visitor who pastes `integrumenergy.in/case/khayati-steel`
+   straight into the address bar gets S3's raw 403/404 instead of the app —
+   S3 has no `index.html`-per-directory at that path, so the request needs to
+   fall back to the real `index.html` and let React Router take it from there.
 
 ### 2.4 Domain and certificate
 
@@ -124,50 +109,47 @@ error-page rewrites. `#platform` never reaches the server — the browser handle
 4. Route 53 (or your DNS provider) → point both names at the distribution with an
    **A record / Alias** to CloudFront.
 
-### 2.5 MIME types
-
-The `.jsx` files must be served as JavaScript. S3 normally sets
-`application/javascript` for them automatically. If the browser console shows
-`Refused to execute … MIME type ('text/plain')`, force it:
+### 2.5 Publishing an update
 
 ```bash
-aws s3 cp s3://integrumenergy-site s3://integrumenergy-site \
-  --recursive --exclude "*" --include "*.jsx" \
-  --metadata-directive REPLACE --content-type "text/babel"
-```
-
-### 2.6 Publishing an update
-
-```bash
-aws s3 sync . s3://integrumenergy-site --delete   # (same excludes as above)
+npm run build
+aws s3 sync dist/ s3://integrumenergy-site --delete
 aws cloudfront create-invalidation \
   --distribution-id <YOUR_DISTRIBUTION_ID> --paths "/*"
 ```
 
-The invalidation matters — without it, CloudFront keeps serving the old CSS/JS for
-up to 24 hours and your change appears not to have taken effect.
+The invalidation matters — without it, CloudFront keeps serving the old build for
+up to 24 hours and your change appears not to have taken effect. (The hashed
+files under `assets/` don't strictly need invalidating since their filenames
+change every build, but `index.html` and `robots.txt`/`sitemap.xml`/`llms.txt` do.)
 
 ---
 
 ## 3. Alternative: AWS Amplify Hosting
 
 Simpler if you'd rather not manage S3 and CloudFront yourself. Connect a Git repo
-and Amplify serves it with HTTPS and a CDN.
+and Amplify builds and serves it with HTTPS and a CDN, including the SPA
+fallback automatically for a Vite/React app.
 
-Build settings — **leave the build phase empty**, there is nothing to compile:
+Build settings:
 
 ```yaml
 version: 1
 frontend:
   phases:
+    preBuild:
+      commands:
+        - npm ci
     build:
-      commands: []
+      commands:
+        - npm run build
   artifacts:
-    baseDirectory: /
+    baseDirectory: dist
     files:
       - '**/*'
   cache:
-    paths: []
+    paths:
+      - node_modules/**/*
 ```
 
 ---
@@ -177,10 +159,9 @@ frontend:
 Only if you already have an EC2 instance you want to use.
 
 ```bash
+npm run build
 sudo apt update && sudo apt install -y nginx
-sudo rsync -av --exclude 'uploads' --exclude 'screens' \
-  --exclude 'screenshots' --exclude '*.md' --exclude '*.gs' \
-  ./ /var/www/integrum/
+sudo rsync -av --delete dist/ /var/www/integrum/
 ```
 
 `/etc/nginx/sites-available/integrum`:
@@ -192,13 +173,10 @@ server {
     root /var/www/integrum;
     index index.html;
 
-    # serve .jsx as JavaScript
-    location ~ \.jsx$ { default_type text/babel; }
-
     location / { try_files $uri $uri/ /index.html; }
 
     gzip on;
-    gzip_types text/css application/javascript text/babel image/svg+xml;
+    gzip_types text/css application/javascript image/svg+xml;
 
     location ~* \.(png|jpe?g|svg|mp4|pdf|woff2?)$ {
         expires 30d;
@@ -218,22 +196,42 @@ sudo certbot --nginx -d integrumenergy.in -d www.integrumenergy.in
 
 ## 5. Lead capture (do this before going live)
 
-Forms post to a Google Apps Script Web App. The endpoint is already set in
-`leads.js`. Nothing runs on AWS for this, and **it works from any domain** —
-the request is sent with `Content-Type: text/plain`, which browsers treat as a
-simple request, so no CORS configuration is needed on your side.
+Forms post to the Integrum lead API in `server/` — a small Express app that
+writes each submission to Postgres and, for résumé uploads, to S3. Unlike the
+rest of this site, **this piece is not static** — it needs to actually run
+somewhere reachable over HTTPS, separately from the S3/CloudFront/Amplify/EC2
+deploy of the frontend itself. How/where you host `server/` (its own small
+EC2 instance, a container platform, etc.) is up to you; this section covers
+what the frontend needs from it.
 
-Confirm in the Apps Script deployment settings:
+**Frontend side:** the API's base URL is baked into the JS bundle at build
+time via `VITE_API_BASE_URL` — **changing it requires `npm run build` again**,
+not just a re-sync of static files.
 
-- **Execute as:** Me
-- **Who has access:** **Anyone**
+```bash
+VITE_API_BASE_URL=https://api.integrumenergy.in npm run build
+```
 
-If access is set to "Only myself", every visitor submission fails silently.
+**Backend side (`server/`):**
 
-If you ever redeploy the script, Apps Script issues a **new** URL. Update the first
-line of `leads.js`, re-sync, and invalidate CloudFront.
+- Copy `server/.env.example` to `server/.env` and fill in `DATABASE_URL`
+  (Postgres) and the `AWS_*` values (S3, for résumés) — never commit `.env`.
+- `SES_FROM_EMAIL` must be a **verified identity** in SES for `AWS_REGION`
+  (SES console → Verified identities), or every notification email will fail
+  silently (logged server-side, doesn't block the submission). `HR_EMAIL` is
+  where the summary of every submission gets sent.
+- Set `ALLOWED_ORIGINS` to your real site origin(s), e.g.
+  `https://integrumenergy.in,https://www.integrumenergy.in` — any
+  `http://localhost:*` origin is allowed automatically outside production,
+  but production traffic must come from an explicitly allowed origin.
+- `npm install && npm start` — on boot it creates the `leads` table if it
+  doesn't already exist (see `server/src/db/schema.sql`).
+- Confirm `GET /api/health` returns `{"ok":true}` from wherever you host it,
+  then confirm the frontend's `VITE_API_BASE_URL` points at that same host.
 
-Full instructions: `SETUP-leads-to-google-sheets.md`.
+If the API is unreachable, submissions still aren't lost — every lead is
+written to the visitor's own browser storage first (see `#leads`), the same
+safety net as before.
 
 ---
 
@@ -244,30 +242,25 @@ Test on the live domain, not localhost:
 - [ ] `https://integrumenergy.in` loads over HTTPS with no certificate warning
 - [ ] Hero background video plays and loops through all three clips
 - [ ] Every nav item opens: Solutions, Platform, Knowledge Hub, Investors, Company, People
-- [ ] Deep links work when pasted fresh into the address bar, e.g.
-      `…/#spark/p`, `…/#investors`, `…/#case/khayati-steel`
+- [ ] Deep links work when pasted **fresh** into the address bar (this is the
+      SPA-fallback check from step 2.3), e.g.
+      `…/spark/p`, `…/investors`, `…/case/khayati-steel`
 - [ ] **Talk to an Advisor** submits → row appears in the Google Sheet
 - [ ] **Bring us your energy challenge** (Platform) submits → row appears
 - [ ] A careers application with a CV submits → row appears **and** the CV lands in
       the Drive folder
-- [ ] Browser console is clean (one Babel development-mode warning is expected)
+- [ ] Browser console is clean
 - [ ] Mobile: 320px, 375px and 768px widths — no horizontal scrolling
 - [ ] PDFs open: GPTW certificate, ISO 9001 certificate, AGM and EGM notices
 - [ ] `https://integrumenergy.in/uploads/` returns 403 or 404 — internal documents
-      must not be reachable
+      must not be reachable (trivially true now — `uploads/` was never part of `dist/`)
 
 ---
 
-## 7. Two notes worth acting on
+## 7. One note worth acting on
 
-**Babel runs in the browser.** `index.html` loads Babel and compiles the `.jsx`
-files on each page load. This works and is what the site is built on, but it adds
-roughly 1–2 seconds to first paint and prints a development-mode console warning.
-If page speed becomes a priority later, the fix is to pre-compile the `.jsx` files
-to plain `.js` as a build step — the site's structure does not otherwise change.
-
-**Video weight.** The three hero clips in `assets/` total around 40 MB at
+**Video weight.** The three hero clips in `public/assets/` total around 40 MB at
 1920×1080. On a slow mobile connection the poster image shows for a while before
 the video starts. Re-exporting them at 1280×720, ~2 Mbps, no audio would bring
-each to 2–3 MB. Drop the replacements into `assets/` under the same filenames —
-no code change needed.
+each to 2–3 MB. Drop the replacements into `public/assets/` under the same
+filenames and rebuild — no other code change needed.

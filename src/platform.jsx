@@ -1,7 +1,10 @@
 /* ============================================================
    platform.jsx — Platform page: capabilities Integrum brings
    ============================================================ */
-const { useState: useStateP } = React;
+import { useState as useStateP } from "react";
+import { I, Reveal } from "./dataviz";
+import { SparkSection } from "./home";
+import { CustomerEnquiry } from "./enquiry";
 
 const PLAT_LAYERS = [
   { k:"DEVELOP",   d:"Land · Connectivity · Approvals · Resource assessment", ic:"compass" },
@@ -123,7 +126,7 @@ const DASH_LEGEND = [
   ["#F59E0B","Lapsed Units"], ["#F87171","Grid Consumption"],
 ];
 
-function Platform({ nav }) {
+export function Platform({ nav }) {
   const [zoom, setZoom] = useStateP(false);
   return (
     <div className="page-fade plat-page">
@@ -150,8 +153,8 @@ function Platform({ nav }) {
           <div className="plat-hero-shot">
             <div className="phs-win">
               <div className="phs-bar"><span></span><span></span><span></span><em>Daily generation vs consumption</em></div>
-              <button className="phs-img" onClick={()=>setZoom("assets/plat-generation.png")} title="Click to enlarge">
-                <img src="assets/plat-generation.png" alt="Platform view: daily generation by time-of-day block against total consumption" loading="eager"/>
+              <button className="phs-img" onClick={()=>setZoom("/assets/plat-generation.png")} title="Click to enlarge">
+                <img src="/assets/plat-generation.png" alt="Platform view: daily generation by time-of-day block against total consumption" loading="eager"/>
                 <span className="mk-zoom">{I.search({width:15,height:15})} Enlarge</span>
               </button>
             </div>
@@ -318,8 +321,8 @@ function Platform({ nav }) {
           <Reveal delay={110} className="eip-mock">
             <div className="mk-win">
               <div className="mk-bar"><span></span><span></span><span></span><em>Energy Intelligence · Generation vs consumption</em></div>
-              <button className="mk-shot" onClick={()=>setZoom("assets/plat-settlement.png")} title="Click to enlarge">
-                <img src="assets/plat-settlement.png" alt="Energy Intelligence dashboard: monthly generation, consumption, banking settlement, lapsed units and grid consumption" loading="lazy"/>
+              <button className="mk-shot" onClick={()=>setZoom("/assets/plat-settlement.png")} title="Click to enlarge">
+                <img src="/assets/plat-settlement.png" alt="Energy Intelligence dashboard: monthly generation, consumption, banking settlement, lapsed units and grid consumption" loading="lazy"/>
                 <span className="mk-zoom">{I.search({width:15,height:15})} Enlarge</span>
               </button>
             </div>
@@ -401,7 +404,7 @@ function Platform({ nav }) {
         <div className="shot-lb" onClick={()=>setZoom(false)}>
           <button className="shot-lb-x" onClick={()=>setZoom(false)} aria-label="Close">{I.x()}</button>
           <figure onClick={e=>e.stopPropagation()}>
-            <img src={typeof zoom === "string" ? zoom : "assets/plat-settlement.png"} alt="Energy Intelligence platform view, full size"/>
+            <img src={typeof zoom === "string" ? zoom : "/assets/plat-settlement.png"} alt="Energy Intelligence platform view, full size"/>
             <figcaption>Energy Intelligence platform view</figcaption>
           </figure>
         </div>
@@ -417,4 +420,3 @@ function Platform({ nav }) {
   );
 }
 
-Object.assign(window, { Platform });

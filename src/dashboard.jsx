@@ -1,7 +1,10 @@
 /* ============================================================
    dashboard.jsx — customer login + sample dashboard
    ============================================================ */
-function Dashboard({ nav }) {
+import React, { useState } from "react";
+import { PhotoBG, IMG, I, GenerationChart, BessRing, isFilled, isPhone, isEmail } from "./dataviz";
+
+export function Dashboard({ nav }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [mode, setMode] = useState("signin");   // signin | signup | forgot
   const [form, setForm] = useState({ name:"", company:"", email:"", phone:"", password:"", confirm:"" });
@@ -51,7 +54,7 @@ function Dashboard({ nav }) {
           <div className="login-aside">
             <PhotoBG src={IMG.solarAerial} overlay="linear-gradient(160deg, rgba(8,23,42,.76), rgba(8,23,42,.70))" pos="center"/>
             <div style={{ position:"relative" }}>
-              <div className="brand-chip" style={{ alignSelf:"flex-start" }}><img src="assets/logo-integrum.svg" alt="Integrum Energy"/></div>
+              <div className="brand-chip" style={{ alignSelf:"flex-start" }}><img src="/assets/logo-integrum.svg" alt="Integrum Energy"/></div>
             </div>
             <div style={{ position:"relative" }}>
               <span className="cc-live" style={{ color:"#7FE3C9" }}><span className="pulse-dot"></span> Live across your plants</span>
@@ -219,4 +222,3 @@ function DashboardApp({ nav, onLogout }) {
   );
 }
 
-Object.assign(window, { Dashboard });

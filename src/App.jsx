@@ -1,17 +1,36 @@
 /* ============================================================
-   app.jsx — router shell, nav, footer, mount (loads last)
+   App.jsx — router shell, nav, footer, mount
    LIGHT THEME · blue primary
    ============================================================ */
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { Routes, Route, useNavigate, useLocation, useParams } from "react-router-dom";
+import { I } from "./dataviz";
+import { Home } from "./home";
+import { CnILane } from "./cni";
+import { Investors } from "./investors";
+import { Dashboard } from "./dashboard";
+import { CaseStudy, Contact, CASES } from "./casestudy";
+import { About } from "./about";
+import { SparkPage } from "./spark";
+import { Platform } from "./platform";
+import { Careers } from "./careers";
+import { Legal } from "./legal";
+import { useTweaks, TweaksPanel, TweakSection, TweakColor } from "./tweaks-panel";
+import {
+  readLeads, clearLeads, downloadLeadsCSV, activeEndpoint,
+  setTestEndpoint, testEndpoint, isVerified,
+} from "./leads";
+
 function LeadsAdmin() {
   const [tick, setTick] = useState(0);
-  const [url, setUrl] = useState(window.activeEndpoint ? activeEndpoint() : "");
+  const [url, setUrl] = useState(activeEndpoint());
   const [test, setTest] = useState(null);      // null | "busy" | {ok,error}
-  const rows = (window.readLeads ? readLeads() : []).slice().reverse();
+  const rows = readLeads().slice().reverse();
   const cols = ["submitted_at","form","name","company","email","phone","industry","consumption","location","state","reason","role","resume_name","notes","help"];
-  const inCode = !!window.LEADS_ENDPOINT;
-  const isSet = !!(window.activeEndpoint && activeEndpoint());
+  const inCode = !!import.meta.env.VITE_API_BASE_URL;
+  const isSet = !!activeEndpoint();
   // "live" requires a delivery that actually succeeded — never just a saved string
-  const live = isSet && !!(window.isVerified && isVerified());
+  const live = isSet && isVerified();
   const unproven = isSet && !live;
   return (
     <div className="page-fade">
@@ -34,12 +53,12 @@ function LeadsAdmin() {
               : unproven ? "Saved, but delivery not yet verified" : "Not connected"}</strong>
           </div>
           <p className="ls-p">
-            Paste the web-app URL from your Google Apps Script deployment (steps are in
-            <code> SETUP-leads-to-google-sheets.md</code>), then send a test row to prove it works.
+            Paste the URL of the Integrum lead API's <code>/api/leads</code> endpoint (see
+            <code> server/</code>), then send a test row to prove it works.
           </p>
           <div className="ls-row">
             <input className="ls-input" value={url} onChange={e=>{ setUrl(e.target.value); setTest(null); }}
-              placeholder="https://script.google.com/macros/s/AKfycb.../exec"/>
+              placeholder="https://api.integrumenergy.in/api/leads"/>
             <button className="btn btn-nav-cta" disabled={test==="busy" || !url.trim()} onClick={async()=>{
               setTest("busy");
               setTestEndpoint(url.trim());
@@ -56,14 +75,14 @@ function LeadsAdmin() {
             </div>
           )}
           {!inCode && live && (
-            <p className="ls-warn">Verified on this browser only. To deliver leads from <strong>every visitor</strong>, paste this into <code>leads.js</code>:<br/>
-              <code className="ls-code">window.LEADS_ENDPOINT = "{activeEndpoint()}";</code></p>
+            <p className="ls-warn">Verified on this browser only. To deliver leads from <strong>every visitor</strong>, set this in the site's build environment:<br/>
+              <code className="ls-code">VITE_API_BASE_URL={activeEndpoint().replace(/\/api\/leads$/, "")}</code></p>
           )}
         </div>
         <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:20 }}>
           <button className="btn btn-nav-cta" onClick={()=>downloadLeadsCSV()}>{`Download CSV (${rows.length})`}</button>
           <button className="btn btn-ghost" disabled={!rows.length} onClick={()=>{
-            if (window.confirm("Delete all " + rows.length + " stored submission(s) from this browser? Download the CSV first if you need a copy \u2014 this cannot be undone.")) {
+            if (window.confirm("Delete all " + rows.length + " stored submission(s) from this browser? Download the CSV first if you need a copy — this cannot be undone.")) {
               clearLeads(); setTick(t=>t+1);
             }
           }}>Clear stored leads</button>
@@ -127,7 +146,7 @@ function buildSearchIndex() {
     { label:"Company", desc:"Our story, impact & leadership", go:"about", kind:"Page" },
     { label:"Contact an advisor", desc:"Talk to a consultant", go:"contact", kind:"Page" },
   ];
-  const cases = (window.CASES || []).map(c => ({ label:c.title, desc:c.chip, go:"case/"+c.id, kind:"Case study" }));
+  const cases = (CASES || []).map(c => ({ label:c.title, desc:c.chip, go:"case/"+c.id, kind:"Case study" }));
   return base.concat(cases);
 }
 
@@ -200,8 +219,8 @@ function Nav({ page, nav, onSearch }) {
       <nav className={`nav ${scrolled?"scrolled":""}`}>
         <div className="shell nav-inner">
           <a className="nav-logo" onClick={()=>nav("home")} style={{ cursor:"pointer" }}>
-            <img className="brand-logo" src="assets/logo-integrum.svg" alt="Integrum Energy"/>
-            <img className="nav-gptw" src="assets/gptw.png" alt="Great Place to Work Certified" title="Great Place to Work® Certified"/>
+            <img className="brand-logo" src="/assets/logo-integrum.svg" alt="Integrum Energy"/>
+            <img className="nav-gptw" src="/assets/gptw.png" alt="Great Place to Work Certified" title="Great Place to Work® Certified"/>
           </a>
           <div className="nav-links">
             {NAV_LINKS.map(l=>(
@@ -241,7 +260,7 @@ function Footer({ nav }) {
         <div className="footer-grid">
           <div>
             <div className="brand-chip" style={{ marginBottom:16 }}>
-              <img src="assets/logo-integrum.svg" alt="Integrum Energy"/>
+              <img src="/assets/logo-integrum.svg" alt="Integrum Energy"/>
             </div>
             <p style={{ color:"#9FB3C7", fontSize:14, maxWidth:280, lineHeight:1.55 }}>Integrum Energy Infrastructure Ltd. — hybrid wind + solar plants and lifecycle energy management for India's industrial businesses.</p>
             <div className="footer-social">
@@ -273,17 +292,29 @@ function Footer({ nav }) {
   );
 }
 
-function App() {
+/* renders the routed page component with `sub` taken from the wildcard
+   segment of its `/page/*` route — reproduces the old parsePath() split
+   of "top/sub" for the one page (CaseStudy) that reads it */
+function SubRoute({ Comp, nav }) {
+  const params = useParams();
+  const sub = params["*"] || null;
+  return <Comp nav={nav} sub={sub} />;
+}
+
+export function App() {
   const TWEAK_DEFAULTS = {
     accent: ["#014976", "#013A5E", "#D8E7F1"],   // [base, deep, soft] — brand blue
   };
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const parsePath = () => {
-    const raw = decodeURIComponent(location.pathname || "/").replace(/^\/+|\/+$/g, "");
+  const navigate = useNavigate();
+  const loc = useLocation();
+
+  const parsePath = (pathname) => {
+    const raw = decodeURIComponent(pathname || "/").replace(/^\/+|\/+$/g, "");
     const [top, ...rest] = raw.split("/");
     return { top: top || "home", sub: rest.join("/") || null };
   };
-  const [route, setRoute] = useState(parsePath);
+  const route = parsePath(loc.pathname);
   const page = route.top;
 
   // keep the light theme locked in
@@ -296,9 +327,8 @@ function App() {
 
   const nav = (p) => {
     const [path, hash] = String(p).split("#");
-    const [top, ...rest] = path.split("/");
-    setRoute({ top: top || "home", sub: rest.join("/") || null });
-    history.pushState(null, "", top === "home" ? "/" : "/" + path);
+    const [top] = path.split("/");
+    navigate(top === "home" ? "/" : "/" + path);
     if (hash) {
       window.scrollTo({ top:0, behavior:"auto" });
       const tries = [80, 320, 700];
@@ -310,11 +340,6 @@ function App() {
     }
     window.scrollTo({ top:0, behavior:"auto" });
   };
-  useEffect(()=>{
-    const onPop = ()=> setRoute(parsePath());
-    window.addEventListener("popstate", onPop);
-    return ()=> window.removeEventListener("popstate", onPop);
-  },[]);
   // per-page SEO: keep <title> + meta description in sync with the route
   useEffect(()=>{
     const [title, desc] = PAGE_META[page] || PAGE_META.home;
@@ -346,12 +371,11 @@ function App() {
     if (!bc) { bc = document.createElement("script"); bc.type = "application/ld+json"; bc.id = "ld-breadcrumb"; document.head.appendChild(bc); }
     bc.textContent = JSON.stringify({ "@context":"https://schema.org", "@type":"BreadcrumbList", itemListElement:crumbs });
 
-    // GA4 page view (hash routing means gtag never sees these on its own)
+    // GA4 page view
     if (window.gtag) window.gtag("event", "page_view", {
       page_title: title, page_location: url, page_path: page === "home" ? "/" : "/" + fullPath,
     });
   },[page]);
-  const Page = PAGES[page] || Home;
   const isDashApp = page === "dashboard";
   const [searchOpen, setSearchOpen] = useState(false);
   useEffect(()=>{
@@ -372,7 +396,20 @@ function App() {
   return (
     <React.Fragment>
       <Nav page={page} nav={nav} onSearch={()=>setSearchOpen(true)}/>
-      <main key={page}><Page nav={nav} sub={route.sub}/></main>
+      <main key={page}>
+        <Routes>
+          {Object.entries(PAGES).map(([key, Comp]) => {
+            const path = key === "home" ? "/" : `/${key}`;
+            return (
+              <React.Fragment key={key}>
+                <Route path={path} element={<Comp nav={nav} sub={null} />} />
+                {key !== "home" && <Route path={`${path}/*`} element={<SubRoute Comp={Comp} nav={nav} />} />}
+              </React.Fragment>
+            );
+          })}
+          <Route path="*" element={<Home nav={nav} sub={null} />} />
+        </Routes>
+      </main>
       {!isDashApp && <Footer nav={nav}/>}
       {searchOpen && <SearchModal nav={nav} onClose={()=>setSearchOpen(false)}/>}
       <TweaksPanel>
@@ -382,5 +419,3 @@ function App() {
     </React.Fragment>
   );
 }
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);

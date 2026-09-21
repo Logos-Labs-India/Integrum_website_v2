@@ -4,7 +4,9 @@
    Rendered by casestudy.jsx: listing on the Knowledge Hub index,
    full read at #case/article/<id>.
    ============================================================ */
-const ARTICLES = [
+import { I, Reveal } from "./dataviz";
+
+export const ARTICLES = [
   {
     id: "bess-1-standalone-solar-tod",
     series: "BESS series",
@@ -154,7 +156,7 @@ const ARTICLES = [
   },
 ];
 
-const articleById = (id) => ARTICLES.find(a => a.id === id);
+export const articleById = (id) => ARTICLES.find(a => a.id === id);
 
 /* ---------- one rendered block ---------- */
 function ArtBlock({ b, nav }) {
@@ -205,7 +207,7 @@ function ArtBlock({ b, nav }) {
 }
 
 /* ---------- full article ---------- */
-function ArticleDetail({ nav, a }) {
+export function ArticleDetail({ nav, a }) {
   const idx = ARTICLES.findIndex(x => x.id === a.id);
   const others = ARTICLES.filter(x => x.id !== a.id);
   return (
@@ -269,7 +271,7 @@ function ArticleDetail({ nav, a }) {
 }
 
 /* ---------- listing card ---------- */
-function ArticleCard({ a, nav, delay = 0 }) {
+export function ArticleCard({ a, nav, delay = 0 }) {
   return (
     <Reveal delay={delay}>
       <button className="art-card" onClick={()=>nav("case/article/"+a.id)}>
@@ -289,7 +291,7 @@ function ArticleCard({ a, nav, delay = 0 }) {
 }
 
 /* ---------- listing section for the Knowledge Hub index ---------- */
-function ArticlesSection({ nav }) {
+export function ArticlesSection({ nav }) {
   return (
     <section className="section" id="insights">
       <div className="shell">
@@ -306,4 +308,3 @@ function ArticlesSection({ nav }) {
   );
 }
 
-Object.assign(window, { ARTICLES, articleById, ArticlesSection, ArticleDetail, ArticleCard });

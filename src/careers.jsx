@@ -2,7 +2,9 @@
    careers.jsx — Careers / People (Life at Integrum, open roles)
    Section structure per client content sheet (People page).
    ============================================================ */
-const { useState: useStateC } = React;
+import { useState as useStateC } from "react";
+import { I, Reveal, VideoBG, VID } from "./dataviz";
+import { CAREER_ROLES } from "./jobs";
 
 const CAREER_VALUES = [
   { ic:"compass", h:"Purpose-driven work", p:"Every megawatt we build displaces conventional power for real industrial businesses. The work is measurable, and it matters." },
@@ -34,7 +36,7 @@ const CAREER_AWARDS = [
 ];
 
 
-function Careers({ nav }) {
+export function Careers({ nav }) {
   const [team, setTeam] = useStateC("All");
   const [openJD, setOpenJD] = useStateC(null);
   const teams = ["All", ...Array.from(new Set(CAREER_ROLES.map(r=>r.team)))];
@@ -43,7 +45,7 @@ function Careers({ nav }) {
     <div className="page-fade lane-accent" style={{ "--p-color":"var(--amber)" }}>
       {/* hero */}
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(40px,5vw,68px)" }}>
-        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="assets/hero-poster.png"
+        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="/assets/hero-poster.png"
           overlay="linear-gradient(120deg, rgba(8,23,42,.82) 38%, rgba(8,23,42,.44) 100%)" pos="center 46%"/>
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}>
@@ -130,20 +132,20 @@ function Careers({ nav }) {
           </Reveal>
           <div className="life-photos">
             {[
-              { src:"assets/life-sitevisit.jpg", t:"Site visit", s:"Team at an operating hybrid plant", wide:true },
-              { src:"assets/life-commissioning.jpeg", t:"Project commissioning", s:"Team at a newly energised pooling substation", wide:true },
-              { src:"assets/life-commissioning-2.jpeg", t:"Charging the panel", s:"Control and relay panel on commissioning day" },
-              { src:"assets/life-training.jpeg", t:"Safety training", s:"CPR and first-aid session at site" },
-              { src:"assets/life-office-1.jpg", t:"Our Bengaluru office", s:"The Integrum frontage in Koramangala", pos:"50% 18%" },
-              { src:"assets/life-office-2.jpg", t:"Office inauguration", s:"Marking a new office with the team", tall:true, pos:"50% 22%" },
-              { src:"assets/life-turbine.jpg", t:"Turbine erection", s:"Nacelle lift during commissioning" },
-              { src:"assets/life-gptw.jpeg", t:"Great Place to Work celebration", s:"Marking our certification at the Bengaluru office", tall:true, pos:"50% 28%" },
-              { src:"assets/life-hackathon.jpeg", t:"Internal hackathon", s:"Presenting an AI contract-review workflow" },
-              { src:"assets/life-csr-school.jpeg", t:"CSR · school outreach", s:"Community programme at a village school" },
-              { src:"assets/life-csr-performance.jpeg", t:"CSR · cultural programme", s:"Students performing at a community event" },
-              { src:"assets/life-teambuilding.jpg", t:"Team building", s:"Company offsite activities" },
-              { src:"assets/life-vmv.jpg", t:"Vision, mission & values workshop", s:"Teams presenting their group work" },
-              { src:"assets/life-office-mgmt.jpeg", t:"Marking a milestone", s:"Leadership at the Bengaluru office", pos:"50% 30%" },
+              { src:"/assets/life-sitevisit.jpg", t:"Site visit", s:"Team at an operating hybrid plant", wide:true },
+              { src:"/assets/life-commissioning.jpeg", t:"Project commissioning", s:"Team at a newly energised pooling substation", wide:true },
+              { src:"/assets/life-commissioning-2.jpeg", t:"Charging the panel", s:"Control and relay panel on commissioning day" },
+              { src:"/assets/life-training.jpeg", t:"Safety training", s:"CPR and first-aid session at site" },
+              { src:"/assets/life-office-1.jpg", t:"Our Bengaluru office", s:"The Integrum frontage in Koramangala", pos:"50% 18%" },
+              { src:"/assets/life-office-2.jpg", t:"Office inauguration", s:"Marking a new office with the team", tall:true, pos:"50% 22%" },
+              { src:"/assets/life-turbine.jpg", t:"Turbine erection", s:"Nacelle lift during commissioning" },
+              { src:"/assets/life-gptw.jpeg", t:"Great Place to Work celebration", s:"Marking our certification at the Bengaluru office", tall:true, pos:"50% 28%" },
+              { src:"/assets/life-hackathon.jpeg", t:"Internal hackathon", s:"Presenting an AI contract-review workflow" },
+              { src:"/assets/life-csr-school.jpeg", t:"CSR · school outreach", s:"Community programme at a village school" },
+              { src:"/assets/life-csr-performance.jpeg", t:"CSR · cultural programme", s:"Students performing at a community event" },
+              { src:"/assets/life-teambuilding.jpg", t:"Team building", s:"Company offsite activities" },
+              { src:"/assets/life-vmv.jpg", t:"Vision, mission & values workshop", s:"Teams presenting their group work" },
+              { src:"/assets/life-office-mgmt.jpeg", t:"Marking a milestone", s:"Leadership at the Bengaluru office", pos:"50% 30%" },
             ].map((p,i)=>(
               <Reveal key={i} delay={i*60} className={"life-photo"+(p.wide?" is-wide":"")+(p.tall?" is-tall":"")}>
                 <img src={p.src} alt={p.t} loading="lazy" style={p.pos?{objectPosition:p.pos}:null}/>
@@ -283,4 +285,3 @@ function Careers({ nav }) {
   );
 }
 
-Object.assign(window, { Careers });

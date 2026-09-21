@@ -1,7 +1,10 @@
 /* ============================================================
    cni.jsx — C&I buyer landing (deepest lane)
    ============================================================ */
-const INDUSTRY_DATA = {
+import { useState } from "react";
+import { I, Reveal, IMG } from "./dataviz";
+
+export const INDUSTRY_DATA = {
   "Metals & mining": { tariff:"Optimized ₹/kWh", saving:"Higher savings", re:"Tariff visibility",
     challenge:"Arc furnaces and crushers run continuous, high-load shifts — energy is often your single largest controllable cost.",
     cases:[{to:"khayati-steel",h:"From 0% RE to 100% RE",m:"Green steel · 7-year transition"},{to:"graphite-india",h:"₹84 cr to ₹24 cr a year on power",m:"Graphite · 80.7% renewable"}],
@@ -126,7 +129,7 @@ const SOL_FAMILIES = [
     cta:"Explore Power Markets", img:"powerMarkets" },
 ];
 
-function CnILane({ nav }) {
+export function CnILane({ nav }) {
   const [tab, setTab] = useState(0);
   const d = INDUSTRY_DATA[IND_TABS[tab]];
   const [open, setOpen] = useState(0);
@@ -375,4 +378,3 @@ function CnILane({ nav }) {
   );
 }
 
-Object.assign(window, { CnILane, INDUSTRY_DATA });

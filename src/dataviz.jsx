@@ -1,11 +1,11 @@
 /* ============================================================
    dataviz.jsx — hooks, icons, charts, counters, India map
-   Exposes components on window for other babel scripts.
    ============================================================ */
-const { useState, useEffect, useRef, useMemo } = React;
+import { useState, useEffect, useRef, useMemo } from "react";
+import { INDIA_GEO } from "./india-geo";
 
 /* ---------- hooks ---------- */
-function useInView(opts) {
+export function useInView(opts) {
   const ref = useRef(null);
   const [seen, setSeen] = useState(false);
   useEffect(() => {
@@ -29,7 +29,7 @@ function useInView(opts) {
   return [ref, seen];
 }
 
-function Reveal({ children, delay = 0, as = "div", className = "", ...rest }) {
+export function Reveal({ children, delay = 0, as = "div", className = "", ...rest }) {
   const [ref, seen] = useInView();
   const Tag = as;
   return (
@@ -41,7 +41,7 @@ function Reveal({ children, delay = 0, as = "div", className = "", ...rest }) {
 }
 
 /* count-up that triggers when in view */
-function useCountUp(target, { dur = 1400, decimals = 0, start = 0 } = {}) {
+export function useCountUp(target, { dur = 1400, decimals = 0, start = 0 } = {}) {
   const [ref, seen] = useInView();
   const [val, setVal] = useState(start);
   useEffect(() => {
@@ -70,7 +70,7 @@ function useCountUp(target, { dur = 1400, decimals = 0, start = 0 } = {}) {
 /* company figures: FIG is defined globally in figures.js */
 
 /* ---------- icon set (stroke, 1.6) ---------- */
-const I = {
+export const I = {
   segSteel: (p) => <svg viewBox="0 0 64 64" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M11 9h42a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H41a3 3 0 0 0-3 3v22a3 3 0 0 0 3 3h12a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3v-3a3 3 0 0 1 3-3h12a3 3 0 0 0 3-3V21a3 3 0 0 0-3-3H11a3 3 0 0 1-3-3v-3a3 3 0 0 1 3-3z"/></svg>,
   segHospital: (p) => <svg viewBox="0 0 64 64" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M22 56V9a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v47"/><path d="M22 23H9a1 1 0 0 0-1 1v32M42 23h13a1 1 0 0 1 1 1v32"/><path d="M32 12.5v8M28 16.5h8" strokeWidth="2.2"/><path d="M27.5 56V47a4.5 4.5 0 0 1 9 0v9"/><path d="M6 56h52"/></svg>,
   segGraphite: (p) => <svg viewBox="0 0 64 64" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...p}><polygon points="32,9 43.26,15.5 43.26,28.5 32,35 20.74,28.5 20.74,15.5"/><polygon points="20.74,28.5 32,35 32,48 20.74,54.5 9.48,48 9.48,35"/><polygon points="43.26,28.5 54.52,35 54.52,48 43.26,54.5 32,48 32,35"/></svg>,
@@ -112,12 +112,12 @@ const I = {
 };
 
 /* ---------- shared form validators ---------- */
-const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((v || "").trim());
-const isPhone = (v) => /^\+?\d{10,13}$/.test((v || "").replace(/[\s\-()]/g, ""));
-const isFilled = (v) => !!(v && String(v).trim().length);
+export const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((v || "").trim());
+export const isPhone = (v) => /^\+?\d{10,13}$/.test((v || "").replace(/[\s\-()]/g, ""));
+export const isFilled = (v) => !!(v && String(v).trim().length);
 
 /* logo mark — abstract "I" + sun/wind motif */
-function LogoMark({ size = 30 }) {
+export function LogoMark({ size = 30 }) {
   return (
     <svg className="logo-mark" viewBox="0 0 32 32" width={size} height={size} aria-hidden="true">
       <rect x="2" y="2" width="28" height="28" rx="8" fill="var(--navy)"/>
@@ -129,7 +129,7 @@ function LogoMark({ size = 30 }) {
 }
 
 /* ---------- sparkline ---------- */
-function Sparkline({ data, w = 320, h = 60, color = "#6D4AFF", fill = true }) {
+export function Sparkline({ data, w = 320, h = 60, color = "#6D4AFF", fill = true }) {
   const max = Math.max(...data), min = Math.min(...data);
   const pts = data.map((d, i) => [ (i/(data.length-1))*w, h - ((d-min)/(max-min || 1))*(h-8) - 4 ]);
   const line = pts.map((p,i)=> (i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
@@ -149,7 +149,7 @@ function Sparkline({ data, w = 320, h = 60, color = "#6D4AFF", fill = true }) {
 }
 
 /* ---------- live MW counter (homepage card) ---------- */
-function LiveCounter() {
+export function LiveCounter() {
   const [mw, setMw] = useState(42.8);
   const [ago, setAgo] = useState(12);
   const [pulse, setPulse] = useState(false);
@@ -223,7 +223,7 @@ function LiveCounter() {
 LiveCounter.displayName = "LiveCounter";
 
 /* ---------- cost curve chart (prop-driven, animates on recalc) ---------- */
-function CostCurveChart({ gridStart = 7.0, gridEnd = 9.8, target = 3.2, saveLabel = null }) {
+export function CostCurveChart({ gridStart = 7.0, gridEnd = 9.8, target = 3.2, saveLabel = null }) {
   const [ref, seen] = useInView();
   const w = 560, h = 320, pad = { l: 46, r: 22, t: 28, b: 40 };
   const years = [0,1,2,3,4,5];
@@ -280,7 +280,7 @@ function CostCurveChart({ gridStart = 7.0, gridEnd = 9.8, target = 3.2, saveLabe
 }
 
 /* ---------- 24h generation area (dashboard) ---------- */
-function GenerationChart({ color = "#18A0B8" }) {
+export function GenerationChart({ color = "#18A0B8" }) {
   const data = useMemo(()=> Array.from({length:48},(_,i)=>{
     const x=i/47; const bell=Math.exp(-Math.pow((x-0.5)*3.3,2));
     return +(bell*5.4 + Math.random()*0.3).toFixed(2);
@@ -309,7 +309,7 @@ function GenerationChart({ color = "#18A0B8" }) {
 const INDIA_W = 400, INDIA_H = 460;
 const INDIA_VB = `0 0 ${INDIA_W} ${INDIA_H}`;
 /* project sites by real coordinates — projected with the same projection as the outline */
-const PROJECT_REGIONS = [
+export const PROJECT_REGIONS = [
   { name: "Gujarat",     lng: 71.5, lat: 22.6, n: 7,  color: "#E0A100", glow: "#F0C000", off: [[16,-12],[-12,10],[8,20]] },
   { name: "Maharashtra", lng: 75.4, lat: 19.4, n: 7,  color: "#005B96", glow: "#5FE0B5", off: [[14,-10],[-10,12],[6,18]] },
   { name: "Karnataka",   lng: 76.2, lat: 14.8, n: 25, color: "#0A6FB0", glow: "#4AA8E8", off: [[14,-10],[-10,12],[6,20]] },
@@ -317,18 +317,18 @@ const PROJECT_REGIONS = [
 ];
 
 let _indiaGeoCache = null;
-function useIndiaGeo() {
+export function useIndiaGeo() {
   const [geo, setGeo] = useState(_indiaGeoCache);
   useEffect(()=>{
     if (_indiaGeoCache) { setGeo(_indiaGeoCache); return; }
     let alive = true;
     (async ()=>{
       try {
-        if (!window.d3 || !window.INDIA_GEO) return;
+        if (!window.d3 || !INDIA_GEO) return;
         // Embedded, correct external boundary (india-geo.js) — no CDN fetch,
         // no dependency on a low-resolution generic world atlas. See that
         // file's header for provenance.
-        const india = window.INDIA_GEO;
+        const india = INDIA_GEO;
         const proj = window.d3.geoMercator().fitExtent([[10,10],[INDIA_W-10,INDIA_H-10]], india);
         const d = window.d3.geoPath(proj)(india);
         const pins = PROJECT_REGIONS.map(r=>{ const [x,y] = proj([r.lng, r.lat]); return { ...r, x, y }; });
@@ -357,7 +357,7 @@ function useIndiaGeo() {
   return geo;
 }
 
-function IndiaMap({ height = 380, interactive = true }) {
+export function IndiaMap({ height = 380, interactive = true }) {
   const [hover, setHover] = useState(null);
   const geo = useIndiaGeo();
   const pins = geo ? geo.pins : [];
@@ -386,7 +386,7 @@ function IndiaMap({ height = 380, interactive = true }) {
 }
 
 /* ---------- DARK projects map — real India outline (client reference layout) ---------- */
-function ProjectsMapDark({ height = 420 }) {
+export function ProjectsMapDark({ height = 420 }) {
   const [hover, setHover] = useState(null);
   const geo = useIndiaGeo();
   const regions = (geo ? geo.pins : []).map(r => ({ ...r, glow: r.glow || r.color || "#5FE0B5" }));
@@ -431,7 +431,7 @@ function ProjectsMapDark({ height = 420 }) {
 }
 
 /* ---------- donut / revenue mix ---------- */
-function Donut({ segments, size = 150, thickness = 22, center }) {
+export function Donut({ segments, size = 150, thickness = 22, center }) {
   const r = (size - thickness)/2; const c = 2*Math.PI*r; let off = 0;
   return (
     <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} style={{transform:"rotate(-90deg)"}}>
@@ -445,7 +445,7 @@ function Donut({ segments, size = 150, thickness = 22, center }) {
 }
 
 /* ---------- bess ring ---------- */
-function BessRing({ pct = 68, size = 96 }) {
+export function BessRing({ pct = 68, size = 96 }) {
   const r=(size-14)/2, c=2*Math.PI*r;
   return (
     <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
@@ -459,7 +459,7 @@ function BessRing({ pct = 68, size = 96 }) {
 
 /* ---------- energy imagery (hotlinked, navy-overlaid for legibility) ---------- */
 const U = (id, w = 1600, q = 72) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=${q}`;
-const IMG = {
+export const IMG = {
   solarAerial: U("1509391366360-2e959784a276"),
   wind:        U("1466611653911-95081537e5b7"),
   solarClose:  U("1508514177221-188b1cf16e9d"),
@@ -468,14 +468,14 @@ const IMG = {
   team:        U("1559302504-64aae6ca6b6d"),
   windField:   U("1497435334941-8c899ee9e8e9"),
   industrial:  U("1581092160562-40aa08e78837"),
-  steelPlant:  "assets/steel-plant.jpeg",
-  powerMarkets: "assets/power-markets-hybrid.png",
+  steelPlant:  "/assets/steel-plant.jpeg",
+  powerMarkets: "/assets/power-markets-hybrid.png",
   commercialSolar: U("1613665813446-82a78c468a1d"),
   heroField:   U("1548337138-e87d889cc369"),
   meadow:      U("1466611653911-95081537e5b7"),
 };
 // absolutely-positioned photo layer with overlay; drop inside a position:relative parent
-function PhotoBG({ src, overlay, pos = "center", style }) {
+export function PhotoBG({ src, overlay, pos = "center", style }) {
   const ov = overlay || "linear-gradient(180deg, rgba(8,23,42,.82), rgba(8,23,42,.93))";
   return (
     <div aria-hidden="true" className="photo-bg" style={style}>
@@ -489,7 +489,7 @@ function PhotoBG({ src, overlay, pos = "center", style }) {
 // Background video. `src` for one clip, or `srcs={[a,b,...]}` to play clips as one
 // continuous sequence. `starts={[s,...]}` skips that many seconds into each clip.
 // Two stacked <video>s crossfade, so no poster ever flashes between clips.
-function VideoBG({ src, srcs, starts, poster, overlay, style }) {
+export function VideoBG({ src, srcs, starts, poster, overlay, style }) {
   const list = (srcs && srcs.length) ? srcs : [src];
   const multi = list.length > 1;
   const offs = starts || [];
@@ -623,20 +623,12 @@ function VideoBG({ src, srcs, starts, poster, overlay, style }) {
   );
 }
 
-const VID = {
+export const VID = {
   grid:    "https://videos.pexels.com/video-files/3129957/3129957-hd_1920_1080_25fps.mp4",  // glowing network globe (HD — smoother loop)
   circuit: "https://videos.pexels.com/video-files/2792370/2792370-hd_1920_1080_30fps.mp4",   // energy circuitry
   solar:   "https://videos.pexels.com/video-files/7442016/7442016-hd_1920_1080_25fps.mp4",   // drone over solar farm
   wind:    "https://videos.pexels.com/video-files/9789422/9789422-hd_1920_1080_30fps.mp4",   // desert wind turbines
   // real Integrum site footage — played in sequence as one continuous loop
   // real Integrum site footage, wind first then solar; played as one loop
-  site:    ["assets/site-3.mp4", "assets/site-1.mp4", "assets/site-2.mp4"],
+  site:    ["/assets/site-3.mp4", "/assets/site-1.mp4", "/assets/site-2.mp4"],
 };
-
-Object.assign(window, {
-  React, useState, useEffect, useRef, useMemo,
-  useInView, Reveal, useCountUp, I, LogoMark,
-  Sparkline, LiveCounter, CostCurveChart, GenerationChart, IndiaMap, Donut, BessRing,
-  IMG, VID, PhotoBG, VideoBG, ProjectsMapDark,
-  isEmail, isPhone, isFilled,
-});

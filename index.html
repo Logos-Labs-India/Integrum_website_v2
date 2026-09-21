@@ -12,8 +12,8 @@
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1"/>
   <meta name="theme-color" content="#014976"/>
   <link rel="canonical" href="https://integrumenergy.in/"/>
-  <link rel="icon" type="image/png" href="assets/integrum-logo.png"/>
-  <link rel="apple-touch-icon" href="assets/integrum-logo.png"/>
+  <link rel="icon" type="image/png" href="/assets/integrum-logo.png"/>
+  <link rel="apple-touch-icon" href="/assets/integrum-logo.png"/>
 
   <!-- ===== Open Graph (Facebook / LinkedIn / WhatsApp) ===== -->
   <meta property="og:type" content="website"/>
@@ -119,7 +119,7 @@
   <!-- ===== Google Analytics 4 =====
        Paste your Measurement ID below (Admin -> Data streams -> Web). Until it is
        set, nothing loads and no requests are made. Page views for the site's
-       routes are sent from app.jsx on every route change. -->
+       routes are sent from src/App.jsx on every route change. -->
   <script>window.GA_MEASUREMENT_ID = ""; /* e.g. "G-XXXXXXXXXX" */</script>
   <script>
   (function(){
@@ -138,9 +138,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="styles.css"/>
-  <link rel="stylesheet" href="components.css"/>
-  <link rel="stylesheet" href="pages.css"/>
   <script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -148,7 +145,7 @@
 
   <noscript>
     <div style="max-width:780px;margin:40px auto;padding:0 20px;font-family:system-ui,sans-serif;line-height:1.6;color:#0B1F3A;">
-      <img src="assets/integrum-logo.png" alt="Integrum Energy logo" width="180"/>
+      <img src="/assets/integrum-logo.png" alt="Integrum Energy logo" width="180"/>
       <h1>Integrum Energy — wind + solar hybrid power for India's industrial businesses</h1>
       <p>Integrum Energy builds wind + solar hybrid power plants for India's most demanding industrial and commercial businesses, then runs them for 25 years and proves every kilowatt-hour on a live platform. We help businesses cut power costs to as low as ₹3 per unit and reach 100% renewable energy (RE 100).</p>
       <h2>What we do</h2>
@@ -168,29 +165,6 @@
     </div>
   </noscript>
 
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-
-  <script src="figures.js"></script>
-  <script src="india-geo.js"></script>
-  <script type="text/babel" src="dataviz.jsx"></script>
-  <script type="text/babel" src="home.jsx"></script>
-  <script type="text/babel" src="spark.jsx"></script>
-  <script src="leads.js"></script>
-  <script type="text/babel" src="enquiry.jsx"></script>
-  <script type="text/babel" src="platform.jsx"></script>
-  <script type="text/babel" src="cni.jsx"></script>
-  <script src="ir-data.js"></script>
-  <script type="text/babel" src="investors.jsx"></script>
-  <script type="text/babel" src="dashboard.jsx"></script>
-  <script type="text/babel" src="articles.jsx"></script>
-  <script type="text/babel" src="casestudy.jsx"></script>
-  <script type="text/babel" src="about.jsx"></script>
-  <script type="text/babel" src="jobs.jsx"></script>
-  <script type="text/babel" src="careers.jsx"></script>
-  <script type="text/babel" src="legal.jsx"></script>
-  <script type="text/babel" src="tweaks-panel.jsx"></script>
-  <script type="text/babel" src="app.jsx"></script>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

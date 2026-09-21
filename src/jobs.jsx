@@ -4,7 +4,7 @@
    Consumed by careers.jsx (listing + detail) and by the application
    form's role dropdown.
    ============================================================ */
-const CAREER_ROLES = [
+export const CAREER_ROLES = [
   {
     id:"project-manager",
     role:"Project Manager / Sr. Project Manager",
@@ -346,4 +346,3 @@ const CAREER_ROLES = [
   },
 ];
 
-Object.assign(window, { CAREER_ROLES });
