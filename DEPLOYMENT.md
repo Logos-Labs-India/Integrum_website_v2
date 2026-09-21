@@ -83,9 +83,9 @@ aws s3 cp s3://integrumenergy-site/assets s3://integrumenergy-site/assets \
 
 1. CloudFront → **Create distribution**
 2. **Origin domain:** your S3 bucket
-3. **Origin access:** *Origin access control (OAC)* → create → then click the button
+3. **Origin access:** _Origin access control (OAC)_ → create → then click the button
    to update the bucket policy. This lets CloudFront read a private bucket.
-4. **Viewer protocol policy:** *Redirect HTTP to HTTPS*
+4. **Viewer protocol policy:** _Redirect HTTP to HTTPS_
 5. **Default root object:** `index.html`
 6. **Compress objects automatically:** Yes
 7. **Custom error responses** (this is the part that matters now that routes
@@ -146,7 +146,7 @@ frontend:
   artifacts:
     baseDirectory: dist
     files:
-      - '**/*'
+      - "**/*"
   cache:
     paths:
       - node_modules/**/*
@@ -218,8 +218,10 @@ VITE_API_BASE_URL=https://api.integrumenergy.in npm run build
   (Postgres) and the `AWS_*` values (S3, for résumés) — never commit `.env`.
 - `SES_FROM_EMAIL` must be a **verified identity** in SES for `AWS_REGION`
   (SES console → Verified identities), or every notification email will fail
-  silently (logged server-side, doesn't block the submission). `HR_EMAIL` is
-  where the summary of every submission gets sent.
+  silently (logged server-side, doesn't block the submission). Each
+  submission emails its own `route_to` address (set per-form in the
+  frontend — e.g. a careers application routes to Careers@..., a general
+  enquiry to info@...);
 - Set `ALLOWED_ORIGINS` to your real site origin(s), e.g.
   `https://integrumenergy.in,https://www.integrumenergy.in` — any
   `http://localhost:*` origin is allowed automatically outside production,

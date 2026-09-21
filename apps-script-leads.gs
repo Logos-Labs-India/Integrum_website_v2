@@ -37,37 +37,41 @@
  *   Without a new version the old code keeps running.
  */
 
-var SHEET_ID     = '1QAwDiV8qrg2l_HrIg8yIqXyAAeemNq3XolG-OuDtHZ4';
-var SHEET_NAME   = 'Leads';
-var CV_FOLDER    = 'Integrum CVs';              // created on first upload
-var NOTIFY_EMAIL = 'info@integrumenergy.in';    // general enquiries; '' disables emails
-var HR_EMAIL     = 'HR@integrumenergy.in';      // careers enquiries + CVs
+var SHEET_ID = "1QAwDiV8qrg2l_HrIg8yIqXyAAeemNq3XolG-OuDtHZ4";
+var SHEET_NAME = "Leads";
+var CV_FOLDER = "Integrum CVs"; // created on first upload
+var NOTIFY_EMAIL = "info@integrumenergy.in"; // general enquiries; '' disables emails
 
 /* ------------------------------------------------------------------ */
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
-  lock.waitLock(30000);                 // two submissions can't collide
+  lock.waitLock(30000); // two submissions can't collide
   try {
     if (!e || !e.postData || !e.postData.contents) {
-      return json({ ok: false, error: 'Empty request body' });
+      return json({ ok: false, error: "Empty request body" });
     }
     var data = JSON.parse(e.postData.contents);
 
     // ---- CV upload: decode, save to Drive, replace with a link ----
-    if (data.resume_file && String(data.resume_file).indexOf('base64,') !== -1) {
+    if (
+      data.resume_file &&
+      String(data.resume_file).indexOf("base64,") !== -1
+    ) {
       try {
-        var parts  = String(data.resume_file).split('base64,');
-        var meta   = parts[0];
-        var mime   = meta.substring(meta.indexOf(':') + 1, meta.indexOf(';'));
-        var bytes  = Utilities.base64Decode(parts[1]);
-        var fname  = data.resume_name || ('cv-' + new Date().getTime());
-        var blob   = Utilities.newBlob(bytes, mime, fname);
-        var found  = DriveApp.getFoldersByName(CV_FOLDER);
-        var folder = found.hasNext() ? found.next() : DriveApp.createFolder(CV_FOLDER);
+        var parts = String(data.resume_file).split("base64,");
+        var meta = parts[0];
+        var mime = meta.substring(meta.indexOf(":") + 1, meta.indexOf(";"));
+        var bytes = Utilities.base64Decode(parts[1]);
+        var fname = data.resume_name || "cv-" + new Date().getTime();
+        var blob = Utilities.newBlob(bytes, mime, fname);
+        var found = DriveApp.getFoldersByName(CV_FOLDER);
+        var folder = found.hasNext()
+          ? found.next()
+          : DriveApp.createFolder(CV_FOLDER);
         data.resume_file = folder.createFile(blob).getUrl();
       } catch (fileErr) {
-        data.resume_file = 'CV received but could not be saved: ' + fileErr;
+        data.resume_file = "CV received but could not be saved: " + fileErr;
       }
     }
 
@@ -80,22 +84,46 @@ function doPost(e) {
     // so those columns stay permanently blank while the script silently adds a
     // second set of columns further right — which looks like "the form isn't
     // saving" even though every row is being written.
-    var lastCol  = sheet.getLastColumn();
-    var existing = (sheet.getLastRow() > 0 && lastCol > 0)
-      ? sheet.getRange(1, 1, 1, lastCol).getValues()[0]
-      : [];
-    while (existing.length && !String(existing[existing.length - 1]).trim()) existing.pop();
+    var lastCol = sheet.getLastColumn();
+    var existing =
+      sheet.getLastRow() > 0 && lastCol > 0
+        ? sheet.getRange(1, 1, 1, lastCol).getValues()[0]
+        : [];
+    while (existing.length && !String(existing[existing.length - 1]).trim())
+      existing.pop();
 
-    var headers = existing.map(function (h) { return String(h); });
-    var slots   = headers.map(function (h) { return norm_(h); });   // parallel lookup keys
-    var added   = false;
+    var headers = existing.map(function (h) {
+      return String(h);
+    });
+    var slots = headers.map(function (h) {
+      return norm_(h);
+    }); // parallel lookup keys
+    var added = false;
 
     // Preferred column order for a fresh sheet, so the common fields lead.
-    var ORDER = ['submitted_at','form','reason','name','company','email','phone',
-                 'role','industry','consumption','location','state','notes','help',
-                 'resume_name','resume_file','page','route_to'];
+    var ORDER = [
+      "submitted_at",
+      "form",
+      "reason",
+      "name",
+      "company",
+      "email",
+      "phone",
+      "role",
+      "industry",
+      "consumption",
+      "location",
+      "state",
+      "notes",
+      "help",
+      "resume_name",
+      "resume_file",
+      "page",
+      "route_to",
+    ];
     var keys = Object.keys(data).sort(function (a, b) {
-      var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b);
+      var ia = ORDER.indexOf(a),
+        ib = ORDER.indexOf(b);
       return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
     });
 
@@ -108,37 +136,48 @@ function doPost(e) {
     });
     if (added || sheet.getLastRow() === 0) {
       sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-      sheet.getRange(1, 1, 1, headers.length)
-           .setFontWeight('bold')
-           .setBackground('#014976')
-           .setFontColor('#ffffff');
+      sheet
+        .getRange(1, 1, 1, headers.length)
+        .setFontWeight("bold")
+        .setBackground("#014976")
+        .setFontColor("#ffffff");
       sheet.setFrozenRows(1);
     }
 
     // ---- the row itself, aligned to whatever the header row actually says ----
     var byNorm = {};
-    Object.keys(data).forEach(function (k) { byNorm[norm_(k)] = data[k]; });
+    Object.keys(data).forEach(function (k) {
+      byNorm[norm_(k)] = data[k];
+    });
     var row = slots.map(function (s) {
-      return byNorm[s] !== undefined && byNorm[s] !== null ? byNorm[s] : '';
+      return byNorm[s] !== undefined && byNorm[s] !== null ? byNorm[s] : "";
     });
     sheet.appendRow(row);
 
     // ---- notification email (never blocks the save) ----
     if (NOTIFY_EMAIL) {
       try {
-        var body = headers.map(function (h) {
-          return h + ': ' + (data[h] || '');
-        }).join('\n');
+        var body = headers
+          .map(function (h) {
+            return h + ": " + (data[h] || "");
+          })
+          .join("\n");
         // careers submissions (and their CVs) go to HR, everything else to info
-        var to = (data.route_to && String(data.route_to).indexOf('@') !== -1)
-          ? data.route_to
-          : NOTIFY_EMAIL;
+        var to =
+          data.route_to && String(data.route_to).indexOf("@") !== -1
+            ? data.route_to
+            : NOTIFY_EMAIL;
         MailApp.sendEmail(
           to,
-          'Website enquiry — ' + (data.form || 'Form') + ' — ' + (data.name || ''),
-          body
+          "Website enquiry — " +
+            (data.form || "Form") +
+            " — " +
+            (data.name || ""),
+          body,
         );
-      } catch (mailErr) { /* quota hit — the row is already saved */ }
+      } catch (mailErr) {
+        /* quota hit — the row is already saved */
+      }
     }
 
     return json({ ok: true });
@@ -151,51 +190,70 @@ function doPost(e) {
 
 // Lets you confirm the deployment is live by opening the URL in a browser.
 function doGet() {
-  return json({ ok: true, status: 'Integrum lead endpoint is live' });
+  return json({ ok: true, status: "Integrum lead endpoint is live" });
 }
 
 // "Submitted At" / "submitted_at" / "submittedat" all reduce to the same key.
 function norm_(s) {
-  var k = String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+  var k = String(s)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
   return ALIAS_[k] || k;
 }
 
 // Headers whose wording in the sheet differs from the payload key.
 var ALIAS_ = {
-  roleappliedfor: 'role',
-  appliedfor:     'role',
-  position:       'role',
-  workemail:      'email',
-  emailaddress:   'email',
-  phonenumber:    'phone',
-  mobile:         'phone',
-  contactnumber:  'phone',
-  companyname:    'company',
-  fullname:       'name',
-  annualconsumption:  'consumption',
-  averageannualconsumption: 'consumption',
-  message:        'help',
-  howcanwehelp:   'help',
-  enquirytype:    'reason',
-  formname:       'form',
-  date:           'submittedat',
-  submittedon:    'submittedat',
-  timestamp:      'submittedat',
-  cv:             'resumefile',
-  resume:         'resumefile',
+  roleappliedfor: "role",
+  appliedfor: "role",
+  position: "role",
+  workemail: "email",
+  emailaddress: "email",
+  phonenumber: "phone",
+  mobile: "phone",
+  contactnumber: "phone",
+  companyname: "company",
+  fullname: "name",
+  annualconsumption: "consumption",
+  averageannualconsumption: "consumption",
+  message: "help",
+  howcanwehelp: "help",
+  enquirytype: "reason",
+  formname: "form",
+  date: "submittedat",
+  submittedon: "submittedat",
+  timestamp: "submittedat",
+  cv: "resumefile",
+  resume: "resumefile",
 };
 
 // Friendly column label for a new field.
 function label_(k) {
   var MAP = {
-    submitted_at:'Submitted At', form:'Form', reason:'Reason', name:'Name',
-    company:'Company', email:'Email', phone:'Phone', role:'Role Applied For',
-    industry:'Industry', consumption:'Annual Consumption', location:'Location',
-    state:'State', notes:'Notes', help:'Message', resume_name:'CV File',
-    resume_file:'CV Link', page:'Page', route_to:'Routed To',
+    submitted_at: "Submitted At",
+    form: "Form",
+    reason: "Reason",
+    name: "Name",
+    company: "Company",
+    email: "Email",
+    phone: "Phone",
+    role: "Role Applied For",
+    industry: "Industry",
+    consumption: "Annual Consumption",
+    location: "Location",
+    state: "State",
+    notes: "Notes",
+    help: "Message",
+    resume_name: "CV File",
+    resume_file: "CV Link",
+    page: "Page",
+    route_to: "Routed To",
   };
   if (MAP[k]) return MAP[k];
-  return String(k).replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  return String(k)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, function (c) {
+      return c.toUpperCase();
+    });
 }
 
 function getSheet_() {
@@ -204,9 +262,9 @@ function getSheet_() {
 }
 
 function json(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
+    ContentService.MimeType.JSON,
+  );
 }
 
 /**
@@ -216,5 +274,5 @@ function json(obj) {
  */
 function testInsert() {
   var sheet = getSheet_();
-  sheet.appendRow(['Editor test — delete this row', new Date()]);
+  sheet.appendRow(["Editor test — delete this row", new Date()]);
 }
