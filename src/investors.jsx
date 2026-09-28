@@ -1,14 +1,15 @@
 /* ============================================================
    investors.jsx — Investor Relations (/investors/<section>)
 
-   Routes:  #investors               → Snapshot
-            #investors/financials    → Financials
-            #investors/announcements → Corporate announcements
-            #investors/press         → Press releases
-            #investors/presentations → Presentations & transcripts
-            #investors/governance    → Governance
-            #investors/offer         → Offer & IPO
-            #investors/esg           → ESG & sustainability
+   Routes:  /investors               → Snapshot
+            /investors/financials    → Financials
+            /investors/announcements → Corporate announcements
+            /investors/press         → Press releases
+            /investors/presentations → Presentations & transcripts
+            /investors/governance    → Governance
+            /investors/offer         → Offer & IPO
+            /investors/esg           → ESG & sustainability
+            /investors/directors     → Board of Directors
 
    All content comes from ir-data.js — this file holds no data.
    ============================================================ */
@@ -193,6 +194,9 @@ function IRBoard() {
 
 /* ---------- governance · statutory disclosure table ---------- */
 function IRDisclosures() {
+  if (!IR_DISCLOSURES.length) return (
+    <div className="ir-empty">Statutory disclosures will be published here.</div>
+  );
   return (
     <div className="ir-table-wrap">
       <table className="ir-table">
@@ -389,6 +393,8 @@ export function Investors({ nav, sub }) {
           </nav>
 
           {sec.kind === "snapshot" && <IRSnapshot nav={nav}/>}
+
+          {sec.kind === "directors" && <div className="page-fade"><IRBoard/></div>}
 
           {sec.kind === "docs" && (
             <div className="page-fade">
