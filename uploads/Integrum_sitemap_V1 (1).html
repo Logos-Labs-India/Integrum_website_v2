@@ -1,0 +1,366 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.wrap{padding:20px 12px;overflow-x:auto;font-family:var(--font-sans);}
+.sm-title{font-size:11px;font-weight:500;line-height:1.3;}
+.sm-sub{font-size:10px;line-height:1.3;margin-top:2px;}
+.home-box{border-radius:10px;padding:10px 28px;text-align:center;border:0.5px solid;display:inline-block;}
+.l1-box{border-radius:8px;padding:8px 10px;text-align:center;border:0.5px solid;width:100%;}
+.l2-box{border-radius:6px;padding:6px 8px;text-align:center;border:0.5px solid;width:100%;}
+.l3-box{border-radius:5px;padding:5px 6px;text-align:center;border:0.5px solid;width:100%;}
+.l3-box .sm-title{font-size:10px;}
+.l3-box .sm-sub{font-size:9px;}
+
+.c-teal{background:#E1F5EE;border-color:#0F6E56;}.c-teal .sm-title{color:#085041;}.c-teal .sm-sub{color:#0F6E56;}
+.c-purple{background:#EEEDFE;border-color:#534AB7;}.c-purple .sm-title{color:#3C3489;}.c-purple .sm-sub{color:#534AB7;}
+.c-amber{background:#FAEEDA;border-color:#854F0B;}.c-amber .sm-title{color:#633806;}.c-amber .sm-sub{color:#854F0B;}
+.c-blue{background:#E6F1FB;border-color:#185FA5;}.c-blue .sm-title{color:#0C447C;}.c-blue .sm-sub{color:#185FA5;}
+.c-coral{background:#FAECE7;border-color:#993C1D;}.c-coral .sm-title{color:#712B13;}.c-coral .sm-sub{color:#993C1D;}
+.c-green{background:#EAF3DE;border-color:#3B6D11;}.c-green .sm-title{color:#27500A;}.c-green .sm-sub{color:#3B6D11;}
+.c-gray{background:#F1EFE8;border-color:#5F5E5A;}.c-gray .sm-title{color:#444441;}.c-gray .sm-sub{color:#5F5E5A;}
+
+@media(prefers-color-scheme:dark){
+.c-teal{background:#04342C;border-color:#5DCAA5;}.c-teal .sm-title{color:#9FE1CB;}.c-teal .sm-sub{color:#5DCAA5;}
+.c-purple{background:#26215C;border-color:#AFA9EC;}.c-purple .sm-title{color:#CECBF6;}.c-purple .sm-sub{color:#AFA9EC;}
+.c-amber{background:#412402;border-color:#EF9F27;}.c-amber .sm-title{color:#FAC775;}.c-amber .sm-sub{color:#EF9F27;}
+.c-blue{background:#042C53;border-color:#85B7EB;}.c-blue .sm-title{color:#B5D4F4;}.c-blue .sm-sub{color:#85B7EB;}
+.c-coral{background:#4A1B0C;border-color:#F0997B;}.c-coral .sm-title{color:#F5C4B3;}.c-coral .sm-sub{color:#F0997B;}
+.c-green{background:#173404;border-color:#97C459;}.c-green .sm-title{color:#C0DD97;}.c-green .sm-sub{color:#97C459;}
+.c-gray{background:#2C2C2A;border-color:#B4B2A9;}.c-gray .sm-title{color:#D3D1C7;}.c-gray .sm-sub{color:#B4B2A9;}
+}
+
+.vline{width:1px;background:var(--color-border-secondary);margin:0 auto;}
+.hline{height:1px;background:var(--color-border-secondary);}
+.col{display:flex;flex-direction:column;align-items:center;}
+.footer-bar{border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:7px 14px;background:var(--color-background-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-top:20px;}
+.spark-row{text-align:center;margin-top:10px;}
+.spark-row span{font-size:10px;color:var(--color-text-tertiary);}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;justify-content:center;}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary);}
+.leg-dot{width:10px;height:10px;border-radius:3px;border:0.5px solid;}
+.section-divider{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-tertiary);text-align:center;margin:8px 0 4px;font-weight:500;}
+</style>
+
+<div class="wrap">
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot c-purple"></div>How We Partner</div>
+  <div class="leg-item"><div class="leg-dot c-amber"></div>Solutions</div>
+  <div class="leg-item"><div class="leg-dot c-blue"></div>Energy Intel. Platform</div>
+  <div class="leg-item"><div class="leg-dot c-teal"></div>Knowledge Hub</div>
+  <div class="leg-item"><div class="leg-dot c-coral"></div>Investors</div>
+  <div class="leg-item"><div class="leg-dot c-gray"></div>About</div>
+  <div class="leg-item"><div class="leg-dot c-green"></div>Contact</div>
+</div>
+
+<div class="col">
+  <div class="home-box c-teal">
+    <div class="sm-title">Home</div>
+    <div class="sm-sub">"Every megawatt begins with a SPARK."</div>
+  </div>
+  <div class="vline" style="height:18px;"></div>
+</div>
+
+<div style="display:flex;align-items:flex-start;position:relative;">
+  <div class="hline" style="position:absolute;top:0;left:0;right:0;"></div>
+
+  <!-- ── COL 1: HOW WE PARTNER ── -->
+  <div style="flex:0 0 188px;padding:0 4px;">
+    <div class="col">
+      <div class="vline" style="height:18px;"></div>
+      <div class="l1-box c-purple">
+        <div class="sm-title">How We Partner</div>
+        <div class="sm-sub">Full lifecycle partnership</div>
+      </div>
+      <div class="vline" style="height:12px;"></div>
+
+      <div style="width:100%;padding:0 2px;display:flex;flex-direction:column;gap:4px;">
+
+        <div class="l2-box c-purple">
+          <div class="sm-title">SPARK — 5 Pillars</div>
+          <div class="sm-sub">"Every megawatt begins with a SPARK."</div>
+        </div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-purple"><div class="sm-title">S — Scan &amp; Understand</div></div>
+          <div class="l3-box c-purple"><div class="sm-title">P — Plan &amp; Design</div></div>
+          <div class="l3-box c-purple"><div class="sm-title">A — Acquire &amp; Build (EPC)</div></div>
+          <div class="l3-box c-purple"><div class="sm-title">R — Run &amp; Maintain (O&amp;M)</div></div>
+          <div class="l3-box c-purple"><div class="sm-title">K — Keep Optimizing</div></div>
+        </div>
+
+        <div style="height:10px;"></div>
+        <div class="l2-box c-purple">
+          <div class="sm-title">Risk Management</div>
+          <div class="sm-sub">Price · Regulatory · Execution · Generation</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COL 2: SOLUTIONS ── -->
+  <div style="flex:0 0 200px;padding:0 4px;">
+    <div class="col">
+      <div class="vline" style="height:18px;"></div>
+      <div class="l1-box c-amber">
+        <div class="sm-title">Solutions</div>
+        <div class="sm-sub">"From sun &amp; wind to your bottom line."</div>
+      </div>
+      <div class="vline" style="height:12px;"></div>
+
+      <div style="width:100%;padding:0 2px;display:flex;flex-direction:column;gap:4px;">
+
+        <!-- Block 1: The Model -->
+        <div class="l2-box c-amber">
+          <div class="sm-title">The Model</div>
+          <div class="sm-sub">How we structure the deal</div>
+        </div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-amber">
+            <div class="sm-title">Capex</div>
+            <div class="sm-sub">Client owns, Integrum builds</div>
+          </div>
+          <div class="l3-box c-amber">
+            <div class="sm-title">Opex / Group Captive</div>
+            <div class="sm-sub">IPP model, zero ownership</div>
+          </div>
+          <div class="l3-box c-amber">
+            <div class="sm-title">EaaS</div>
+            <div class="sm-sub">Energy-as-a-Service</div>
+          </div>
+        </div>
+
+        <div style="height:10px;"></div>
+
+        <!-- Block 2: Segments -->
+        <div class="l2-box c-amber">
+          <div class="sm-title">Segments</div>
+          <div class="sm-sub">Who we serve</div>
+        </div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-amber">
+            <div class="sm-title">Industries</div>
+            <div class="sm-sub">Mfg · Chemicals · Metals · CRE</div>
+          </div>
+          <div class="l3-box c-amber">
+            <div class="sm-title">Customers</div>
+            <div class="sm-sub">Large C&amp;I · Multi-location · Tariff-sensitive</div>
+          </div>
+        </div>
+
+        <div style="height:10px;"></div>
+
+        <!-- Block 3: Technology -->
+        <div class="l2-box c-amber">
+          <div class="sm-title">Technology</div>
+          <div class="sm-sub">What we deploy</div>
+        </div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-amber">
+            <div class="sm-title">Solar Solutions</div>
+          </div>
+          <div class="l3-box c-amber">
+            <div class="sm-title">Wind Solutions</div>
+          </div>
+          <div class="l3-box c-amber">
+            <div class="sm-title">Hybrid Solutions</div>
+            <div class="sm-sub">Flagship offering</div>
+          </div>
+          <div class="l3-box c-amber">
+            <div class="sm-title">Energy Storage — BESS</div>
+            <div class="sm-sub">Future-ready power</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COL 3: ENERGY INTEL PLATFORM ── -->
+  <div style="flex:0 0 174px;padding:0 4px;">
+    <div class="col">
+      <div class="vline" style="height:18px;"></div>
+      <div class="l1-box c-blue">
+        <div class="sm-title">Energy Intelligence Platform</div>
+        <div class="sm-sub">"Your energy. Visible. Intelligent. Always on."</div>
+      </div>
+      <div class="vline" style="height:12px;"></div>
+
+      <div style="width:100%;padding:0 2px;display:flex;flex-direction:column;gap:4px;">
+
+        <div class="l2-box c-blue"><div class="sm-title">Real-Time Dashboard</div><div class="sm-sub">Client portal</div></div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-blue"><div class="sm-title">Generation Monitor</div><div class="sm-sub">Live kW / MW output</div></div>
+          <div class="l3-box c-blue"><div class="sm-title">Consumption Monitor</div><div class="sm-sub">Load tracking &amp; peaks</div></div>
+          <div class="l3-box c-blue"><div class="sm-title">Banking Ledger</div><div class="sm-sub">Units credited vs. drawn</div></div>
+          <div class="l3-box c-blue"><div class="sm-title">Surplus / Deficit Mgmt.</div><div class="sm-sub">Auto sell or purchase</div></div>
+          <div class="l3-box c-blue"><div class="sm-title">Alerts &amp; Reports</div><div class="sm-sub">Daily / weekly / monthly</div></div>
+        </div>
+
+        <div style="height:10px;"></div>
+        <div class="l2-box c-blue"><div class="sm-title">BESS Intelligence</div><div class="sm-sub">"Charge smart. Discharge smarter."</div></div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-blue"><div class="sm-title">When to Charge</div><div class="sm-sub">Off-peak / surplus trigger</div></div>
+          <div class="l3-box c-blue"><div class="sm-title">When to Discharge</div><div class="sm-sub">Peak / outage / high tariff</div></div>
+          <div class="l3-box c-blue"><div class="sm-title">When to Hold</div><div class="sm-sub">Demand buffer / reserve</div></div>
+          <div class="l3-box c-blue"><div class="sm-title">Automated Dispatch</div><div class="sm-sub">AI schedule + forecast</div></div>
+        </div>
+
+        <div style="height:10px;"></div>
+        <div class="l2-box c-blue"><div class="sm-title">Open Access Tracker</div><div class="sm-sub">KERC / State OA status</div></div>
+        
+<div class="l2-box c-blue" style="margin-top:4px;">
+  <div class="sm-title">Savings Calculator</div>
+  <div class="sm-sub">"Know your savings before you switch."</div>
+</div>
+
+<div class="vline" style="height:8px;"></div>
+
+<div style="display:flex;flex-direction:column;gap:3px;">
+  <div class="l3-box c-blue">
+    <div class="sm-title">Electricity Bill Estimator</div>
+    <div class="sm-sub">Monthly savings projection</div>
+  </div>
+
+  <div class="l3-box c-blue">
+    <div class="sm-title">Solar ROI Calculator</div>
+    <div class="sm-sub">Payback & returns analysis</div>
+  </div>
+
+  <div class="l3-box c-blue">
+    <div class="sm-title">Open Access Savings</div>
+    <div class="sm-sub">Compare tariff benefits</div>
+  </div>
+
+  <div class="l3-box c-blue">
+    <div class="sm-title">Carbon Offset Tracker</div>
+    <div class="sm-sub">CO₂ reduction insights</div>
+  </div>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COL 4: KNOWLEDGE HUB ── -->
+  <div style="flex:0 0 162px;padding:0 4px;">
+    <div class="col">
+      <div class="vline" style="height:18px;"></div>
+      <div class="l1-box c-teal">
+        <div class="sm-title">Knowledge Hub</div>
+        <div class="sm-sub">Outcomes · Industries · Insights</div>
+      </div>
+      <div class="vline" style="height:12px;"></div>
+
+      <div style="width:100%;padding:0 2px;display:flex;flex-direction:column;gap:4px;">
+
+        <div class="l2-box c-teal"><div class="sm-title">Client Outcomes</div><div class="sm-sub">All case studies</div></div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-teal"><div class="sm-title">Client Overview</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Challenge</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Solution Design</div><div class="sm-sub">SPARK applied</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Financial Impact</div><div class="sm-sub">₹ Savings / IRR</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">ESG Impact</div></div>
+        </div>
+
+        <div style="height:10px;"></div>
+        <div class="l2-box c-teal"><div class="sm-title">Industries</div></div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-teal"><div class="sm-title">Manufacturing</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Chemicals</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Metals &amp; Mining</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Commercial Real Estate</div></div>
+        </div>
+
+        <div style="height:10px;"></div>
+        <div class="l2-box c-teal"><div class="sm-title">Insights</div></div>
+        <div class="vline" style="height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="l3-box c-teal"><div class="sm-title">Thought Leadership</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Market Outlook</div></div>
+          <div class="l3-box c-teal"><div class="sm-title">Regulatory Updates</div><div class="sm-sub">OA · KERC · Policy</div></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COL 5: INVESTORS ── -->
+  <div style="flex:0 0 158px;padding:0 4px;">
+    <div class="col">
+      <div class="vline" style="height:18px;"></div>
+      <div class="l1-box c-coral">
+        <div class="sm-title">Investors</div>
+        <div class="sm-sub">"Powering India's energy transition — transparently."</div>
+      </div>
+      <div class="vline" style="height:12px;"></div>
+
+      <div style="width:100%;padding:0 2px;display:flex;flex-direction:column;gap:4px;">
+        <div class="l2-box c-coral"><div class="sm-title">Investor Overview</div><div class="sm-sub">Business model &amp; ESG thesis</div></div>
+        <div class="l2-box c-coral"><div class="sm-title">Financial Performance</div><div class="sm-sub">AR · QR · Audited statements</div></div>
+        <div class="l2-box c-coral"><div class="sm-title">Corporate Governance</div><div class="sm-sub">Board · Committees · Conduct</div></div>
+        <div class="l2-box c-coral"><div class="sm-title">Shareholding Pattern</div><div class="sm-sub">Promoter · Public · FII</div></div>
+        <div class="l2-box c-coral"><div class="sm-title">Stock Exchange Filings</div><div class="sm-sub">BSE · NSE · SEBI</div></div>
+        <div class="l2-box c-coral"><div class="sm-title">ESG &amp; Sustainability</div><div class="sm-sub">BRSR · tCO₂e · Social</div></div>
+        <div class="l2-box c-coral"><div class="sm-title">Press &amp; Analyst</div><div class="sm-sub">Releases · Coverage</div></div>
+        <div class="l2-box c-coral"><div class="sm-title">Investor Contact</div><div class="sm-sub">RTA · IEPF · Grievance</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COL 6: ABOUT ── -->
+  <div style="flex:0 0 148px;padding:0 4px;">
+    <div class="col">
+      <div class="vline" style="height:18px;"></div>
+      <div class="l1-box c-gray">
+        <div class="sm-title">About</div>
+        <div class="sm-sub">"Built by energy people."</div>
+      </div>
+      <div class="vline" style="height:12px;"></div>
+
+      <div style="width:100%;padding:0 2px;display:flex;flex-direction:column;gap:4px;">
+        <div class="l2-box c-gray"><div class="sm-title">Vision &amp; Mission</div></div>
+        <div class="l2-box c-gray"><div class="sm-title">Leadership Team</div></div>
+        <div class="l2-box c-gray"><div class="sm-title">The SPARK Difference</div><div class="sm-sub">vs. pure EPC players</div></div>
+        <div class="l2-box c-gray"><div class="sm-title">Why Integrum</div></div>
+        <div class="l2-box c-gray"><div class="sm-title">Our People</div><div class="sm-sub">Life · Roles · Offers</div></div>
+        <div class="l2-box c-gray"><div class="sm-title">Culture &amp; Certifications</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COL 7: CONTACT ── -->
+  <div style="flex:0 0 128px;padding:0 4px;">
+    <div class="col">
+      <div class="vline" style="height:18px;"></div>
+      <div class="l1-box c-green">
+        <div class="sm-title">Contact</div>
+        <div class="sm-sub">"Start your SPARK conversation today."</div>
+      </div>
+      <div class="vline" style="height:12px;"></div>
+
+      <div style="width:100%;padding:0 2px;display:flex;flex-direction:column;gap:4px;">
+        <div class="l2-box c-green"><div class="sm-title">Contact Form</div></div>
+        <div class="l2-box c-green"><div class="sm-title">Office Locations</div></div>
+        <div class="l2-box c-green"><div class="sm-title">Talk to an Energy Advisor</div><div class="sm-sub">CTA</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-bar">
+  <span style="font-size:10px;font-weight:500;color:var(--color-text-secondary);">Footer / Utility</span>
+  <span style="font-size:10px;color:var(--color-text-tertiary);">Careers · Downloads &amp; Resources · ESG / Sustainability · Investor Relations · Privacy Policy · Terms &amp; Legal</span>
+</div>
+
+</div>
