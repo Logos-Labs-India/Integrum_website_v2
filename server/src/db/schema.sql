@@ -25,3 +25,8 @@ CREATE TABLE IF NOT EXISTS leads (
   route_to      TEXT,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Additive, idempotent — CREATE TABLE IF NOT EXISTS above is a no-op once
+-- the table already exists, so new columns need their own statement to
+-- reach a database that was created before they were added.
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS resume_upload_failed BOOLEAN NOT NULL DEFAULT false;

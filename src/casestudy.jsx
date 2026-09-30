@@ -641,7 +641,7 @@ export function Contact({ nav, sub }) {
                   )}
                   <div className="field-l" style={{ marginTop:14 }}><label style={labelStyle}>How can we help? <em className="opt">(optional)</em></label><textarea rows="3" value={f.help} onChange={set("help")} style={{ ...inputStyle, resize:"vertical" }}></textarea></div>
                   {Object.keys(err).filter(k=>err[k]).length > 0 && <div className="form-alert error" style={{ marginTop:14, marginBottom:0 }}>Please complete the required fields above.</div>}
-                  <button className="btn btn-primary" style={{ width:"100%", marginTop:18, background:"var(--p-color)", color:"#fff", boxShadow:"none" }} onClick={submit}>{reason==="Investor / analyst" ? "Request the investor deck" : reason==="I'm a C&I buyer" ? "Book a 60-min energy consult" : reason==="Talent / careers" ? "Submit my application" : "Send message"} {I.arrow()}</button>
+                  <button className="btn btn-primary" style={{ width:"100%", marginTop:18, background:"var(--p-color)", color:"#fff", boxShadow:"none" }} onClick={submit} disabled={busy}>{busy ? "Sending…" : reason==="Investor / analyst" ? "Request the investor deck" : reason==="I'm a C&I buyer" ? "Book a 60-min energy consult" : reason==="Talent / careers" ? "Submit my application" : "Send message"} {!busy && I.arrow()}</button>
                 </div>
               )}
             </div>

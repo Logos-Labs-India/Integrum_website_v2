@@ -1,21 +1,24 @@
 # Deploying the Integrum Energy website on AWS
 
-This is a **built React app** (Vite + React Router). There's no backend and no
-database — `npm run build` produces a folder of static files (`dist/`), and
-deployment is still just "copy the files to storage and serve them." The
-difference from before is that there's now a build step, and because routes
-are real paths (`/investors`, `/case/khayati-steel`, not `#investors`), the
-host needs one SPA fallback rule so a direct hit on a nested path serves
-`index.html` instead of a 404.
+This is a **built React app** (Vite + React Router) **plus a small backend**
+(`server/` — Postgres + S3 + SES for form submissions; see section 5). The
+frontend itself is still static: `npm run build` produces a folder of files
+(`dist/`), and deploying it is "copy the files to storage and serve them."
+The backend is not static — it's a Node process that needs to actually run
+somewhere. Because routes are real paths (`/investors`, `/case/khayati-steel`,
+not `#investors`), the frontend's host needs one SPA fallback rule so a
+direct hit on a nested path serves `index.html` instead of a 404.
 
-- **Build first:** `npm install` (once), then `npm run build`. This compiles
-  `src/` into `dist/` — that's the folder you upload, not the project root.
+- **Build first:** `npm install` (once), then
+  `VITE_API_BASE_URL=<your backend URL> npm run build`. This compiles `src/`
+  into `dist/` — that's the folder you upload, not the project root. The
+  build **fails on purpose** if `VITE_API_BASE_URL` isn't set — see section 5.
 - **Entry point:** `dist/index.html`. Every other route (Solutions, Platform,
   Company, People, Investors, Knowledge Hub, SPARK, legal pages) is a real
   path handled client-side by React Router once the bundle loads.
-- **Form submissions** go to a Google Apps Script Web App, not to your server.
-  See "Lead capture" below. The endpoint URL lives in `src/leads.js` and is
-  baked into the bundle at build time — changing it means rebuilding.
+- **Form submissions** go to the API in `server/`, not to a third-party
+  service. See "Lead capture" (section 5) — that's the one part of this
+  deploy that isn't just "upload static files."
 
 ---
 
@@ -40,10 +43,10 @@ dist/
 ```
 
 Upload **the contents of `dist/`**, not the project source. `src/`,
-`node_modules/`, `uploads/`, `screens/`, `screenshots/`, `apps-script-leads.gs`
-and the `.md` files never need to leave your machine — they aren't part of
-`dist/` and don't need excluding from anything, since you're only uploading
-`dist/`'s contents in the first place.
+`node_modules/`, `uploads/`, `screens/`, `screenshots/`, `server/` and the
+`.md` files never need to leave your machine as part of the *frontend*
+deploy — they aren't part of `dist/`. (`server/` is its own separate
+deploy — see section 5 — not something that goes in `dist/`.)
 
 `uploads/` in particular must stay out of any deploy: it holds internal
 documents (leadership profiles, AGM notices, job descriptions) that should
@@ -247,10 +250,13 @@ Test on the live domain, not localhost:
 - [ ] Deep links work when pasted **fresh** into the address bar (this is the
       SPA-fallback check from step 2.3), e.g.
       `…/spark/p`, `…/investors`, `…/case/khayati-steel`
-- [ ] **Talk to an Advisor** submits → row appears in the Google Sheet
-- [ ] **Bring us your energy challenge** (Platform) submits → row appears
-- [ ] A careers application with a CV submits → row appears **and** the CV lands in
-      the Drive folder
+- [ ] **Talk to an Advisor** submits → a row appears in Postgres (check via
+      `GET /api/leads` with `ADMIN_API_KEY`, or `/leads` in the app) and a
+      notification email arrives at the general enquiries address
+- [ ] **Bring us your energy challenge** (Platform) submits → same check
+- [ ] A careers application with a résumé submits → the row appears, the
+      résumé lands in the S3 bucket under `S3_RESUME_PREFIX`, **and** the
+      notification email (to the careers address) has it attached
 - [ ] Browser console is clean
 - [ ] Mobile: 320px, 375px and 768px widths — no horizontal scrolling
 - [ ] PDFs open: GPTW certificate, ISO 9001 certificate, AGM and EGM notices

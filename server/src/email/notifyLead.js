@@ -1,5 +1,24 @@
 import { mailer, NOTIFY_FROM } from "./client.js";
-import { isValidEmail } from "../validate.js";
+import { config } from "../config.js";
+
+// The recipient is resolved server-side from the submission's own `form`/
+// `reason` fields — never from the client-supplied `route_to` (which is
+// still stored on the row for reference, but is not trusted as a mail
+// destination: an unauthenticated POST could otherwise set an arbitrary
+// `route_to` and turn this into a way to send attacker-controlled email,
+// with a spoofable reply-to, from the site's verified SES identity).
+//
+// HR_EMAIL (server/.env) is the careers-application inbox; general enquiries
+// go to GENERAL_NOTIFY_EMAIL if set, otherwise the company's published
+// info@ address.
+const CAREERS_EMAIL = config.hrEmail || "Careers@integrumenergy.in";
+const GENERAL_EMAIL = config.generalNotifyEmail || "info@integrumenergy.in";
+const IS_CAREERS = /career/i;
+
+function resolveRecipient(row) {
+  if (IS_CAREERS.test(row.form || "") || IS_CAREERS.test(row.reason || "")) return CAREERS_EMAIL;
+  return GENERAL_EMAIL;
+}
 
 // Fields shown in the main details table, in display order. Internal/
 // technical fields (resume_bucket, resume_key, page, route_to) are handled
@@ -96,15 +115,11 @@ function formatHtml(row, resumeName) {
 // lead itself was saved (same "never lose the lead" rule as the rest of
 // the API).
 //
-// The recipient is taken from the submission's own `route_to` field (each
-// form picks its own — e.g. Careers@... for a job application, info@... for
-// a general enquiry).
-//
 // `attachment`, when given, is { filename, contentType, buffer }.
 export async function notifyLead(row, attachment) {
-  const to = isValidEmail(row.route_to) && row.route_to;
+  const to = resolveRecipient(row);
   if (!NOTIFY_FROM || !to) {
-    console.warn("notifyLead: SES_FROM_EMAIL/HR_EMAIL not configured — skipping email");
+    console.warn("notifyLead: SES_FROM_EMAIL not configured — skipping email");
     return;
   }
   const resumeName = attachment ? attachment.filename : null;

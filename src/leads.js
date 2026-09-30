@@ -165,6 +165,37 @@ async function postLead(url, lead) {
   }
 }
 
+/* ---------- admin: view real submissions from the database ---------- */
+const ADMIN_KEY_LS = "integrum_admin_key";
+
+export function getAdminKey() {
+  try { return localStorage.getItem(ADMIN_KEY_LS) || ""; }
+  catch (e) { return ""; }
+}
+export function setAdminKey(key) {
+  try {
+    if (key) localStorage.setItem(ADMIN_KEY_LS, key);
+    else localStorage.removeItem(ADMIN_KEY_LS);
+  } catch (e) {}
+}
+
+// Fetches real submissions from the server's database (GET /api/leads) —
+// distinct from readLeads(), which only ever shows what this one browser
+// has submitted itself. Returns { ok, leads, error }.
+export async function fetchServerLeads(adminKey, { limit = 100, offset = 0 } = {}) {
+  if (!adminKey) return { ok: false, error: "Enter the admin key first" };
+  try {
+    const res = await fetch(`${LEADS_ENDPOINT}?limit=${limit}&offset=${offset}`, {
+      headers: { "x-admin-key": adminKey },
+    });
+    const body = await res.json().catch(() => null);
+    if (!res.ok) return { ok: false, error: (body && body.error) || `HTTP ${res.status}` };
+    return { ok: true, leads: (body && body.leads) || [] };
+  } catch (err) {
+    return { ok: false, error: String(err) };
+  }
+}
+
 // Sends a throwaway row so the connection can be proven before go-live.
 export async function testEndpoint(url) {
   if (!url) return { ok: false, error: "Enter an endpoint URL first" };

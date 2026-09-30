@@ -8,6 +8,7 @@ import { I } from "./dataviz";
 import { Home } from "./home";
 import { CnILane } from "./cni";
 import { Investors } from "./investors";
+import { IR_META } from "./ir-data";
 import { Dashboard } from "./dashboard";
 import { CaseStudy, Contact, CASES } from "./casestudy";
 import { About } from "./about";
@@ -19,14 +20,18 @@ import { useTweaks, TweaksPanel, TweakSection, TweakColor } from "./tweaks-panel
 import {
   readLeads, clearLeads, downloadLeadsCSV, activeEndpoint,
   setTestEndpoint, testEndpoint, isVerified,
+  getAdminKey, setAdminKey, fetchServerLeads,
 } from "./leads";
 
 function LeadsAdmin() {
   const [tick, setTick] = useState(0);
   const [url, setUrl] = useState(activeEndpoint());
   const [test, setTest] = useState(null);      // null | "busy" | {ok,error}
+  const [adminKey, setAdminKeyState] = useState(getAdminKey());
+  const [serverState, setServerState] = useState(null); // null | "busy" | {ok, leads?, error?}
   const rows = readLeads().slice().reverse();
   const cols = ["submitted_at","form","name","company","email","phone","industry","consumption","location","state","reason","role","resume_name","notes","help"];
+  const serverCols = ["submitted_at","form","name","company","email","phone","industry","consumption","location","state","reason","role","resume_name","resume_upload_failed","notes","help"];
   const inCode = !!import.meta.env.VITE_API_BASE_URL;
   const isSet = !!activeEndpoint();
   // "live" requires a delivery that actually succeeded — never just a saved string
@@ -88,10 +93,42 @@ function LeadsAdmin() {
           }}>Clear stored leads</button>
         </div>
       </div></section>
+
       <section className="section" style={{ paddingTop:0 }}><div className="shell">
+        <h2 style={{ fontSize:22 }}>Submissions in the database</h2>
+        <p className="muted" style={{ marginTop:6, maxWidth:760 }}>
+          What's actually in Postgres — every visitor's submissions, not just this browser's.
+          Requires the server's <code>ADMIN_API_KEY</code> (see <code>server/.env</code>).
+        </p>
+        <div className="ls-row" style={{ marginTop:14 }}>
+          <input className="ls-input" type="password" value={adminKey}
+            onChange={e=>{ setAdminKeyState(e.target.value); setAdminKey(e.target.value); }}
+            placeholder="Admin key"/>
+          <button className="btn btn-nav-cta" disabled={serverState==="busy" || !adminKey.trim()} onClick={async()=>{
+            setServerState("busy");
+            const r = await fetchServerLeads(adminKey.trim());
+            setServerState(r);
+          }}>{serverState==="busy" ? "Loading…" : "Load from database"}</button>
+        </div>
+        {serverState && serverState !== "busy" && !serverState.ok && (
+          <div className="form-alert error" style={{ marginTop:14 }}>Couldn't load: {serverState.error}</div>
+        )}
+        {serverState && serverState.ok && (
+          serverState.leads.length === 0
+            ? <p className="muted" style={{ marginTop:14 }}>No submissions in the database yet.</p>
+            : <div className="co2-table-wrap" style={{ marginTop:14 }}><table className="co2-table">
+                <thead><tr>{serverCols.map(c=>(<th key={c}>{c.replace(/_/g," ")}</th>))}</tr></thead>
+                <tbody>{serverState.leads.map((r)=>(<tr key={r.id}>{serverCols.map(c=>(<td key={c}>{String(r[c] ?? "")}</td>))}</tr>))}</tbody>
+              </table></div>
+        )}
+      </div></section>
+
+      <section className="section" style={{ paddingTop:0 }}><div className="shell">
+        <h2 style={{ fontSize:22 }}>Submissions captured in this browser</h2>
+        <p className="muted" style={{ marginTop:6 }}>The local backup every submission writes before attempting delivery — useful if the database above is unreachable.</p>
         {rows.length === 0
-          ? <p className="muted">No submissions captured in this browser yet.</p>
-          : <div className="co2-table-wrap"><table className="co2-table">
+          ? <p className="muted" style={{ marginTop:14 }}>No submissions captured in this browser yet.</p>
+          : <div className="co2-table-wrap" style={{ marginTop:14 }}><table className="co2-table">
               <thead><tr>{cols.map(c=>(<th key={c}>{c.replace(/_/g," ")}</th>))}</tr></thead>
               <tbody>{rows.map((r,i)=>(<tr key={i}>{cols.map(c=>(<td key={c}>{r[c] || ""}</td>))}</tr>))}</tbody>
             </table></div>}
@@ -342,7 +379,11 @@ export function App() {
   };
   // per-page SEO: keep <title> + meta description in sync with the route
   useEffect(()=>{
-    const [title, desc] = PAGE_META[page] || PAGE_META.home;
+    // The Investors page has its own richer per-section titles (9 sub-
+    // sections: snapshot, financials, governance, directors, ...) — use
+    // those over the one generic "Investors" entry in PAGE_META when the
+    // current sub-route matches one.
+    const [title, desc] = (page === "investors" && IR_META[route.sub]) || PAGE_META[page] || PAGE_META.home;
     document.title = title;
     let m = document.querySelector('meta[name="description"]');
     if (!m) { m = document.createElement("meta"); m.setAttribute("name","description"); document.head.appendChild(m); }
@@ -375,7 +416,7 @@ export function App() {
     if (window.gtag) window.gtag("event", "page_view", {
       page_title: title, page_location: url, page_path: page === "home" ? "/" : "/" + fullPath,
     });
-  },[page]);
+  },[page, route.sub]);
   const isDashApp = page === "dashboard";
   const [searchOpen, setSearchOpen] = useState(false);
   useEffect(()=>{

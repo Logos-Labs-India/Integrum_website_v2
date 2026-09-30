@@ -1,10 +1,9 @@
 import pg from "pg";
+import { config } from "../config.js";
 
 const { Pool } = pg;
 
-const useSSL = String(process.env.PGSSL_INSECURE || "").toLowerCase() === "true";
-
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: useSSL ? { rejectUnauthorized: false } : undefined,
+  connectionString: config.databaseUrl,
+  ssl: config.pgSslInsecure ? { rejectUnauthorized: false } : undefined,
 });

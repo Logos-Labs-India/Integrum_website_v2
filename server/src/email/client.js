@@ -1,11 +1,12 @@
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import nodemailer from "nodemailer";
+import { config } from "../config.js";
 
 const sesClient = new SESv2Client({
-  region: process.env.AWS_REGION,
+  region: config.awsRegion,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: config.awsAccessKeyId,
+    secretAccessKey: config.awsSecretAccessKey,
   },
 });
 
@@ -16,4 +17,4 @@ export const mailer = nodemailer.createTransport({
   SES: { sesClient, SendEmailCommand },
 });
 
-export const NOTIFY_FROM = process.env.SES_FROM_EMAIL;
+export const NOTIFY_FROM = config.sesFromEmail;
