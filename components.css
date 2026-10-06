@@ -1636,6 +1636,12 @@
 .ir-tag.t-independent { background: var(--green-soft); color: #12704F; }
 .ir-tag.t-executive { background: var(--accent-soft); color: var(--p-color); }
 .ir-person-bio { font-size: 13.5px; color: var(--ink-3); line-height: 1.55; margin: 12px 0 0; }
+/* ---------- snapshot: DRHP statutory audio-visual ---------- */
+.ir-av {
+  margin-top: 20px; background: #07111F; border: 1px solid var(--hairline);
+  border-radius: var(--r-lg); box-shadow: var(--sh-1); overflow: hidden;
+}
+.ir-av video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #07111F; }
 /* ---------- snapshot: jump-into-the-library cards ---------- */
 .ir-jump { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 20px; }
 @media (max-width: 900px) { .ir-jump { grid-template-columns: repeat(2, minmax(0,1fr)); } }
