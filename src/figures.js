@@ -7,8 +7,8 @@
    being hand-copied into sibling arrays; this object exists to prevent that.
    ============================================================ */
 export const FIG = {
-  greenUnitsMn:  "876",              // mn kWh cumulative (87,63,59,709 kWh)
-  co2Total:      "6,22,215",         // tonnes, cumulative
+  greenUnitsMn:  "725.81",           // mn kWh cumulative
+  co2Total:      "5,11,698",         // tonnes, cumulative
   co2LatestFY:   "2,17,435",         // tonnes, FY25-26
   commissioned:  "264+",              // MW operating
   ongoing:       "351+",              // MW under development

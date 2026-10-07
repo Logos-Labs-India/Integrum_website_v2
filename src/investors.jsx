@@ -222,6 +222,30 @@ function IRDisclosures() {
 }
 
 /* ---------- snapshot ---------- */
+/* ---------- snapshot · DRHP statutory audio-visual ---------- */
+const IR_AV = [
+  { key:"en", label:"English", src:"/assets/investors/IEIL-DRHP-Statutory-AV-English.mp4" },
+  { key:"hi", label:"हिन्दी (Hindi)", src:"/assets/investors/IEIL-DRHP-Statutory-AV-Hindi.mp4" },
+];
+
+function IRStatutoryAV() {
+  const [lang, setLang] = useState(IR_AV[0].key);
+  const cur = IR_AV.find(v => v.key === lang) || IR_AV[0];
+  return (
+    <>
+      <h3 className="ir-h3" style={{ marginTop: 40 }}>Statutory audio-visual — DRHP</h3>
+      <p className="muted" style={{ maxWidth:640, marginTop:-4 }}>Draft Red Herring Prospectus audio-visual, in English and Hindi.</p>
+      <IRGroupTabs groups={IR_AV} active={lang} onPick={setLang}/>
+      <Reveal className="ir-av">
+        <video key={cur.key} controls preload="metadata" playsInline
+               poster="/assets/investors/IEIL-DRHP-Statutory-AV-poster.jpg">
+          <source src={cur.src} type="video/mp4"/>
+        </video>
+      </Reveal>
+    </>
+  );
+}
+
 function IRSnapshot({ nav }) {
   const jump = IR_SECTIONS.filter(s => s.key !== "snapshot").map(s => ({
     ...s, n: IR_DOCS.filter(d => d.sec === s.key).length,
@@ -280,6 +304,8 @@ function IRSnapshot({ nav }) {
           </div>
         </div>
       </Reveal>
+
+      <IRStatutoryAV/>
 
       <h3 className="ir-h3" style={{ marginTop: 40 }}>Document library</h3>
       <p className="muted" style={{ maxWidth:640, marginTop:-4 }}>Filed by section.</p>
