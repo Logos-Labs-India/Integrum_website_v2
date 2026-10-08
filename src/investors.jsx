@@ -61,7 +61,9 @@ const IR_DRHP_DISCLAIMER = [
   "The Company and its affiliates shall not be responsible for any loss or damage that could result from interception and interpretation by any third parties of any information being made available to you through this website. Our Company has taken all necessary steps to ensure that the contents of the Draft Red Herring Prospectus as appearing on this website are identical to the Draft Red Herring Prospectus filed with SEBI. You are reminded that documents transmitted in electronic form may be altered or changed during the process of transmission and consequently, none of the Company, Book Running Lead Managers, their respective affiliates, directors, officers, agents, representatives, advisors or employees accepts any liability or responsibility whatsoever in respect of alterations or changes which may have taken place during the course of transmission of the Draft Red Herring Prospectus in electronic format.",
   "You are responsible for protecting against viruses and other destructive items. You are accessing this website at your own risk, and it is your responsibility to take precautions to ensure that it is free from viruses and other items of a destructive nature."
 ];
-function IRDisclaimer({ doc, onClose }) {
+/* onConfirm (optional): what "I Confirm" does. Defaults to downloading
+   doc.url; the DRHP audio-visuals pass a callback that starts playback. */
+function IRDisclaimer({ doc, onClose, onConfirm }) {
   const [declined, setDeclined] = React.useState(false);
   React.useEffect(() => {
     const k = (e) => { if (e.key === "Escape") onClose(); };
@@ -70,6 +72,7 @@ function IRDisclaimer({ doc, onClose }) {
     return () => { window.removeEventListener("keydown", k); document.body.style.overflow = o; };
   }, []);
   const confirm = () => {
+    if (onConfirm) { onClose(); onConfirm(); return; }
     const a = document.createElement("a");
     a.href = doc.url; a.download = doc.url.split("/").pop(); a.rel = "noopener";
     document.body.appendChild(a); a.click(); a.remove();
@@ -299,17 +302,39 @@ const IR_AV = [
 function IRStatutoryAV() {
   const [lang, setLang] = useState(IR_AV[0].key);
   const cur = IR_AV.find(v => v.key === lang) || IR_AV[0];
+  // Legal requirement: the DRHP disclaimer must be acknowledged before EVERY
+  // play — no memory between plays or sessions. Any play that wasn't just
+  // confirmed (Play button, clicking the picture, keyboard, replay after the
+  // end) is paused immediately and the disclaimer shown instead.
+  const videoRef = React.useRef(null);
+  const confirmedRef = React.useRef(false);
+  const [gate, setGate] = useState(false);
+  const onPlay = (e) => {
+    if (confirmedRef.current) { confirmedRef.current = false; return; }
+    e.currentTarget.pause();
+    setGate(true);
+  };
+  const playConfirmed = () => {
+    confirmedRef.current = true;
+    const v = videoRef.current;
+    if (v) v.play().catch(() => { confirmedRef.current = false; });
+  };
   return (
     <>
       <h3 className="ir-h3" style={{ marginTop: 40 }}>Statutory audio-visual — DRHP</h3>
       <p className="muted" style={{ maxWidth:640, marginTop:-4 }}>Draft Red Herring Prospectus audio-visual, in English and Hindi.</p>
       <IRGroupTabs groups={IR_AV} active={lang} onPick={setLang}/>
       <Reveal className="ir-av">
-        <video key={cur.key} controls preload="metadata" playsInline
+        <video key={cur.key} ref={videoRef} controls preload="metadata" playsInline
+               controlsList="nodownload noremoteplayback" disablePictureInPicture
+               onContextMenu={(e)=>e.preventDefault()} onPlay={onPlay}
                poster="/assets/investors/IEIL-DRHP-Statutory-AV-poster.jpg">
           <source src={cur.src} type="video/mp4"/>
         </video>
       </Reveal>
+      {gate && ReactDOM.createPortal(
+        <IRDisclaimer doc={{ t: `Statutory audio-visual — DRHP · ${cur.label}` }} onClose={()=>setGate(false)} onConfirm={playConfirmed}/>,
+        document.body)}
     </>
   );
 }
