@@ -8,11 +8,12 @@ import { config } from "../config.js";
 // `route_to` and turn this into a way to send attacker-controlled email,
 // with a spoofable reply-to, from the site's verified SES identity).
 //
-// HR_EMAIL (server/.env) is the careers-application inbox; general enquiries
-// go to GENERAL_NOTIFY_EMAIL if set, otherwise the company's published
-// info@ address.
-const CAREERS_EMAIL = config.hrEmail || "Careers@integrumenergy.in";
-const GENERAL_EMAIL = config.generalNotifyEmail || "info@integrumenergy.in";
+// HR_EMAIL and GENERAL_NOTIFY_EMAIL (server/.env) are both required — no
+// hardcoded address is baked into source as a fallback, so the recipient
+// is always whatever's actually configured, and a missing value fails the
+// server at boot (config.js) rather than silently mailing the wrong inbox.
+const CAREERS_EMAIL = config.hrEmail;
+const GENERAL_EMAIL = config.generalNotifyEmail;
 const IS_CAREERS = /career/i;
 
 function resolveRecipient(row) {

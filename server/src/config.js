@@ -10,6 +10,10 @@ const REQUIRED = [
   "AWS_SECRET_ACCESS_KEY",
   "AWS_STORAGE_BUCKET_NAME",
   "SES_FROM_EMAIL",
+  // Notification recipients — deliberately required rather than defaulting
+  // to a hardcoded address baked into source. See email/notifyLead.js.
+  "HR_EMAIL",
+  "GENERAL_NOTIFY_EMAIL",
 ];
 
 export function loadConfig() {
@@ -18,12 +22,6 @@ export function loadConfig() {
     throw new Error(
       `Missing required environment variable(s): ${missing.join(", ")}. ` +
       `Copy server/.env.example to server/.env and fill these in before starting the server.`
-    );
-  }
-  if (!process.env.HR_EMAIL) {
-    console.warn(
-      "Warning: HR_EMAIL not set — careers-application notifications will fall back to " +
-      "the hardcoded Careers@integrumenergy.in, which may not be a verified SES recipient."
     );
   }
   if (!process.env.ADMIN_API_KEY) {
@@ -40,8 +38,8 @@ export function loadConfig() {
     resumeBucket: process.env.AWS_STORAGE_BUCKET_NAME,
     resumePrefix: process.env.S3_RESUME_PREFIX || "careers-resumes",
     sesFromEmail: process.env.SES_FROM_EMAIL,
-    hrEmail: process.env.HR_EMAIL || "",
-    generalNotifyEmail: process.env.GENERAL_NOTIFY_EMAIL || "",
+    hrEmail: process.env.HR_EMAIL,
+    generalNotifyEmail: process.env.GENERAL_NOTIFY_EMAIL,
     allowedOrigins: (process.env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean),
     adminApiKey: process.env.ADMIN_API_KEY || "",
     isProd: process.env.NODE_ENV === "production",
