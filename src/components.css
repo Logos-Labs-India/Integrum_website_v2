@@ -2064,3 +2064,21 @@
 .vmv-card.is-core h3 { color:var(--accent-deep); }
 .vmv-card p { font-size:15px; color:var(--ink-2); line-height:1.66; margin-top:11px; }
 .vmv-card.is-core p { color:var(--ink); }
+
+/* ===== DRHP / DAP disclaimer gate ===== */
+.irdc-overlay { position: fixed; inset: 0; z-index: 95; background: rgba(6,14,26,.6); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; padding: 24px; animation: fadeIn .18s ease; }
+.irdc-box { width: min(760px, 100%); max-height: min(86vh, 900px); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--hairline-2); border-radius: var(--r-lg); box-shadow: var(--sh-3); overflow: hidden; }
+.irdc-head { padding: 26px 30px 18px; border-bottom: 1px solid var(--hairline); display: flex; flex-direction: column; gap: 6px; }
+.irdc-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.irdc-title { margin: 0; font-family: var(--font-display); font-size: 24px; color: var(--ink); }
+.irdc-doc { font-size: 13.5px; color: var(--ink-2); }
+.irdc-body { padding: 20px 30px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: var(--ink-2); display: flex; flex-direction: column; gap: 12px; }
+.irdc-body p { margin: 0; text-wrap: pretty; }
+.irdc-body strong { color: var(--ink); }
+.irdc-caps { font-size: 12.5px; font-weight: 600; color: var(--ink) !important; letter-spacing: .01em; }
+.irdc-h4 { margin: 8px 0 0; font-size: 15px; color: var(--ink); }
+.irdc-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.irdc-foot { padding: 16px 30px; border-top: 1px solid var(--hairline); display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+.irdc-declined { padding: 40px 32px; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+.irdc-declined-msg { margin: 0; font-family: var(--font-display); font-size: 19px; line-height: 1.45; color: var(--ink); max-width: 460px; text-wrap: pretty; }
+@media (max-width: 600px) { .irdc-head, .irdc-body, .irdc-foot { padding-left: 20px; padding-right: 20px; } .irdc-foot .btn { flex: 1; justify-content: center; } }
