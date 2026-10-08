@@ -42,9 +42,75 @@ const irSection = (key) => IR_SECTIONS.find(s => s.key === key) || IR_SECTIONS[0
    IR_STAGE is "preipo" it renders as a locked placeholder instead of a file. */
 const irLocked = (d) => window.IR_STAGE !== "listed" && d && d.from === "listing";
 
+/* ---------- DRHP / DAP / DRHP advertisement — legal disclaimer gate ----------
+   Shown on EVERY download click (no session/local memory, by legal instruction).
+   "I Confirm" downloads; "I Do Not Confirm" blocks it and shows the notice. */
+const IR_DRHP_DISCLAIMER = [
+  "The following disclaimer applies to the draft red herring prospectus dated September 24, 2026 (the “Draft Red Herring Prospectus”) filed with the Securities and Exchange Board of India (“SEBI”), BSE Limited and National Stock Exchange of India Limited hosted on this website in relation to the proposed initial public offering in India of the equity shares bearing face value of ₹2 each (“Equity Shares”) of Integrum Energy Infrastructure Limited (the “Company”) (the “Offer”). You are advised to read this disclaimer carefully before reading, accessing or making any other use of the Draft Red Herring Prospectus.",
+  "The Draft Red Herring Prospectus does not constitute an offer of securities for sale in any jurisdiction, including India, and any potential investors should not rely on the Draft Red Herring Prospectus. Neither the Company nor any of its affiliates is soliciting any action based on the Draft Red Herring Prospectus. The offer and sale of the Equity Shares to be offered in the Offer shall be made only pursuant to the Red Herring Prospectus (when available), if the investor is in India, or the Red Herring Prospectus and the accompanying preliminary international wrap (which contains, among other things, the selling restrictions for the Offer outside India) if the investor is outside India. No person outside India is eligible to bid for Equity Shares in the Offer unless that person has received the preliminary offering memorandum for the Offer, which comprises the Red Herring Prospectus and the preliminary international wrap.",
+  "The Equity Shares offered in the Offer have not been and will not be registered, listed or otherwise qualified in any jurisdiction except India and may not be offered or sold to persons outside of India except in compliance with the applicable laws of each such jurisdiction. In particular, the Equity Shares offered in the Offer have not been and will not be registered, listed or otherwise qualified in any jurisdiction except India and may not be offered or sold to persons outside of India except in compliance with the applicable laws of each such jurisdiction. In particular, the Equity Shares offered in the Offer have not been and will not be registered under the U.S. Securities Act of 1933, as amended (the “U.S. Securities Act”), or the securities laws of any state of the United States and may not be offered or sold in the United States, except pursuant to an exemption from, or in a transaction not subject to, the registration requirements of the U.S. Securities Act and applicable state securities laws. The Equity Shares offered in the Offer are being offered and sold only outside the United States in “offshore transactions” as defined in and in reliance on Regulation S under the U.S. Securities Act.",
+  "The copy of the Draft Red Herring Prospectus hosted on this website may not be distributed, directly or indirectly, outside India. You are hereby notified that any forwarding, delivery, distribution or reproduction of the Draft Red Herring Prospectus, in whole or in part, outside India is strictly prohibited. Failure to comply with this disclaimer may result in a violation of the applicable laws. If you access the Draft Red Herring Prospectus, you agree not to forward, deliver or distribute it, in whole or in part, to any person outside India.",
+  "You are accessing this website at your own risk. None of the Company, Mefcom Capital Markets Limited, Centrum Broking Limited (as successor to the merchant banking business of Centrum Capital Limited), Beeline Capital Advisors Private Limited (together, the “Book Running Lead Managers”) or their respective affiliates, directors, officers, agents, representatives, advisors or employees will be liable or have any responsibility of any kind for any loss or damage that you incur in the event of any failure or disruption of this website, or resulting from the act or omission of any other party involved in making this website or the data contained therein available to you, or from any other cause relating to your access to, inability to access, or use of the website or these materials.",
+  "The Company and its affiliates shall not be responsible for any loss or damage that could result from interception and interpretation by any third parties of any information being made available to you through this website. Our Company has taken all necessary steps to ensure that the contents of the Draft Red Herring Prospectus as appearing on this website are identical to the Draft Red Herring Prospectus filed with SEBI. You are reminded that documents transmitted in electronic form may be altered or changed during the process of transmission and consequently, none of the Company, Book Running Lead Managers, their respective affiliates, directors, officers, agents, representatives, advisors or employees accepts any liability or responsibility whatsoever in respect of alterations or changes which may have taken place during the course of transmission of the Draft Red Herring Prospectus in electronic format.",
+  "You are responsible for protecting against viruses and other destructive items. You are accessing this website at your own risk, and it is your responsibility to take precautions to ensure that it is free from viruses and other items of a destructive nature."
+];
+function IRDisclaimer({ doc, onClose }) {
+  const [declined, setDeclined] = React.useState(false);
+  React.useEffect(() => {
+    const k = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", k);
+    const o = document.body.style.overflow; document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", k); document.body.style.overflow = o; };
+  }, []);
+  const confirm = () => {
+    const a = document.createElement("a");
+    a.href = doc.url; a.download = doc.url.split("/").pop(); a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    onClose();
+  };
+  return (
+    <div className="irdc-overlay" onMouseDown={(e)=>{ if (e.target === e.currentTarget) onClose(); }}>
+      <div className="irdc-box" role="dialog" aria-modal="true" aria-labelledby="irdc-title">
+        {declined ? (
+          <div className="irdc-declined">
+            <p className="irdc-declined-msg">You are not permitted to view the materials in this section of the website</p>
+            <button className="btn btn-ghost" onClick={onClose} autoFocus>Close</button>
+          </div>
+        ) : (<>
+          <div className="irdc-head">
+            <span className="irdc-eyebrow">Website screening and disclaimer</span>
+            <h3 id="irdc-title" className="irdc-title">Important Disclaimer</h3>
+            <span className="irdc-doc">{doc.t}</span>
+          </div>
+          <div className="irdc-body">
+            <p className="irdc-caps">PLEASE READ THIS DISCLAIMER CAREFULLY AND AGREE WITH THE TERMS AND CONDITIONS OF THIS DISCLAIMER BEFORE CONTINUING. IT APPLIES TO ALL PERSONS WHO VIEW THIS WEBSITE. PLEASE NOTE THAT THE DISCLAIMER SET OUT BELOW MAY BE ALTERED OR UPDATED. YOU SHOULD READ IT IN FULL EACH TIME YOU VISIT THE WEBSITE. BY ACCESSING THIS INFORMATION ON THIS WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS BELOW, INCLUDING ANY MODIFICATIONS THAT MAY BE MADE TO THEM FROM TIME TO TIME.</p>
+            <p className="irdc-caps">THESE MATERIALS ARE NOT DIRECTED AT OR INTENDED TO BE ACCESSED BY PERSONS OUTSIDE INDIA.</p>
+            <p className="irdc-caps">THE DRAFT RED HERRING PROSPECTUS HAS BEEN MADE AVAILABLE ON OUR WEBSITE TO COMPLY WITH THE SECURITIES AND EXCHANGE BOARD OF INDIA (ISSUE OF CAPITAL AND DISCLOSURE REQUIREMENTS) REGULATIONS, 2018, AS AMENDED.</p>
+            {IR_DRHP_DISCLAIMER.map((p, i) => <p key={i}>{p}</p>)}
+            <p><strong>Due to legal restrictions, access to this part of this website is only available to residents of India from within India.</strong></p>
+            <p><strong>If you are not in India, please exit this webpage.</strong></p>
+            <h4 className="irdc-h4">Confirmation of your acceptance of the terms and conditions</h4>
+            <p>By clicking on the “I Confirm” button below you represent to the Company that:</p>
+            <ol className="irdc-list">
+              <li>You have read the disclaimer set out above and you agree to be bound by its terms; and</li>
+              <li>You are a resident of India and are located in India.</li>
+            </ol>
+            <p>If you cannot make these confirmations, you must press the button marked “I Do Not Confirm”.</p>
+          </div>
+          <div className="irdc-foot">
+            <button className="btn btn-ghost" onClick={()=>setDeclined(true)}>I Do Not Confirm</button>
+            <button className="btn btn-primary" onClick={confirm}>I Confirm</button>
+          </div>
+        </>)}
+      </div>
+    </div>
+  );
+}
+
 /* ---------- one document row ---------- */
 function IRDocRow({ d }) {
   const locked = irLocked(d);
+  const [gate, setGate] = React.useState(false);
   return (
     <li className={"ir-doc-row" + (locked ? " locked" : "")}>
       <span className="dl-ico">{I.doc()}</span>
@@ -56,7 +122,8 @@ function IRDocRow({ d }) {
       <span className="dm num">{locked ? "—" : (d.size ? "PDF · " + d.size : "PDF")}</span>
       {locked
         ? <span className="ir-lock">Available on listing</span>
-        : <a className="dl-arrow" href={d.url || "#"} onClick={(e)=>{ if (!d.url) e.preventDefault(); }} aria-label={"Download " + d.t}>{I.download()}</a>}
+        : <a className="dl-arrow" href={d.url || "#"} onClick={(e)=>{ if (!d.url) { e.preventDefault(); return; } if (d.gated) { e.preventDefault(); setGate(true); } }} aria-label={"Download " + d.t}>{I.download()}</a>}
+      {gate && ReactDOM.createPortal(<IRDisclaimer doc={d} onClose={()=>setGate(false)}/>, document.body)}
     </li>
   );
 }
