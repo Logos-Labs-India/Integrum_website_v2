@@ -312,8 +312,8 @@ const IR_OPS = [];
 const IR_CONTACT = {
   name:"Investor Relations",
   role:"Integrum Energy Infrastructure Ltd.",
-  email:"compliance@integrumenergy.in",
-  phone:"+91 76187 02052",
+  email:"IR@integrumenergy.in",
+  phone:"+91-9187713438",
   addr:"Bengaluru, Karnataka, India · CIN U40106KA2021PLC144691",
 };
 
