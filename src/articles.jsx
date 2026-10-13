@@ -158,30 +158,46 @@ export const ARTICLES = [
 
 export const articleById = (id) => ARTICLES.find(a => a.id === id);
 
+/* ---------- page text (CMS-editable) ---------- */
+export const ARTICLES_TEXT = {
+  sectionEyebrow: "Insights & analysis",
+  sectionTitle: "What we are working through.",
+  sectionLead: "Commercial and regulatory analysis from live projects — written for the people who have to sign off on the numbers.",
+  breadcrumb: "Knowledge Hub",
+  partOf: "of",
+  read: "Read",
+  fromLabel: "From",
+  toLabel: "To",
+  sideTitle: "Sizing storage for your own load?",
+  sideText: "We model these configurations against your actual interval data before recommending any battery.",
+  sideCta: "Talk to an advisor",
+  continueTitle: "Continue reading",
+};
+
 /* ---------- one rendered block ---------- */
 function ArtBlock({ b, nav }) {
   if (b.t === "p")  return <p className="art-p">{b.v}</p>;
   if (b.t === "h")  return <h3 className="art-h">{b.v}</h3>;
   if (b.t === "eq") return <div className="art-eq">{b.v}</div>;
   if (b.t === "pull") return <blockquote className="art-pull">{b.v}</blockquote>;
-  if (b.t === "ul") return <ul className="art-ul">{b.v.map((x,i)=>(<li key={i}>{I.check({width:15,height:15})}<span>{x}</span></li>))}</ul>;
+  if (b.t === "ul") return <ul className="art-ul">{(Array.isArray(b.v) ? b.v : []).map((x,i)=>(<li key={i}>{I.check({width:15,height:15})}<span>{x}</span></li>))}</ul>;
   if (b.t === "qh") return (
     <div className="art-qh"><span className="art-qn">{b.n}</span><h3>{b.v}</h3></div>
   );
   if (b.t === "shift") return (
     <div className="art-shift">
-      <div className="as-row is-from"><span className="as-k">From</span><p>“{b.from}”</p></div>
+      <div className="as-row is-from"><span className="as-k">{ARTICLES_TEXT.fromLabel}</span><p>“{b.from}”</p></div>
       <span className="as-arrow">{I.arrow({width:18,height:18})}</span>
-      <div className="as-row is-to"><span className="as-k">To</span><p>“{b.to}”</p></div>
+      <div className="as-row is-to"><span className="as-k">{ARTICLES_TEXT.toLabel}</span><p>“{b.to}”</p></div>
     </div>
   );
   if (b.t === "table") return (
     <div className="art-table-wrap">
       <table className="art-table">
-        <thead><tr>{b.head.map((h,i)=>(<th key={i} className={i?"ta-c":""}>{h}</th>))}</tr></thead>
+        <thead><tr>{(b.head||[]).map((h,i)=>(<th key={i} className={i?"ta-c":""}>{h}</th>))}</tr></thead>
         <tbody>
-          {b.rows.map((r,i)=>(
-            <tr key={i}>{r.map((cell,j)=>(<td key={j} className={j?"ta-c num":"art-td-k"}>{cell}</td>))}</tr>
+          {(b.rows||[]).map((r,i)=>(
+            <tr key={i}>{(r||[]).map((cell,j)=>(<td key={j} className={j?"ta-c num":"art-td-k"}>{cell}</td>))}</tr>
           ))}
         </tbody>
       </table>
@@ -191,7 +207,7 @@ function ArtBlock({ b, nav }) {
   if (b.t === "assum") return (
     <details className="art-assum">
       <summary>{b.h}</summary>
-      <ul>{b.v.map((x,i)=>(<li key={i}>{x}</li>))}</ul>
+      <ul>{(Array.isArray(b.v) ? b.v : []).map((x,i)=>(<li key={i}>{x}</li>))}</ul>
     </details>
   );
   if (b.t === "next") {
@@ -199,7 +215,7 @@ function ArtBlock({ b, nav }) {
     return (
       <div className="art-next">
         <p>{b.v}</p>
-        {nx && <button className="btn btn-nav-cta" onClick={()=>nav("case/article/"+nx.id)}>Read {nx.part} {I.arrow()}</button>}
+        {nx && <button className="btn btn-nav-cta" onClick={()=>nav("case/article/"+nx.id)}>{ARTICLES_TEXT.read} {nx.part} {I.arrow()}</button>}
       </div>
     );
   }
@@ -216,13 +232,13 @@ export function ArticleDetail({ nav, a }) {
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}>
             <a onClick={()=>nav("home")} style={{cursor:"pointer",color:"#9FB7CF"}}>Home</a> {I.arrow({width:13,height:13})}
-            <a onClick={()=>nav("case")} style={{cursor:"pointer",color:"#9FB7CF"}}>Knowledge Hub</a> {I.arrow({width:13,height:13})}
+            <a onClick={()=>nav("case")} style={{cursor:"pointer",color:"#9FB7CF"}}>{ARTICLES_TEXT.breadcrumb}</a> {I.arrow({width:13,height:13})}
             <span>{a.part}</span>
           </div>
           <div className="art-hero-body">
             <div className="art-series">
               <span className="art-series-k">{a.series}</span>
-              <span className="art-series-p">{a.part} of {ARTICLES.length}</span>
+              <span className="art-series-p">{a.part} {ARTICLES_TEXT.partOf} {ARTICLES.length}</span>
             </div>
             <h1>{a.title}</h1>
             <p className="art-standfirst">{a.standfirst}</p>
@@ -237,7 +253,7 @@ export function ArticleDetail({ nav, a }) {
         <div className="shell art-layout">
           <article className="art-body">
             {a.blocks.map((b,i)=>(<ArtBlock key={i} b={b} nav={nav}/>))}
-            <div className="art-tags">{a.tags.map((t,i)=>(<span key={i}>{"#" + t.replace(/\s+/g,"")}</span>))}</div>
+            <div className="art-tags">{(a.tags||[]).map((t,i)=>(<span key={i}>{"#" + t.replace(/\s+/g,"")}</span>))}</div>
           </article>
           <aside className="art-side">
             <div className="art-side-card">
@@ -250,9 +266,9 @@ export function ArticleDetail({ nav, a }) {
               ))}
             </div>
             <div className="art-side-cta">
-              <h4>Sizing storage for your own load?</h4>
-              <p>We model these configurations against your actual interval data before recommending any battery.</p>
-              <button className="btn btn-nav-cta" onClick={()=>nav("contact")}>Talk to an advisor {I.arrow()}</button>
+              <h4>{ARTICLES_TEXT.sideTitle}</h4>
+              <p>{ARTICLES_TEXT.sideText}</p>
+              <button className="btn btn-nav-cta" onClick={()=>nav("contact")}>{ARTICLES_TEXT.sideCta} {I.arrow()}</button>
             </div>
           </aside>
         </div>
@@ -260,7 +276,7 @@ export function ArticleDetail({ nav, a }) {
 
       <section className="section" style={{ background:"var(--surface-2)", paddingTop:"clamp(26px,3vw,44px)" }}>
         <div className="shell">
-          <h3 className="ir-h3">Continue reading</h3>
+          <h3 className="ir-h3">{ARTICLES_TEXT.continueTitle}</h3>
           <div className="art-grid" style={{ marginTop:18 }}>
             {others.map((x,i)=>(<ArticleCard key={x.id} a={x} nav={nav} delay={i*60}/>))}
           </div>
@@ -283,7 +299,7 @@ export function ArticleCard({ a, nav, delay = 0 }) {
         <p>{a.standfirst}</p>
         <div className="art-card-foot">
           <span className="art-card-read">{a.read}</span>
-          <span className="art-card-go">Read {I.arrow({width:15,height:15})}</span>
+          <span className="art-card-go">{ARTICLES_TEXT.read} {I.arrow({width:15,height:15})}</span>
         </div>
       </button>
     </Reveal>
@@ -296,9 +312,9 @@ export function ArticlesSection({ nav }) {
     <section className="section" id="insights">
       <div className="shell">
         <Reveal className="sec-head">
-          <span className="eyebrow">Insights &amp; analysis</span>
-          <h2>What we are working through.</h2>
-          <p className="lead">Commercial and regulatory analysis from live projects — written for the people who have to sign off on the numbers.</p>
+          <span className="eyebrow">{ARTICLES_TEXT.sectionEyebrow}</span>
+          <h2>{ARTICLES_TEXT.sectionTitle}</h2>
+          <p className="lead">{ARTICLES_TEXT.sectionLead}</p>
         </Reveal>
         <div className="art-grid">
           {ARTICLES.map((a,i)=>(<ArticleCard key={a.id} a={a} nav={nav} delay={i*70}/>))}

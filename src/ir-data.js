@@ -309,12 +309,48 @@ export const IR_DISCLOSURES = [
    The card is hidden entirely while this list is empty.              */
 export const IR_OPS = [];
 
+/* ---------- page labels (CMS-editable) ---------- */
+export const IR_TEXT = {
+  eyebrow: "Investor relations",
+  avTitle: "Statutory audio-visual — DRHP",
+  avLead: "Draft Red Herring Prospectus audio-visual, in English and Hindi.",
+  whereTitle: "Where we operate",
+  whereSub: "Four states across India's highest-resource wind and solar corridors",
+  whereFoot: "Wind, solar and hybrid assets sited on validated resource data, with transmission access secured before construction.",
+  underDevelopment: "Under development",
+  projectsLabel: "projects",
+  libraryTitle: "Document library",
+  libraryLead: "Filed by section.",
+  documentOne: "document",
+  documentMany: "documents",
+  emptyNote: "Nothing filed in this category yet. Documents appear here as they are published.",
+  listingLock: "Available on listing",
+  boardEmpty: "Board and committee composition will be published here.",
+  committeeTitle: "Committee composition",
+  disclosuresEmpty: "Statutory disclosures will be published here.",
+  railTitle: "Stay on the list.",
+  railText: "Results, filings and the latest deck — straight to your inbox.",
+  railPlaceholder: "you@fund.com",
+  railSubscribe: "Subscribe to IR updates",
+  railDeck: "Download latest investor deck",
+  contactTitle: "Investor contact",
+};
+
+/* ---------- statutory audio-visual (shown on the snapshot) ----------
+   One tab per video. The section is hidden entirely while this is empty. */
+export const IR_AV = [
+  { key:"en", label:"English", src:"/assets/investors/IEIL-DRHP-Statutory-AV-English.mp4",
+    poster:"/assets/investors/IEIL-DRHP-Statutory-AV-poster.jpg" },
+  { key:"hi", label:"हिन्दी (Hindi)", src:"/assets/investors/IEIL-DRHP-Statutory-AV-Hindi.mp4",
+    poster:"/assets/investors/IEIL-DRHP-Statutory-AV-poster.jpg" },
+];
+
 /* ---------- IR contact ---------- */
 export const IR_CONTACT = {
   name:"Investor Relations",
   role:"Integrum Energy Infrastructure Ltd.",
-  email:"compliance@integrumenergy.in",
-  phone:"+91 76187 02052",
+  email:"IR@integrumenergy.in",
+  phone:"+91-9187713438",
   addr:"Bengaluru, Karnataka, India · CIN U40106KA2021PLC144691",
 };
 

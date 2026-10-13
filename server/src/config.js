@@ -43,6 +43,11 @@ export function loadConfig() {
     allowedOrigins: (process.env.ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean),
     adminApiKey: process.env.ADMIN_API_KEY || "",
     isProd: process.env.NODE_ENV === "production",
+    // CMS uploads live under their own prefix, which (unlike the private
+    // résumé prefix) is meant to be publicly readable — see DEPLOYMENT.md.
+    cmsUploadPrefix: (process.env.CMS_UPLOAD_PREFIX || "cms").replace(/^\/+|\/+$/g, ""),
+    cmsPublicBaseUrl: (process.env.CMS_PUBLIC_BASE_URL ||
+      `https://${process.env.AWS_STORAGE_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`).replace(/\/+$/, ""),
   };
 }
 

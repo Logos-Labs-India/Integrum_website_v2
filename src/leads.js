@@ -14,7 +14,7 @@
    API base URL comes from VITE_API_BASE_URL (see .env.example), defaulting
    to http://localhost:4000 for local development.
    ============================================================ */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+import { API_BASE_URL } from "./apiBase";
 export const LEADS_ENDPOINT = `${API_BASE_URL}/api/leads`;
 
 // Lets you trial an endpoint from the #leads screen before committing to the

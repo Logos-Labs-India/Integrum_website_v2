@@ -3,6 +3,7 @@
    Content supplied by the client (existing integrumenergy.in)
    ============================================================ */
 import React from "react";
+import { I } from "./dataviz";
 
 const CO_NAME = "Integrum Energy Infrastructure Private Limited";
 const CO_ADDR = "736, 2nd Floor, 3rd Block, Koramangala, Bengaluru 560034";
@@ -198,6 +199,16 @@ export const LEGAL_CONTENT = {
   },
 };
 
+/* ---------- page text shared by the legal pages (CMS-editable) ---------- */
+export const LEGAL_TEXT = {
+  eyebrow: "Legal",
+  emailLabel: "By email:",
+  email: "info@integrumenergy.in",
+  askTitle: "Have a question we haven't answered here?",
+  askText: "Our team will point you to the right person.",
+  askCta: "Contact us",
+};
+
 export function Legal({ nav, kind = "terms" }) {
   const c = LEGAL_CONTENT[kind] || LEGAL_CONTENT.terms;
   return (
@@ -206,7 +217,7 @@ export function Legal({ nav, kind = "terms" }) {
         <div className="shell">
           <div className="breadcrumb"><a onClick={()=>nav("home")} style={{ cursor:"pointer" }}>Home</a> <span>/</span> <span>{c.title}</span></div>
           <div className="legal-body" style={{ marginTop: 22 }}>
-            <span className="eyebrow">Legal</span>
+            <span className="eyebrow">{LEGAL_TEXT.eyebrow}</span>
             <h1 style={{ fontSize:"clamp(34px,4.6vw,54px)", letterSpacing:"-.035em", marginTop:14, lineHeight:1.02 }}>{c.title}</h1>
             <div className="legal-updated">{c.updated}</div>
             <p style={{ marginTop:18 }}>{c.intro}</p>
@@ -216,7 +227,7 @@ export function Legal({ nav, kind = "terms" }) {
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="shell">
           <div className="legal-body">
-            {c.sections.map((s,i)=>(
+            {(c.sections||[]).map((s,i)=>(
               <div key={i}>
                 {s.h && <h3>{s.h}</h3>}
                 {s.sub && <h4 className="legal-sub">{s.sub}</h4>}
@@ -225,15 +236,15 @@ export function Legal({ nav, kind = "terms" }) {
                 {s.ul && <ul>{s.ul.map((li,j)=>(<li key={j}>{li}</li>))}</ul>}
                 {(s.pAfter||[]).map((para,j)=>(<p key={"pa"+j}>{para}</p>))}
                 {s.ulAfter && <ul>{s.ulAfter.map((li,j)=>(<li key={j}>{li}</li>))}</ul>}
-                {s.mail && <p>By email: <a href="mailto:info@integrumenergy.in">info@integrumenergy.in</a></p>}
+                {s.mail && <p>{LEGAL_TEXT.emailLabel} <a href={"mailto:" + LEGAL_TEXT.email}>{LEGAL_TEXT.email}</a></p>}
               </div>
             ))}
             <div className="router-promise" style={{ marginTop: 40 }}>
               <div style={{ flex:"1 1 320px" }}>
-                <div className="rp-line">Have a question we haven't answered here?</div>
-                <div className="rp-next">Our team will point you to the right person.</div>
+                <div className="rp-line">{LEGAL_TEXT.askTitle}</div>
+                <div className="rp-next">{LEGAL_TEXT.askText}</div>
               </div>
-              <button className="btn btn-nav-cta" onClick={()=>nav("contact")}>Contact us {I.arrow()}</button>
+              <button className="btn btn-nav-cta" onClick={()=>nav("contact")}>{LEGAL_TEXT.askCta} {I.arrow()}</button>
             </div>
           </div>
         </div>

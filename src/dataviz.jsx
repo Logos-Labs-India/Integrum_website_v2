@@ -474,6 +474,10 @@ export const IMG = {
   heroField:   U("1548337138-e87d889cc369"),
   meadow:      U("1466611653911-95081537e5b7"),
 };
+/* An image field holds either a key of IMG above (the built-in library) or
+   a URL — e.g. a file uploaded through the CMS. media() resolves both. */
+export const media = (v) => (v && IMG[v]) || v || "";
+
 // absolutely-positioned photo layer with overlay; drop inside a position:relative parent
 export function PhotoBG({ src, overlay, pos = "center", style }) {
   const ov = overlay || "linear-gradient(180deg, rgba(8,23,42,.82), rgba(8,23,42,.93))";

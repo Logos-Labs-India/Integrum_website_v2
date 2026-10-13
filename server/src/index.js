@@ -4,6 +4,11 @@ import cors from "cors";
 import { config } from "./config.js";
 import { migrate } from "./db/migrate.js";
 import { leadsRouter } from "./routes/leads.js";
+import { contentRouter } from "./routes/content.js";
+import { adminAuthRouter } from "./routes/adminAuth.js";
+import { adminContentRouter } from "./routes/adminContent.js";
+import { adminUploadsRouter } from "./routes/adminUploads.js";
+import { purgeExpiredSessions } from "./auth/session.js";
 
 const app = express();
 
@@ -25,6 +30,9 @@ app.use(cors({
     err.status = 403;
     return callback(err);
   },
+  // The CMS admin signs in with a session cookie, which the browser only
+  // sends cross-origin when the response allows credentials.
+  credentials: true,
 }));
 
 // Resumes arrive base64-encoded in the JSON body; allow a generous limit.
@@ -32,6 +40,10 @@ app.use(express.json({ limit: "8mb" }));
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 app.use("/api/leads", leadsRouter);
+app.use("/api/content", contentRouter);
+app.use("/api/admin/auth", adminAuthRouter);
+app.use("/api/admin/content", adminContentRouter);
+app.use("/api/admin/uploads", adminUploadsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ ok: false, error: "Not found" });
@@ -51,6 +63,8 @@ app.use((err, req, res, _next) => {
 
 async function start() {
   await migrate();
+  await purgeExpiredSessions();
+  setInterval(() => purgeExpiredSessions().catch((e) => console.error("session purge failed:", e)), 6 * 3600 * 1000).unref();
   app.listen(config.port, () => console.log(`Integrum lead API listening on :${config.port}`));
 }
 

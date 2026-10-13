@@ -9,6 +9,8 @@ import { Home } from "./home";
 import { CnILane } from "./cni";
 import { Investors } from "./investors";
 import { IR_META } from "./ir-data";
+import { SITE_TEXT, NAV_LINKS, SOCIALS, FOOTER_COLS, FOOTER_BADGES, PAGE_META } from "./site";
+import { media } from "./dataviz";
 import { Dashboard } from "./dashboard";
 import { CaseStudy, Contact, CASES } from "./casestudy";
 import { About } from "./about";
@@ -144,33 +146,6 @@ const PAGES = {
   privacy:    (p)=><Legal kind="privacy" {...p}/>,
   disclaimer: (p)=><Legal kind="disclaimer" {...p}/>,
 };
-const PAGE_META = {
-  home:      ["Integrum Energy | Wind + Solar Hybrid Power for Industry in India", "Wind + solar hybrid plants for India's industrial businesses — lower, predictable power costs and a credible path to 100% renewable (RE 100)."],
-  cni:       ["Cut Your Industrial Power Bill — Wind + Solar Hybrid | Integrum Energy", "Hybrid wind + solar, open access, group captive, BESS and EaaS — engineered to take your industrial tariff toward ₹3 per unit."],
-  case:      ["Knowledge Hub — Renewable Power for Steel, Cement & More | Integrum Energy", "Real engagements across steel and cement: from 100% conventional to RE 100, and power cost cut from ₹7 to ₹3 per unit."],
-  about:     ["About Integrum Energy — Our Story, Impact & Leadership", "Integrum Energy harnesses renewable energy for India's industry, opening a ~70 GW hybrid market. Meet our team and our impact."],
-  investors: ["Investors — Snapshot, Financials & Governance | Integrum Energy", "Investor snapshot, financials and governance for Integrum Energy Infrastructure Ltd."],
-  dashboard: ["Energy Intelligence Platform | Integrum Energy", "Track live generation, savings and open-access power across your plants on the Integrum Energy Intelligence platform."],
-  contact:   ["Contact Integrum Energy — Talk to an Energy Advisor", "Talk to an Integrum Energy consultant about cutting your power cost and reaching 100% renewable. Bengaluru, India."],
-  spark:     ["The SPARK Framework — How Integrum Energy Partners | Integrum Energy", "SPARK is Integrum's full-lifecycle partnership: Scan, Plan, Acquire, Run and Keep optimising — from first site scan to a 25-year optimized asset."],
-  platform:  ["The Integrum Energy Platform — Develop, Deliver, Structure, Operate, Optimise", "One energy platform built around the customer outcome — development, projects, commercial structuring, O&M and power markets under one accountable partner."],
-  careers:   ["People at Integrum Energy — Build the Energy Transition", "Join Integrum Energy: engineering, development, commercial and operations roles opening India's ~70 GW wind + solar hybrid market. See current openings."],
-  terms:     ["Terms & Conditions | Integrum Energy", "The terms governing use of the Integrum Energy website, estimates, customer platform and content."],
-  privacy:   ["Privacy Policy | Integrum Energy", "How Integrum Energy collects, uses and protects your personal information, and the choices you have."],
-  leads:     ["Form submissions | Integrum Energy", "Internal view of captured website enquiries."],
-  disclaimer:["Disclaimer | Integrum Energy", "Important notes on the indicative nature of savings estimates, investor content and forward-looking statements."],
-};
-const NAV_LINKS = [
-  { label:"Solutions", page:"cni" },
-  { label:"Platform", page:"platform" },
-  { label:"Knowledge Hub", page:"case" },
-  { label:"Investors", page:"investors" },
-  { label:"Company", page:"about" },
-  { label:"People", page:"careers" },
-];
-const SOCIALS = [
-  { key:"linkedin",  label:"LinkedIn",  href:"https://www.linkedin.com/company/integrum-energy/" },
-];
 
 /* ---------- global search ---------- */
 function buildSearchIndex() {
@@ -256,8 +231,8 @@ function Nav({ page, nav, onSearch }) {
       <nav className={`nav ${scrolled?"scrolled":""}`}>
         <div className="shell nav-inner">
           <a className="nav-logo" onClick={()=>nav("home")} style={{ cursor:"pointer" }}>
-            <img className="brand-logo" src="/assets/logo-integrum.svg" alt="Integrum Energy"/>
-            <img className="nav-gptw" src="/assets/gptw.png" alt="Great Place to Work Certified" title="Great Place to Work® Certified"/>
+            <img className="brand-logo" src={media(SITE_TEXT.logo)} alt="Integrum Energy"/>
+            {SITE_TEXT.navBadge && <img className="nav-gptw" src={media(SITE_TEXT.navBadge)} alt={SITE_TEXT.navBadgeAlt} title={SITE_TEXT.navBadgeAlt}/>}
           </a>
           <div className="nav-links">
             {NAV_LINKS.map(l=>(
@@ -266,8 +241,8 @@ function Nav({ page, nav, onSearch }) {
           </div>
           <div className="nav-right">
             <button className="nav-icon" onClick={onSearch} title="Search (⌘K)" aria-label="Search">{I.search()}</button>
-            <a className="nav-textlink" onClick={()=>nav("dashboard")} style={{ cursor:"pointer" }}>Customer login</a>
-            <button className="btn btn-nav-cta" onClick={()=>nav("contact")}>Talk to an advisor</button>
+            <a className="nav-textlink" onClick={()=>nav("dashboard")} style={{ cursor:"pointer" }}>{SITE_TEXT.customerLogin}</a>
+            <button className="btn btn-nav-cta" onClick={()=>nav("contact")}>{SITE_TEXT.navCta}</button>
             <button className="nav-icon menu-btn" onClick={()=>setMenu(m=>!m)} aria-label="Menu">{I.menu()}</button>
           </div>
         </div>
@@ -275,8 +250,8 @@ function Nav({ page, nav, onSearch }) {
       {menu && (
         <div className="mobile-menu">
           {NAV_LINKS.map(l=>(<a key={l.label} onClick={()=>nav(l.page)}>{l.label}</a>))}
-          <a onClick={()=>nav("dashboard")}>Customer login</a>
-          <button className="btn btn-nav-cta btn-lg" style={{ marginTop:18 }} onClick={()=>nav("contact")}>Talk to an advisor</button>
+          <a onClick={()=>nav("dashboard")}>{SITE_TEXT.customerLogin}</a>
+          <button className="btn btn-nav-cta btn-lg" style={{ marginTop:18 }} onClick={()=>nav("contact")}>{SITE_TEXT.navCta}</button>
         </div>
       )}
     </React.Fragment>
@@ -284,25 +259,20 @@ function Nav({ page, nav, onSearch }) {
 }
 
 function Footer({ nav }) {
-  const cols = [
-    { h:"Solutions", links:[["Reduce your energy bill","cni"],["Hybrid wind + solar","cni"],["Energy storage · BESS","cni"],["CAPEX · OPEX · EaaS","cni"]] },
-    { h:"Platform", links:[["Energy Intelligence","dashboard"],["Customer login","dashboard"],["Open access tracker","dashboard"]] },
-    { h:"Investors", links:[["Investor snapshot","investors"],["Financials & filings","investors"],["Governance","investors"],["ESG / BRSR","investors"]] },
-    { h:"Company", links:[["Knowledge Hub","case"],["The SPARK difference","spark"],["People","careers"],["Contact","contact"]] },
-  ];
-  const badges = ["ISO 9001:2015","Great Place to Work","Company of the Year 2024"];
+  const cols = FOOTER_COLS;
+  const badges = FOOTER_BADGES;
   return (
     <footer className="footer">
       <div className="shell">
         <div className="footer-grid">
           <div>
             <div className="brand-chip" style={{ marginBottom:16 }}>
-              <img src="/assets/logo-integrum.svg" alt="Integrum Energy"/>
+              <img src={media(SITE_TEXT.logo)} alt="Integrum Energy"/>
             </div>
-            <p style={{ color:"#9FB3C7", fontSize:14, maxWidth:280, lineHeight:1.55 }}>Integrum Energy Infrastructure Ltd. — hybrid wind + solar plants and lifecycle energy management for India's industrial businesses.</p>
+            <p style={{ color:"#9FB3C7", fontSize:14, maxWidth:280, lineHeight:1.55 }}>{SITE_TEXT.footerBlurb}</p>
             <div className="footer-social">
               {SOCIALS.map(s=>(
-                <a key={s.key} className="fsoc" href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} title={s.label}>{I[s.key]({width:18,height:18})}</a>
+                <a key={s.key} className="fsoc" href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} title={s.label}>{I[s.key] ? I[s.key]({width:18,height:18}) : s.label}</a>
               ))}
             </div>
             <div className="footer-badges">
@@ -317,11 +287,11 @@ function Footer({ nav }) {
           ))}
         </div>
         <div className="footer-base">
-          <span>© {new Date().getFullYear()} Integrum Energy Infrastructure Ltd. · CIN U40106KA2021PLC144691 · Bengaluru, India</span>
+          <span>© {new Date().getFullYear()} {SITE_TEXT.footerCopyright}</span>
           <span style={{ display:"flex", gap:18, flexWrap:"wrap" }}>
-            <a onClick={()=>nav("privacy")} style={{ cursor:"pointer" }}>Privacy Policy</a>
-            <a onClick={()=>nav("terms")} style={{ cursor:"pointer" }}>Terms & Conditions</a>
-            <a onClick={()=>nav("disclaimer")} style={{ cursor:"pointer" }}>Disclaimer</a>
+            <a onClick={()=>nav("privacy")} style={{ cursor:"pointer" }}>{SITE_TEXT.privacyLink}</a>
+            <a onClick={()=>nav("terms")} style={{ cursor:"pointer" }}>{SITE_TEXT.termsLink}</a>
+            <a onClick={()=>nav("disclaimer")} style={{ cursor:"pointer" }}>{SITE_TEXT.disclaimerLink}</a>
           </span>
         </div>
       </div>
