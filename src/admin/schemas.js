@@ -265,7 +265,119 @@ SCHEMAS.investors.root.fields.push(
       emptyNote: "Empty tab message", listingLock: "'Available on listing' label", boardEmpty: "Empty board message", committeeTitle: "Committee table heading",
       disclosuresEmpty: "Empty disclosures message", railTitle: "Updates box — heading", railText: "Updates box — text", railPlaceholder: "Updates box — email placeholder",
       railSubscribe: "Updates box — subscribe button", railDeck: "Updates box — deck button", contactTitle: "Contact card — heading",
+      breadcrumbHome: "Breadcrumb — 'Home'", breadcrumbInvestors: "Breadcrumb — 'Investors'",
+      opsTitle: "Capacity build-out — heading", opsSub: "Capacity build-out — subtitle",
+      filterAllYears: "Filter — 'All years'", filterAllQuarters: "Filter — 'All quarters'", filterPlaceholder: "Filter — search box placeholder",
+      noMatch: "Filter — no results message", loadMore: "'Load more' button", loadMoreOf: "'of' in 'Load more (8 of 20)'", fileType: "File type shown on each document (PDF)",
+      directorCol: "Committee table — 'Director' column", chair: "Committee table — 'Chair'", member: "Committee table — 'Member'",
+      srCol: "Disclosures table — 'Sr.' column", particularsCol: "Disclosures table — 'Particulars' column", referenceCol: "Disclosures table — 'Reference' column",
+      viewLink: "Disclosures table — 'View' link", onListing: "Disclosures table — 'On listing'", notApplicable: "Disclosures table — 'Not applicable'",
     }).map(([name, label]) => ({ name, label, type: "text" })),
+  },
+  {
+    name: "kpis", label: "Hero figure tiles", type: "list",
+    help: "The number tiles under the Investors heading. Link a tile to Company figures so it always matches the rest of the site.",
+    addLabel: "Add tile",
+    summary: (x) => ({ title: x.k || "Untitled tile", meta: x.fig ? `${x.fig} (Company figures)` : x.v || "" }),
+    newItem: () => ({ fig: "", v: "", u: "", k: "", d: "" }),
+    item: {
+      type: "group",
+      fields: [
+        { name: "fig", ...FIG_HINTS.fig },
+        { name: "v", label: FIG_HINTS.v.label, type: "text", half: true },
+        { name: "u", label: "Unit after the number", type: "text", half: true, placeholder: " MW" },
+        { name: "k", label: "Caption", type: "text", required: true },
+        { name: "d", label: "Small line beneath", type: "text" },
+      ],
+    },
+  },
+  {
+    name: "ops", label: "Capacity build-out bars", type: "list",
+    help: "Progress bars on the Investors snapshot. The card is hidden while this list is empty.",
+    addLabel: "Add bar",
+    summary: (r) => ({ title: r.l || "Untitled bar", meta: `${r.v ?? ""} / ${r.max ?? ""} ${r.s || ""}` }),
+    newItem: () => ({ l: "", v: 0, max: 0, s: "MW", c: "#3E6FD6" }),
+    item: {
+      type: "group",
+      fields: [
+        { name: "l", label: "Label", type: "text", required: true, placeholder: "Operational capacity" },
+        { name: "v", label: "Value", type: "number", half: true },
+        { name: "max", label: "Full bar = (maximum)", type: "number", half: true },
+        { name: "s", label: "Unit", type: "text", half: true, placeholder: "MW" },
+        { name: "c", label: "Bar colour", type: "text", half: true, placeholder: "#3E6FD6", help: "A hex colour code." },
+      ],
+    },
+  },
+  {
+    name: "committees", label: "Committees (column names)", type: "list",
+    help: "Columns of the Governance › committee table, in order. The table is hidden until 'Committee membership' below has rows.",
+    addLabel: "Add committee",
+    summary: (c) => ({ title: c || "Empty" }),
+    newItem: () => "",
+    item: { type: "text", label: "Committee name" },
+  },
+  {
+    name: "matrix", label: "Committee membership", type: "list",
+    help: "One row per director. List their role in each committee in the SAME ORDER as the committees above.",
+    addLabel: "Add director row",
+    summary: (r) => ({ title: r.n || "Unnamed", meta: (r.roles || []).map((x) => x || "—").join(" · ") }),
+    newItem: () => ({ n: "", roles: [] }),
+    item: {
+      type: "group",
+      fields: [
+        { name: "n", label: "Director", type: "text", required: true },
+        { name: "roles", label: "Role in each committee", type: "list", addLabel: "Add committee role",
+          summary: (x) => ({ title: { C: "Chair", M: "Member" }[x] || "Not a member" }),
+          newItem: () => "",
+          item: { type: "select", label: "Role", required: false, allowEmpty: true,
+            options: () => [{ value: "C", label: "Chair" }, { value: "M", label: "Member" }] } },
+      ],
+    },
+  },
+  {
+    name: "settings", label: "Listing stage", type: "group",
+    fields: [
+      { name: "stage", label: "Company stage", type: "select",
+        options: () => [{ value: "listed", label: "Listed — show every document" }, { value: "preipo", label: "Pre-IPO — lock documents marked 'on listing'" }],
+        help: "Pre-IPO shows rows that only apply after listing as locked 'Available on listing' placeholders." },
+    ],
+  },
+  {
+    name: "disclaimer", label: "DRHP legal disclaimer", type: "group",
+    help: "⚠ LEGAL TEXT — change only with written sign-off from the legal team. Shown before every DRHP, abridged prospectus and advertisement download and every DRHP video play. Which documents show it is set per document (the 'Show the DRHP legal disclaimer' tick).",
+    fields: [
+      { name: "eyebrow", label: "Small label at the top", type: "text", required: true },
+      { name: "title", label: "Heading", type: "text", required: true },
+      { name: "caps", label: "Upper-case notices (top)", type: "list", addLabel: "Add notice", minItems: 1,
+        summary: (x) => ({ title: String(x || "Empty").slice(0, 110) }), newItem: () => "",
+        item: { type: "textarea", label: "Notice", rows: 4 } },
+      { name: "paras", label: "Disclaimer paragraphs", type: "list", addLabel: "Add paragraph", minItems: 1,
+        summary: (x) => ({ title: String(x || "Empty").slice(0, 110) }), newItem: () => "",
+        item: { type: "textarea", label: "Paragraph", rows: 8 } },
+      { name: "notice", label: "Bold lines after the paragraphs", type: "list", addLabel: "Add line",
+        summary: (x) => ({ title: String(x || "Empty").slice(0, 110) }), newItem: () => "",
+        item: { type: "textarea", label: "Line", rows: 2 } },
+      { name: "confirmHeading", label: "Confirmation — heading", type: "text", required: true },
+      { name: "confirmIntro", label: "Confirmation — intro line", type: "textarea", rows: 2, required: true },
+      { name: "confirmPoints", label: "Confirmation — numbered points", type: "list", addLabel: "Add point", minItems: 1,
+        summary: (x) => ({ title: String(x || "Empty").slice(0, 110) }), newItem: () => "",
+        item: { type: "textarea", label: "Point", rows: 2 } },
+      { name: "confirmOutro", label: "Confirmation — closing line", type: "textarea", rows: 2, required: true },
+      { name: "confirmBtn", label: "Button — confirm", type: "text", required: true, half: true },
+      { name: "declineBtn", label: "Button — do not confirm", type: "text", required: true, half: true },
+      { name: "declinedMsg", label: "Message after 'do not confirm'", type: "textarea", rows: 2, required: true },
+      { name: "closeBtn", label: "Button — close (after 'do not confirm')", type: "text", required: true },
+    ],
+  },
+  {
+    name: "meta", label: "Search engine titles (Investors sub-pages)", type: "group",
+    help: "What Google and the browser tab show for each Investors page: first the title, then the description. The main Investors page uses Site-wide › Search engine titles › Investors.",
+    // /investors itself has no sub-route, so it takes its title from PAGE_META.
+    fields: IR_SECTIONS.filter((s) => s.key !== "snapshot").map((s) => ({
+      name: s.key, label: s.label, type: "list", fixed: true,
+      summary: (x) => ({ title: x || "Empty" }),
+      item: { type: "textarea", label: "Title / description", rows: 2 },
+    })),
   },
   {
     name: "sections", label: "Sections & tabs", type: "list", fixed: true,
@@ -491,6 +603,7 @@ export function findProblems(schema, value, path = "") {
       else if (f.required && (v == null || String(v).trim() === "")) out.push(`${path ? path + " — " : ""}${f.label} is empty`);
     }
   } else if (schema.type === "list") {
+    if (schema.minItems && (value || []).length < schema.minItems) out.push(`${schema.label} needs at least ${schema.minItems} item${schema.minItems > 1 ? "s" : ""}`);
     (value || []).forEach((item, i) => {
       const where = `${schema.label} #${i + 1}${schema.summary ? ` (${schema.summary(item).title})` : ""}`;
       if (schema.item.type === "group") out.push(...findProblems(schema.item, item, where));

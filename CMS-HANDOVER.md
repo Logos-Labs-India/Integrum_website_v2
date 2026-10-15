@@ -22,7 +22,7 @@ design stay in code.
 | Admin page | Covers |
 |---|---|
 | Company figures | MW, CO₂, generation… — used on Home, Company, Investors |
-| Investor relations | documents, DRHP videos, board, disclosures, IR contact, labels, section/tab names |
+| Investor relations | documents, DRHP videos, board, disclosures, IR contact, every label, section/tab names, hero figure tiles, capacity build-out bars, committee table, listing stage (listed / pre-IPO), sub-page SEO titles, the DRHP legal disclaimer wording |
 | Home · Solutions · Platform · SPARK · Company · People & careers | every heading, paragraph, button, card, list and image on those pages; open roles with full JDs |
 | Case studies & contact | case cards/groups/industries, full case pages, Contact page text |
 | Knowledge Hub articles | article text and body blocks (paragraphs, tables, lists…) |
@@ -30,9 +30,14 @@ design stay in code.
 | Forms & sign-in | enquiry form labels/dropdown choices, sign-in page panel |
 | Site-wide | logo, menu, footer, badges, socials, per-page SEO title/description |
 
-Deliberately **not** editable: layout/design, the DRHP legal disclaimer wording
-(lawyer-approved), the Contact form's "Who are you?" options (form logic depends
-on them), calculator formulas, maps, the demo dashboard.
+Deliberately **not** editable: layout/design, the Contact form's "Who are you?"
+options (form logic depends on them), calculator formulas, maps, the demo dashboard.
+
+**DRHP legal disclaimer:** the wording is editable (Investor relations › DRHP
+legal disclaimer) but is lawyer-approved — change it only with written sign-off
+from the legal team. The gate itself stays in code: it shows before every gated
+download and every DRHP video play, and "I Do Not Confirm" blocks access. The
+admin refuses to publish it with an empty heading, paragraphs or points.
 
 Roles: **editor** saves drafts; **publisher** also publishes and restores.
 
@@ -118,5 +123,4 @@ passwords were shared separately. Reset or add accounts with `npm run create-adm
 
 - No "forgot password" email — resets go through `npm run create-admin -- --email … --reset`.
 - No admin user guide for the client yet.
-- Investors sub-page SEO titles (`IR_META`) are still in code.
 - The public bundle is ~560 KB (Vite warns); the admin is already split into its own chunk.

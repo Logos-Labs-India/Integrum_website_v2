@@ -8,8 +8,8 @@
    imported. Pages keep importing FIG / IR_DOCS exactly as before and simply
    render the published values — no page needs to know about the CMS.
 
-   Order matters: figures are applied before ir-data.js is imported, because
-   ir-data computes IR_KPIS from FIG when it first runs.
+   Order matters: figures are applied before the other modules are imported,
+   so anything that reads FIG at import time sees the published values.
 
    If the API is slow or down the site renders the built-in defaults, so a
    CMS outage can never blank the site.
@@ -40,6 +40,13 @@ export const CONTENT_DEFS = [
       contact: m.IR_CONTACT,
       text: m.IR_TEXT,
       sections: m.IR_SECTIONS,
+      kpis: m.IR_KPIS,
+      ops: m.IR_OPS,
+      committees: m.IR_COMMITTEES,
+      matrix: m.IR_MATRIX,
+      settings: m.IR_SETTINGS,
+      meta: m.IR_META,
+      disclaimer: m.IR_DISCLAIMER,
     }),
   },
   {
@@ -148,7 +155,7 @@ function snapshotOf(slots) {
   return Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, structuredClone(v)]));
 }
 
-function applyDoc(slots, data, key) {
+function applyDoc(slots, data, key, base) {
   if (!isPlainObject(data)) return;
   if ("" in slots) {
     // Merge over the defaults so a figure missing from older published
@@ -158,7 +165,10 @@ function applyDoc(slots, data, key) {
   }
   for (const [name, target] of Object.entries(slots)) {
     if (!(name in data)) continue;
-    if (!overwrite(target, data[name])) console.warn(`[cms] ignored "${key}.${name}": wrong type`);
+    // Same for objects such as a page's labels: a label added to the code
+    // after the page was last published keeps its built-in text.
+    const value = isPlainObject(data[name]) && isPlainObject(base?.[name]) ? { ...base[name], ...data[name] } : data[name];
+    if (!overwrite(target, value)) console.warn(`[cms] ignored "${key}.${name}": wrong type`);
   }
 }
 
@@ -188,8 +198,11 @@ const defaults = {};
 /* Loads published content (or, with preview, the signed-in admin's drafts)
    and applies it. Resolves to { preview: boolean } once done. */
 export async function loadContent({ preview = false, timeout = 2500 } = {}) {
+  // Not signed in (or the preview call failed) → fall back to published
+  // content, and don't claim to be a preview.
+  const drafts = preview ? await fetchJSON(`${API_BASE_URL}/api/admin/content/preview`, { timeout: 8000, preview: true }) : null;
   const content =
-    (preview && await fetchJSON(`${API_BASE_URL}/api/admin/content/preview`, { timeout: 8000, preview: true })) ||
+    drafts ||
     await fetchJSON(`${API_BASE_URL}/api/content`, { timeout, preview: false }) ||
     {};
 
@@ -197,9 +210,9 @@ export async function loadContent({ preview = false, timeout = 2500 } = {}) {
     const mod = await def.load();
     const slots = def.slots(mod);
     if (!(def.key in defaults)) defaults[def.key] = snapshotOf(slots);
-    if (content[def.key]) applyDoc(slots, content[def.key], def.key);
+    if (content[def.key]) applyDoc(slots, content[def.key], def.key, defaults[def.key]);
   }
-  return { preview: preview && Object.keys(content).length > 0 };
+  return { preview: !!drafts && Object.keys(drafts).length > 0 };
 }
 
 /* The built-in content for every key, without loading anything published. */

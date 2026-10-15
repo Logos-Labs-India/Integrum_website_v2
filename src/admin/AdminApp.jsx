@@ -237,10 +237,16 @@ function Editor({ docKey, user, onBack }) {
     setMsg(null);
     const [{ doc: d }, defaults] = await Promise.all([api("GET", `/content/${docKey}`), loadDefaults()]);
     // Merge over the built-in defaults so fields added to the site after the
-    // last publish still show up in the form.
+    // last publish still show up in the form — one level down too, so a new
+    // label inside an existing section (e.g. `text`) is filled in as well.
     const base = defaults[docKey] || {};
     setSchema(resolveSchema(docKey, defaults));
-    const start = { ...base, ...(d.draft ?? d.published ?? {}) };
+    const saved = d.draft ?? d.published ?? {};
+    const isObj = (v) => !!v && typeof v === "object" && !Array.isArray(v);
+    const start = { ...base, ...saved };
+    for (const k of Object.keys(saved)) {
+      if (isObj(base[k]) && isObj(saved[k])) start[k] = { ...base[k], ...saved[k] };
+    }
     setDoc(d);
     setValue(start);
     setSavedJSON(JSON.stringify(start));
