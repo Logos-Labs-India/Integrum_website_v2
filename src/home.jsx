@@ -2,7 +2,8 @@
    home.jsx — the router homepage (7 sections) + persona re-skin
    ============================================================ */
 import { useState as useStateH, useEffect as useEffectH, useRef as useRefH } from "react";
-import { Reveal, I, IMG, PhotoBG, VideoBG, VID } from "./dataviz";
+import { Reveal, I, IMG, PhotoBG, VideoBG, VID, media } from "./dataviz";
+import { Rich } from "./content/Rich";
 import { FIG } from "./figures";
 
 export const PERSONAS = [
@@ -35,7 +36,7 @@ export const SPARK = [
     get:"Maximized lifetime value, improved returns and sustained operational excellence." },
 ];
 
-const OUTCOMES = [
+export const OUTCOMES = [
   { metric:"₹84cr → ₹24cr", ml:"annual power spend, ~71% lower", h:"Graphite manufacturer cuts power spend by ₹60 crore", client:"Graphite · hybrid open access", img:"windField", esg:false, go:"case/graphite-india" },
   { metric:"0% → 100%", ml:"conventional to renewable, in 7 years", h:"Green-steel maker reaches 100% renewable", client:"Steel · no incentives", img:"steelPlant", esg:true, go:"case/khayati-steel" },
   { metric:"₹8 → ₹3.25", ml:"per unit, across 31+ hospital sites", h:"Hospital chain optimises cost across 31+ sites", client:"Healthcare · captive solar", img:"solarClose", esg:false, go:"case/cloud-nine" },
@@ -65,6 +66,109 @@ export const PROOF = [
     outcome:"~44% hybrid plant load factor, against 24% solar and 34% wind standalone.",
     buckets:[["Cost outcome","Transmission charges down ₹30 lakh p.a."],["Renewable outcome","Hybrid with optimised evacuation"],["Performance outcome","~44% PLF per MW"]] },
 ];
+
+/* ---------- page text (CMS-editable) ----------
+   *phrase* renders in the heading's accent colour; a new line is a <br/>. */
+export const HOME_TEXT = {
+  heroEyebrow: "India's wind + solar hybrid operator",
+  heroTitle: "Your energy. Fully integrated. *Fully optimized.*",
+  heroSub: "Integrum designs, builds and manages the optimized energy mix for businesses. Solar. Wind. Storage. Markets. Lifecycle management. One accountable partner from strategy and implementation to operations.",
+  heroCta: "Reduce your energy bill",
+  heroCta2: "Talk to an advisor",
+  heroPoster: "/assets/hero-poster.png",
+  heroStatsLabel: "Integrum today",
+  heroStat1: "commissioned capacity",
+  heroStat2: "hybrid capacity",
+  heroStat3: "trusted partners",
+  segmentsLabel: "Trusted by segment leaders",
+  routerTitle: "I'm here to…",
+  routerNote: "Pick your lane",
+  routerBadge: "Most popular",
+  wwdEyebrow: "What we do",
+  wwdTitle: "One energy strategy.\nBuilt around your business.",
+  wwdFoot: "One accountable partner across the energy lifecycle.",
+  proofEyebrow: "Proof, not promises",
+  proofTitle: "Measured outcomes from operating projects.",
+  proofLead: "Every engagement below follows the same arc — the situation we found, what we changed, and what it delivered.",
+  proofContext: "Context",
+  proofSolution: "Integrum solution",
+  proofOutcome: "Outcome",
+  proofLink: "Read the full case",
+  proofNote: "Results vary by state, load profile, regulatory framework and commercial structure.",
+  costEyebrow: "The core story",
+  costTitle: "Most plants pay *₹7–9* a unit. We get them to *₹3–4*.",
+  costLead: "The discom tariff keeps climbing while a hybrid plant reduces your cost down at commissioning and holds it for 25 years — that gap is money that stays in your business.",
+  chart1Eyebrow: "Cost over 25 years",
+  chart1Title: "Your cost steps down. The discom's keeps climbing.",
+  chart1Image: "/assets/chart-cost-25yr-nofigures.png",
+  chart1Caption: "The discom bill keeps climbing year on year. A hybrid plant carries build-phase cost early, then steps down sharply post-debt and stays low for the asset's life.",
+  chart2Eyebrow: "Generation through the year",
+  chart2Title: "One source dips. The other picks it up.",
+  chart2Caption: "Actual month-wise generation from an operating hybrid plant. Wind more than doubles through the monsoon exactly as solar falls to its lowest, and solar holds steady through the dry months when wind drops away.",
+  chart3Eyebrow: "Generation through the day",
+  chart3Title: "Solar peaks in 7 hours. Wind runs all day.",
+  chart3Image: "/assets/chart-tod-profile.png",
+  chart3Caption: "Solar generates about 80% of its power in roughly seven hours; wind generates through the day. Combining them fills the gaps either source leaves alone.",
+  sparkEyebrow: "The framework · SPARK",
+  sparkTitle: "Every megawatt begins with a *SPARK*.",
+  sparkLead: "One partner across the whole arc — from the first site scan to optimizing a live asset 25 years later. Pick a stage to see exactly what we do.",
+  sparkStageLink: "Explore",
+  sparkCtaStrong: "One partner.",
+  sparkCtaNote: "From first analysis to year 25.",
+  sparkCta: "Explore the full SPARK framework",
+  epcEyebrow: "Why not a projects-only contractor",
+  epcTitle: "A projects-only contractor delivers the plant. Integrum delivers the energy outcome.",
+  epcFrom: "A typical contractor",
+  epcTo: "Integrum",
+  epcClose: "For the next 25 years, the important question is not only whether the plant is running. It is whether your energy cost is still optimised.",
+  epcCta: "See how SPARK works",
+  epcCta2: "Explore solutions",
+  askEyebrow: "One ask",
+  askTitle: "Tell us your plant's energy bill. We'll tell you what it could be.",
+  askCta: "Talk to an energy advisor",
+  askCta2: "Get the investor deck",
+  askImage: "windField",
+  callLabel: "Call",
+  phone: "+91 76187 02052",
+  emailLabel: "Email",
+  email: "info@integrumenergy.in",
+  officeLabel: "Registered office",
+  office: "736, 2nd Floor, 3rd Block, Koramangala, Bengaluru 560034",
+};
+
+export const WHAT_WE_DO = [
+  { icon:"compass", title:"Design the right energy mix", go:"cni#sol-tech",
+    body:"Wind, solar, hybrid, storage and grid power — configured around your load, location and economics." },
+  { icon:"factory", title:"Structure & deliver the project", go:"spark/a",
+    body:"Land, connectivity, approvals, commercial structuring, engineering and execution — made bankable and built to perform." },
+  { icon:"battery", title:"Decarbonise on-site", go:"cni#sol-b",
+    body:"Behind-the-meter solar, BESS and distributed-energy solutions that reduce grid dependence and peak costs." },
+  { icon:"gauge", title:"Operate & continuously optimise", go:"spark/k",
+    body:"O&M, asset management, forecasting, scheduling, storage and power markets — keeping lifetime ₹/kWh low." },
+];
+
+export const HOME_STATS = [
+  { n:"25", u:" Yr", s:"We run each plant's full lifecycle" },
+  { n:"24×7", u:"", s:"Live remote monitoring with SLA" },
+  { n:"70–80", u:"%", uBig:true, s:"Of replacement of power demand." },
+  { n:"4–14", u:" months", s:"Feasibility to commissioning" },
+];
+
+export const SEGMENTS = [
+  { t:"Steel manufacturer", ic:"segSteel" },
+  { t:"Multi-location hospital chain", ic:"segHospital" },
+  { t:"Graphite manufacturer", ic:"segGraphite" },
+  { t:"Multinational automobile manufacturer", ic:"segScooter" },
+  { t:"Chemical manufacturer", ic:"segFlask" },
+  { t:"Leading water tanks & pipes manufacturer", ic:"segPipes" },
+  { t:"Woven packaging manufacturer", ic:"segWoven" },
+  { t:"Cement manufacturer", ic:"segCement" },
+  { t:"Leading jewellery retailer", ic:"segDiamond" },
+];
+
+export const MARQUEE = ["Wind + Solar Hybrid","Open Access","Group Captive","BESS Storage","RE 100","Energy-as-a-Service","24×7 O&M","Live Energy Intelligence"];
+
+export const TRUST_BADGES = ["ISO 9001:2015","Great Place to Work","Company of the Year 2024"];
 
 /* ---------- savings calculator (shared with C&I lane) ---------- */
 export const STATES = ["Karnataka","Maharashtra","Tamil Nadu","Gujarat","Rajasthan","Telangana","Madhya Pradesh","Andhra Pradesh"];
@@ -136,27 +240,27 @@ export function SavingsCalculator({ compact = false, onCase }) {
 function Hero({ nav }) {
   // sourced from the shared FIG object — never restate these numbers here
   const heroStats = [
-    { v:FIG.commissioned.replace(/\+$/,""), u:"+ MW", k:"commissioned capacity" },
-    { v:FIG.hybrid,       u:"+ MW",  k:"hybrid capacity" },
-    { v:FIG.partners,     u:"+",     k:"trusted partners" },
+    { v:FIG.commissioned.replace(/\+$/,""), u:"+ MW", k:HOME_TEXT.heroStat1 },
+    { v:FIG.hybrid,       u:"+ MW",  k:HOME_TEXT.heroStat2 },
+    { v:FIG.partners,     u:"+",     k:HOME_TEXT.heroStat3 },
   ];
   return (
     <section className="hero-l has-photo">
-      <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="/assets/hero-poster.png" pos="center 45%"
+      <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster={media(HOME_TEXT.heroPoster)} pos="center 45%"
         overlay="linear-gradient(90deg, rgba(1,44,70,.68) 0%, rgba(1,52,79,.46) 40%, rgba(1,52,79,.42) 62%, rgba(1,44,70,.46) 100%), linear-gradient(180deg, transparent 45%, rgba(1,44,70,.34) 100%)"/>
       <div className="shell hero-l-inner">
         <div className="hero-l-copy">
-          <span className="chip-eyebrow"><span className="pulse-dot"></span> India's wind + solar hybrid operator</span>
-          <h1>Your energy. Fully integrated. <span className="hl-plain">Fully optimized.</span></h1>
-          <p className="hero-l-sub">Integrum designs, builds and manages the optimized energy mix for businesses. Solar. Wind. Storage. Markets. Lifecycle management. One accountable partner from strategy and implementation to operations.</p>
+          <span className="chip-eyebrow"><span className="pulse-dot"></span> {HOME_TEXT.heroEyebrow}</span>
+          <h1><Rich text={HOME_TEXT.heroTitle} hl="hl-plain"/></h1>
+          <p className="hero-l-sub">{HOME_TEXT.heroSub}</p>
           <div className="hero-l-cta">
-            <button className="btn btn-solar btn-lg" onClick={()=>nav("cni")}>Reduce your energy bill {I.arrow()}</button>
-            <button className="btn btn-ghost-light btn-lg" onClick={()=>nav("contact")}>Talk to an advisor</button>
+            <button className="btn btn-solar btn-lg" onClick={()=>nav("cni")}>{HOME_TEXT.heroCta} {I.arrow()}</button>
+            <button className="btn btn-ghost-light btn-lg" onClick={()=>nav("contact")}>{HOME_TEXT.heroCta2}</button>
           </div>
         </div>
         <div className="hero-l-media">
           <div className="hero-stats-plain">
-            <span className="hsc-k">Integrum today</span>
+            <span className="hsc-k">{HOME_TEXT.heroStatsLabel}</span>
             <div className="hsp-grid">
               {heroStats.map((s,i)=>(
                 <div className="hsp-item" key={i}>
@@ -174,22 +278,13 @@ function Hero({ nav }) {
 
 /* ---------- WHAT WE DO ---------- */
 function WhatWeDo({ nav }) {
-  const cards = [
-    { icon:"compass", title:"Design the right energy mix", go:"cni#sol-tech",
-      body:"Wind, solar, hybrid, storage and grid power — configured around your load, location and economics." },
-    { icon:"factory", title:"Structure & deliver the project", go:"spark/a",
-      body:"Land, connectivity, approvals, commercial structuring, engineering and execution — made bankable and built to perform." },
-    { icon:"battery", title:"Decarbonise on-site", go:"cni#sol-b",
-      body:"Behind-the-meter solar, BESS and distributed-energy solutions that reduce grid dependence and peak costs." },
-    { icon:"gauge", title:"Operate & continuously optimise", go:"spark/k",
-      body:"O&M, asset management, forecasting, scheduling, storage and power markets — keeping lifetime ₹/kWh low." },
-  ];
+  const cards = WHAT_WE_DO;
   return (
     <section className="section wwd-sec" id="what-we-do">
       <div className="shell">
         <Reveal className="sec-head">
-          <span className="eyebrow">What we do</span>
-          <h2>One energy strategy.<br/>Built around your business.</h2>
+          <span className="eyebrow">{HOME_TEXT.wwdEyebrow}</span>
+          <h2><Rich text={HOME_TEXT.wwdTitle}/></h2>
         </Reveal>
         <div className="wwd-grid wwd-grid-4">
           {cards.map((c,i)=>(
@@ -201,7 +296,7 @@ function WhatWeDo({ nav }) {
           ))}
         </div>
         <Reveal>
-          <div className="wwd-foot wwd-foot-center">{I.link({width:16,height:16})} One accountable partner across the energy lifecycle.</div>
+          <div className="wwd-foot wwd-foot-center">{I.link({width:16,height:16})} {HOME_TEXT.wwdFoot}</div>
         </Reveal>
       </div>
     </section>
@@ -218,8 +313,8 @@ export function PersonaRouterBand({ nav }) {
     <section className="router-band" id="router">
       <div className="shell">
         <div className="router-head">
-          <div className="rh-title">I'm here to…</div>
-          <div className="rh-note">Pick your lane</div>
+          <div className="rh-title">{HOME_TEXT.routerTitle}</div>
+          <div className="rh-note">{HOME_TEXT.routerNote}</div>
         </div>
         <div className="prouter-grid">
           {PERSONAS.map(per=>(
@@ -229,7 +324,7 @@ export function PersonaRouterBand({ nav }) {
               onClick={()=>go(per)}>
               <div className="prouter-top">
                 <span className="prouter-ico">{I[per.icon]()}</span>
-                {per.primary && <span className="p-badge">Most popular</span>}
+                {per.primary && <span className="p-badge">{HOME_TEXT.routerBadge}</span>}
               </div>
               <div>
                 <h3>{per.title}</h3>
@@ -250,23 +345,8 @@ export function PersonaRouterBand({ nav }) {
 
 /* ---------- STAT BAR (raised, overlaps hero) ---------- */
 function ProofBand() {
-  const stats = [
-    { n:"25", u:" Yr", s:"We run each plant's full lifecycle" },
-    { n:"24×7", u:"", s:"Live remote monitoring with SLA" },
-    { n:"70–80", u:"%", uBig:true, s:"Of replacement of power demand." },
-    { n:"4–14", u:" months", s:"Feasibility to commissioning" },
-  ];
-  const logos = [
-    { t:"Steel manufacturer", ic:"segSteel" },
-    { t:"Multi-location hospital chain", ic:"segHospital" },
-    { t:"Graphite manufacturer", ic:"segGraphite" },
-    { t:"Multinational automobile manufacturer", ic:"segScooter" },
-    { t:"Chemical manufacturer", ic:"segFlask" },
-    { t:"Leading water tanks & pipes manufacturer", ic:"segPipes" },
-    { t:"Woven packaging manufacturer", ic:"segWoven" },
-    { t:"Cement manufacturer", ic:"segCement" },
-    { t:"Leading jewellery retailer", ic:"segDiamond" },
-  ];
+  const stats = HOME_STATS;
+  const logos = SEGMENTS;
   return (
     <section className="statbar-sec">
       <div className="shell">
@@ -279,7 +359,7 @@ function ProofBand() {
           ))}
         </div>
         <div className="trust-marquee">
-          <span className="tm-label">Trusted by segment leaders</span>
+          <span className="tm-label">{HOME_TEXT.segmentsLabel}</span>
           <div className="tm-row">
             {logos.map((l,i)=>(<span className="tm-item" key={i}><span className="tm-ic">{I[l.ic]({width:20,height:20})}</span>{l.t}</span>))}
           </div>
@@ -291,7 +371,7 @@ function ProofBand() {
 
 /* ---------- MARQUEE STRIP ---------- */
 function MarqueeStrip() {
-  const items = ["Wind + Solar Hybrid","Open Access","Group Captive","BESS Storage","RE 100","Energy-as-a-Service","24×7 O&M","Live Energy Intelligence"];
+  const items = MARQUEE;
   const row = [...items, ...items];
   return (
     <div className="marquee" aria-hidden="true">
@@ -401,7 +481,7 @@ function CostCurve25() {
 /* ---------- seasonal generation: client's month-wise hybrid data ----------
    Source: "Generation Month wise.xlsx" (client-supplied). Values are kWh,
    plotted in thousands. No demand series was supplied, so none is drawn. */
-const SEASON = [
+export const SEASON = [
   { m:"Jan", w:233, s:146 }, { m:"Feb", w:175, s:136 },
   { m:"Mar", w:186, s:141 }, { m:"Apr", w:110, s:132 },
   { m:"May", w:203, s:145 }, { m:"Jun", w:415, s:110 },
@@ -443,7 +523,7 @@ function SeasonChart() {
         })}
         <line x1={PL} x2={W-PR} y1={PT+ih} y2={PT+ih} stroke="var(--hairline-2)" strokeWidth="1.2"/>
       </svg>
-      <figcaption>Actual month-wise generation from an operating hybrid plant. Wind more than doubles through the monsoon exactly as solar falls to its lowest, and solar holds steady through the dry months when wind drops away.</figcaption>
+      <figcaption>{HOME_TEXT.chart2Caption}</figcaption>
     </figure>
   );
 }
@@ -503,9 +583,9 @@ function CostStory({ nav }) {
     <section className="section ss" id="savings">
       <div className="shell">
         <Reveal className="sec-head">
-          <span className="eyebrow">The core story</span>
-          <h2>Most plants pay <span className="amber-num num">₹7–9</span> a unit. We get them to <span className="amber-num num">₹3–4</span>.</h2>
-          <p className="lead">The discom tariff keeps climbing while a hybrid plant reduces your cost down at commissioning and holds it for 25 years — that gap is money that stays in your business.</p>
+          <span className="eyebrow">{HOME_TEXT.costEyebrow}</span>
+          <h2><Rich text={HOME_TEXT.costTitle} hl="amber-num num"/></h2>
+          <p className="lead">{HOME_TEXT.costLead}</p>
         </Reveal>
 
         <div className="ss-grid ss-grid-solo">
@@ -513,29 +593,29 @@ function CostStory({ nav }) {
             <div className="chart-trio">
               <div className="chart-col">
                 <div className="chart-col-head">
-                  <span className="eyebrow">Cost over 25 years</span>
-                  <h3>Your cost steps down. The discom's keeps climbing.</h3>
+                  <span className="eyebrow">{HOME_TEXT.chart1Eyebrow}</span>
+                  <h3>{HOME_TEXT.chart1Title}</h3>
                 </div>
                 <figure className="chart-img">
-                  <img src="/assets/chart-cost-25yr-nofigures.png" alt="Total cost with Integrum versus discom cost across 25 years" loading="lazy"/>
-                  <figcaption>The discom bill keeps climbing year on year. A hybrid plant carries build-phase cost early, then steps down sharply post-debt and stays low for the asset's life.</figcaption>
+                  <img src={media(HOME_TEXT.chart1Image)} alt={HOME_TEXT.chart1Title} loading="lazy"/>
+                  <figcaption>{HOME_TEXT.chart1Caption}</figcaption>
                 </figure>
               </div>
               <div className="chart-col">
                 <div className="chart-col-head">
-                  <span className="eyebrow">Generation through the year</span>
-                  <h3>One source dips. The other picks it up.</h3>
+                  <span className="eyebrow">{HOME_TEXT.chart2Eyebrow}</span>
+                  <h3>{HOME_TEXT.chart2Title}</h3>
                 </div>
                 <SeasonChart/>
               </div>
               <div className="chart-col">
                 <div className="chart-col-head">
-                  <span className="eyebrow">Generation through the day</span>
-                  <h3>Solar peaks in 7 hours. Wind runs all day.</h3>
+                  <span className="eyebrow">{HOME_TEXT.chart3Eyebrow}</span>
+                  <h3>{HOME_TEXT.chart3Title}</h3>
                 </div>
                 <figure className="chart-img">
-                  <img src="/assets/chart-tod-profile.png" alt="Time-of-day generation profile: solar delivers 80% of its power in seven hours while wind generates through the day" loading="lazy"/>
-                  <figcaption>Solar generates about 80% of its power in roughly seven hours; wind generates through the day. Combining them fills the gaps either source leaves alone.</figcaption>
+                  <img src={media(HOME_TEXT.chart3Image)} alt={HOME_TEXT.chart3Title} loading="lazy"/>
+                  <figcaption>{HOME_TEXT.chart3Caption}</figcaption>
                 </figure>
               </div>
             </div>
@@ -551,7 +631,7 @@ function CostStory({ nav }) {
             ) : null}
             {kase && (
               <button className="ss-case" onClick={()=>nav(kase.go)}>
-                <img src={IMG[kase.img]} alt={kase.client}/>
+                <img src={media(kase.img)} alt={kase.client}/>
                 <div className="ss-case-body">
                   <div className="ss-case-tag">Comparable case · {kase.client}</div>
                   <div className="ss-case-metric num">{kase.metric}</div>
@@ -574,9 +654,9 @@ export function SparkSection({ nav, note }) {
     <section className="section spark-sec" id="spark">
       <div className="shell">
         <Reveal className="sec-head spark-head">
-          <span className="eyebrow">The framework · SPARK</span>
-          <h2>Every megawatt begins with a <span className="spark-word">SPARK</span>.</h2>
-          <p className="lead">One partner across the whole arc — from the first site scan to optimizing a live asset 25 years later. Pick a stage to see exactly what we do.</p>
+          <span className="eyebrow">{HOME_TEXT.sparkEyebrow}</span>
+          <h2><Rich text={HOME_TEXT.sparkTitle} hl="spark-word"/></h2>
+          <p className="lead">{HOME_TEXT.sparkLead}</p>
         </Reveal>
         {note && <p className="spark-note">{note}</p>}
         <div className="spark-stepper">
@@ -586,13 +666,13 @@ export function SparkSection({ nav, note }) {
               <span className="spark-node-title">{st.title}</span>
               <span className="spark-node-one">{st.one}</span>
               <span className="spark-node-dur">{st.dur}</span>
-              <span className="spark-node-go">Explore {I.arrow({width:15,height:15})}</span>
+              <span className="spark-node-go">{HOME_TEXT.sparkStageLink} {I.arrow({width:15,height:15})}</span>
             </button>
           ))}
         </div>
         <div className="spark-cta-row">
-          <span className="spark-cta-note"><strong>One partner.</strong> From first analysis to year 25.</span>
-          <button className="btn btn-primary" onClick={()=>nav("spark")}>Explore the full SPARK framework {I.arrow()}</button>
+          <span className="spark-cta-note"><strong>{HOME_TEXT.sparkCtaStrong}</strong> {HOME_TEXT.sparkCtaNote}</span>
+          <button className="btn btn-primary" onClick={()=>nav("spark")}>{HOME_TEXT.sparkCta} {I.arrow()}</button>
         </div>
       </div>
     </section>
@@ -605,31 +685,31 @@ function Outcomes({ nav }) {
     <section className="section proof-sec">
       <div className="shell">
         <Reveal className="sec-head">
-          <span className="eyebrow">Proof, not promises</span>
-          <h2>Measured outcomes from operating projects.</h2>
-          <p className="lead">Every engagement below follows the same arc — the situation we found, what we changed, and what it delivered.</p>
+          <span className="eyebrow">{HOME_TEXT.proofEyebrow}</span>
+          <h2>{HOME_TEXT.proofTitle}</h2>
+          <p className="lead">{HOME_TEXT.proofLead}</p>
         </Reveal>
         <div className="proof-list">
           {PROOF.map((p,i)=>(
             <Reveal key={i} delay={i*60}>
               <article className="proof-card">
                 <div className="proof-media">
-                  <img src={IMG[p.img]} alt={p.client} loading="lazy"/>
+                  <img src={media(p.img)} alt={p.client} loading="lazy"/>
                   <span className="proof-sector">{p.sector}</span>
                 </div>
                 <div className="proof-body">
                   <h3>{p.client}</h3>
                   <div className="proof-steps">
                     <div className="proof-step">
-                      <span className="ps-k">Context</span>
+                      <span className="ps-k">{HOME_TEXT.proofContext}</span>
                       <p>{p.context}</p>
                     </div>
                     <div className="proof-step is-mid">
-                      <span className="ps-k">Integrum solution</span>
+                      <span className="ps-k">{HOME_TEXT.proofSolution}</span>
                       <p>{p.intervention}</p>
                     </div>
                     <div className="proof-step is-out">
-                      <span className="ps-k">Outcome</span>
+                      <span className="ps-k">{HOME_TEXT.proofOutcome}</span>
                       <p>{p.outcome}</p>
                     </div>
                   </div>
@@ -641,20 +721,20 @@ function Outcomes({ nav }) {
                       </div>
                     ))}
                   </div>
-                  <button className="link-arrow" onClick={()=>nav(p.go)}>Read the full case {I.arrow()}</button>
+                  <button className="link-arrow" onClick={()=>nav(p.go)}>{HOME_TEXT.proofLink} {I.arrow()}</button>
                 </div>
               </article>
             </Reveal>
           ))}
         </div>
-        <p className="proof-note proof-note-tight">Results vary by state, load profile, regulatory framework and commercial structure.</p>
+        <p className="proof-note proof-note-tight">{HOME_TEXT.proofNote}</p>
       </div>
     </section>
   );
 }
 
 /* ---------- WHY NOT EPC (shift cards) ---------- */
-const EPC_ROWS = [
+export const EPC_ROWS = [
   ["Optimises project CAPEX",              "Optimises lifetime ₹/kWh"],
   ["Builds the asset",                     "Designs the complete energy strategy"],
   ["Scope largely ends at COD",            "Stays accountable through operations"],
@@ -663,19 +743,19 @@ const EPC_ROWS = [
   ["Project performance focus",             "Customer energy-cost focus"],
 ];
 function WhyIntegrum({ nav }) {
-  const badges = ["ISO 9001:2015","Great Place to Work","Company of the Year 2024"];
+  const badges = TRUST_BADGES;
   return (
     <section className="section why-sec">
       <div className="shell">
         <Reveal className="sec-head">
-          <span className="eyebrow">Why not a projects-only contractor</span>
-          <h2>A projects-only contractor delivers the plant. Integrum delivers the energy outcome.</h2>
+          <span className="eyebrow">{HOME_TEXT.epcEyebrow}</span>
+          <h2>{HOME_TEXT.epcTitle}</h2>
         </Reveal>
         <Reveal>
           <div className="shift-legend">
-            <span className="sl-a">A typical contractor</span>
+            <span className="sl-a">{HOME_TEXT.epcFrom}</span>
             <span className="sl-arrow">{I.arrow({width:16,height:16})}</span>
-            <span className="sl-b">Integrum</span>
+            <span className="sl-b">{HOME_TEXT.epcTo}</span>
           </div>
           <div className="shift-grid">
             {EPC_ROWS.map((r,i)=>(
@@ -688,10 +768,10 @@ function WhyIntegrum({ nav }) {
           </div>
         </Reveal>
         <Reveal>
-          <p className="epc-close">For the next 25 years, the important question is not only whether the plant is running. It is whether your energy cost is still optimised.</p>
+          <p className="epc-close">{HOME_TEXT.epcClose}</p>
           <div style={{ display:"flex", gap:14, flexWrap:"wrap", marginTop:22 }}>
-            <button className="btn btn-primary btn-lg" onClick={()=>nav("spark")}>See how SPARK works {I.arrow()}</button>
-            <button className="btn btn-ghost btn-lg" onClick={()=>nav("cni")}>Explore solutions</button>
+            <button className="btn btn-primary btn-lg" onClick={()=>nav("spark")}>{HOME_TEXT.epcCta} {I.arrow()}</button>
+            <button className="btn btn-ghost btn-lg" onClick={()=>nav("cni")}>{HOME_TEXT.epcCta2}</button>
           </div>
         </Reveal>
         <Reveal className="trust-row">
@@ -706,20 +786,20 @@ function WhyIntegrum({ nav }) {
 function OneAsk({ nav }) {
   return (
     <section className="ask has-photo" id="savings-calc">
-      <PhotoBG src={IMG.windField} overlay="linear-gradient(100deg, rgba(1,58,94,.96) 30%, rgba(1,58,94,.78) 100%)" pos="center 42%"/>
+      <PhotoBG src={media(HOME_TEXT.askImage)} overlay="linear-gradient(100deg, rgba(1,58,94,.96) 30%, rgba(1,58,94,.78) 100%)" pos="center 42%"/>
       <div className="shell ask-inner">
         <div className="ask-copy">
           <Reveal>
-            <span className="eyebrow">One ask</span>
-            <h2 style={{ marginTop:16 }}>Tell us your plant's energy bill. We'll tell you what it could be.</h2>
+            <span className="eyebrow">{HOME_TEXT.askEyebrow}</span>
+            <h2 style={{ marginTop:16 }}>{HOME_TEXT.askTitle}</h2>
             <div className="ask-actions">
-              <button className="btn btn-nav-cta btn-lg" onClick={()=>nav("contact")}>Talk to an energy advisor {I.arrow()}</button>
-              <button className="btn btn-ghost-light btn-lg" onClick={()=>nav("investors")}>Get the investor deck</button>
+              <button className="btn btn-nav-cta btn-lg" onClick={()=>nav("contact")}>{HOME_TEXT.askCta} {I.arrow()}</button>
+              <button className="btn btn-ghost-light btn-lg" onClick={()=>nav("investors")}>{HOME_TEXT.askCta2}</button>
             </div>
             <div className="ask-contact">
-              <div><div className="k">Call</div><div className="v num">+91 76187 02052</div></div>
-              <div><div className="k">Email</div><div className="v">info@integrumenergy.in</div></div>
-              <div><div className="k">Registered office</div><div className="v">736, 2nd Floor, 3rd Block, Koramangala, Bengaluru 560034</div></div>
+              <div><div className="k">{HOME_TEXT.callLabel}</div><div className="v num">{HOME_TEXT.phone}</div></div>
+              <div><div className="k">{HOME_TEXT.emailLabel}</div><div className="v">{HOME_TEXT.email}</div></div>
+              <div><div className="k">{HOME_TEXT.officeLabel}</div><div className="v">{HOME_TEXT.office}</div></div>
             </div>
           </Reveal>
         </div>

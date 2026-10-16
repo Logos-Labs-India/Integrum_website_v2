@@ -23,14 +23,15 @@
      size   file size as you want it displayed
      url    path to the file
      from   optional. "listing" marks a row that only applies once listed;
-            it renders locked while IR_STAGE is "preipo".
+            it renders locked while IR_SETTINGS.stage is "preipo".
 
    No JSX editing is required to add, remove or reorder documents.
    ============================================================ */
 import { FIG } from "./figures";
 
-/* "listed" shows every row. "preipo" locks rows marked from:"listing". */
-export const IR_STAGE = "listed";
+/* stage: "listed" shows every row. "preipo" locks rows marked from:"listing".
+   An object (not a bare string) so the CMS can change it in place. */
+export const IR_SETTINGS = { stage: "listed" };
 
 /* No demo content in this build, so the placeholder banner stays off. */
 export const IR_DEMO = false;
@@ -112,14 +113,17 @@ export const IR_SECTIONS = [
 ];
 
 /* ---------- hero figures ----------
-   v = value · u = unit · k = label · d = qualifier line beneath.
+   fig = key in figures.js (Company figures in the CMS), so the tile always
+   matches the rest of the site · v = fixed value, used only when no fig is set
+   u = unit · k = label · d = qualifier line beneath.
    The tile strip is hidden entirely while this list is empty.        */
 export const IR_KPIS = [
-  { v:FIG.commissioned, u:" MW", k:"Commissioned capacity",        d:"Operating" },
-  { v:FIG.ongoing,      u:" MW", k:"Ongoing projects",             d:"Under development" },
-  { v:FIG.co2Total,     u:" t",  k:"CO₂ avoided",                  d:"Cumulative" },
-  { v:FIG.states,       u:"",    k:"States with operating assets", d:"TN · KA · GJ · MH" },
+  { fig:"commissioned", v:"", u:" MW", k:"Commissioned capacity",        d:"Operating" },
+  { fig:"ongoing",      v:"", u:" MW", k:"Ongoing projects",             d:"Under development" },
+  { fig:"co2Total",     v:"", u:" t",  k:"CO₂ avoided",                  d:"Cumulative" },
+  { fig:"states",       v:"", u:"",    k:"States with operating assets", d:"TN · KA · GJ · MH" },
 ];
+export const irFigVal = (x) => (x.fig && FIG[x.fig]) || x.v;
 
 /* ---------- hero highlight chips ----------
    Short headline claims, shown as pill badges next to the hero copy —
@@ -308,6 +312,103 @@ export const IR_DISCLOSURES = [
      { l:"Operational capacity", v:000, max:000, c:"#3E6FD6", s:"MW" }
    The card is hidden entirely while this list is empty.              */
 export const IR_OPS = [];
+
+/* ---------- page labels (CMS-editable) ---------- */
+export const IR_TEXT = {
+  eyebrow: "Investor relations",
+  avTitle: "Statutory audio-visual — DRHP",
+  avLead: "Draft Red Herring Prospectus audio-visual, in English and Hindi.",
+  whereTitle: "Where we operate",
+  whereSub: "Four states across India's highest-resource wind and solar corridors",
+  whereFoot: "Wind, solar and hybrid assets sited on validated resource data, with transmission access secured before construction.",
+  underDevelopment: "Under development",
+  projectsLabel: "projects",
+  libraryTitle: "Document library",
+  libraryLead: "Filed by section.",
+  documentOne: "document",
+  documentMany: "documents",
+  emptyNote: "Nothing filed in this category yet. Documents appear here as they are published.",
+  listingLock: "Available on listing",
+  boardEmpty: "Board and committee composition will be published here.",
+  committeeTitle: "Committee composition",
+  disclosuresEmpty: "Statutory disclosures will be published here.",
+  railTitle: "Stay on the list.",
+  railText: "Results, filings and the latest deck — straight to your inbox.",
+  railPlaceholder: "you@fund.com",
+  railSubscribe: "Subscribe to IR updates",
+  railDeck: "Download latest investor deck",
+  contactTitle: "Investor contact",
+  breadcrumbHome: "Home",
+  breadcrumbInvestors: "Investors",
+  opsTitle: "Capacity build-out",
+  opsSub: "Commissioned, under construction and advanced pipeline.",
+  filterAllYears: "All years",
+  filterAllQuarters: "All quarters",
+  filterPlaceholder: "Filter documents…",
+  noMatch: "No documents match these filters.",
+  loadMore: "Load more",
+  loadMoreOf: "of",
+  fileType: "PDF",
+  directorCol: "Director",
+  chair: "Chair",
+  member: "Member",
+  srCol: "Sr.",
+  particularsCol: "Particulars",
+  referenceCol: "Reference",
+  viewLink: "View",
+  onListing: "On listing",
+  notApplicable: "Not applicable",
+};
+
+/* ---------- DRHP legal disclaimer (CMS-editable) ----------
+   Shown before every DRHP / DAP / advertisement download and every DRHP video
+   play. LEGAL TEXT — change only with legal sign-off. The gate itself (shown
+   every time, no memory) is in investors.jsx and is not editable.
+     caps     upper-case notices at the top
+     paras    the disclaimer paragraphs
+     notice   bold lines after the paragraphs                          */
+export const IR_DISCLAIMER = {
+  eyebrow: "Website screening and disclaimer",
+  title: "Important Disclaimer",
+  caps: [
+    "PLEASE READ THIS DISCLAIMER CAREFULLY AND AGREE WITH THE TERMS AND CONDITIONS OF THIS DISCLAIMER BEFORE CONTINUING. IT APPLIES TO ALL PERSONS WHO VIEW THIS WEBSITE. PLEASE NOTE THAT THE DISCLAIMER SET OUT BELOW MAY BE ALTERED OR UPDATED. YOU SHOULD READ IT IN FULL EACH TIME YOU VISIT THE WEBSITE. BY ACCESSING THIS INFORMATION ON THIS WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS BELOW, INCLUDING ANY MODIFICATIONS THAT MAY BE MADE TO THEM FROM TIME TO TIME.",
+    "THESE MATERIALS ARE NOT DIRECTED AT OR INTENDED TO BE ACCESSED BY PERSONS OUTSIDE INDIA.",
+    "THE DRAFT RED HERRING PROSPECTUS HAS BEEN MADE AVAILABLE ON OUR WEBSITE TO COMPLY WITH THE SECURITIES AND EXCHANGE BOARD OF INDIA (ISSUE OF CAPITAL AND DISCLOSURE REQUIREMENTS) REGULATIONS, 2018, AS AMENDED.",
+  ],
+  paras: [
+    "The following disclaimer applies to the draft red herring prospectus dated September 24, 2026 (the “Draft Red Herring Prospectus”) filed with the Securities and Exchange Board of India (“SEBI”), BSE Limited and National Stock Exchange of India Limited hosted on this website in relation to the proposed initial public offering in India of the equity shares bearing face value of ₹2 each (“Equity Shares”) of Integrum Energy Infrastructure Limited (the “Company”) (the “Offer”). You are advised to read this disclaimer carefully before reading, accessing or making any other use of the Draft Red Herring Prospectus.",
+    "The Draft Red Herring Prospectus does not constitute an offer of securities for sale in any jurisdiction, including India, and any potential investors should not rely on the Draft Red Herring Prospectus. Neither the Company nor any of its affiliates is soliciting any action based on the Draft Red Herring Prospectus. The offer and sale of the Equity Shares to be offered in the Offer shall be made only pursuant to the Red Herring Prospectus (when available), if the investor is in India, or the Red Herring Prospectus and the accompanying preliminary international wrap (which contains, among other things, the selling restrictions for the Offer outside India) if the investor is outside India. No person outside India is eligible to bid for Equity Shares in the Offer unless that person has received the preliminary offering memorandum for the Offer, which comprises the Red Herring Prospectus and the preliminary international wrap.",
+    "The Equity Shares offered in the Offer have not been and will not be registered, listed or otherwise qualified in any jurisdiction except India and may not be offered or sold to persons outside of India except in compliance with the applicable laws of each such jurisdiction. In particular, the Equity Shares offered in the Offer have not been and will not be registered, listed or otherwise qualified in any jurisdiction except India and may not be offered or sold to persons outside of India except in compliance with the applicable laws of each such jurisdiction. In particular, the Equity Shares offered in the Offer have not been and will not be registered under the U.S. Securities Act of 1933, as amended (the “U.S. Securities Act”), or the securities laws of any state of the United States and may not be offered or sold in the United States, except pursuant to an exemption from, or in a transaction not subject to, the registration requirements of the U.S. Securities Act and applicable state securities laws. The Equity Shares offered in the Offer are being offered and sold only outside the United States in “offshore transactions” as defined in and in reliance on Regulation S under the U.S. Securities Act.",
+    "The copy of the Draft Red Herring Prospectus hosted on this website may not be distributed, directly or indirectly, outside India. You are hereby notified that any forwarding, delivery, distribution or reproduction of the Draft Red Herring Prospectus, in whole or in part, outside India is strictly prohibited. Failure to comply with this disclaimer may result in a violation of the applicable laws. If you access the Draft Red Herring Prospectus, you agree not to forward, deliver or distribute it, in whole or in part, to any person outside India.",
+    "You are accessing this website at your own risk. None of the Company, Mefcom Capital Markets Limited, Centrum Broking Limited (as successor to the merchant banking business of Centrum Capital Limited), Beeline Capital Advisors Private Limited (together, the “Book Running Lead Managers”) or their respective affiliates, directors, officers, agents, representatives, advisors or employees will be liable or have any responsibility of any kind for any loss or damage that you incur in the event of any failure or disruption of this website, or resulting from the act or omission of any other party involved in making this website or the data contained therein available to you, or from any other cause relating to your access to, inability to access, or use of the website or these materials.",
+    "The Company and its affiliates shall not be responsible for any loss or damage that could result from interception and interpretation by any third parties of any information being made available to you through this website. Our Company has taken all necessary steps to ensure that the contents of the Draft Red Herring Prospectus as appearing on this website are identical to the Draft Red Herring Prospectus filed with SEBI. You are reminded that documents transmitted in electronic form may be altered or changed during the process of transmission and consequently, none of the Company, Book Running Lead Managers, their respective affiliates, directors, officers, agents, representatives, advisors or employees accepts any liability or responsibility whatsoever in respect of alterations or changes which may have taken place during the course of transmission of the Draft Red Herring Prospectus in electronic format.",
+    "You are responsible for protecting against viruses and other destructive items. You are accessing this website at your own risk, and it is your responsibility to take precautions to ensure that it is free from viruses and other items of a destructive nature.",
+  ],
+  notice: [
+    "Due to legal restrictions, access to this part of this website is only available to residents of India from within India.",
+    "If you are not in India, please exit this webpage.",
+  ],
+  confirmHeading: "Confirmation of your acceptance of the terms and conditions",
+  confirmIntro: "By clicking on the “I Confirm” button below you represent to the Company that:",
+  confirmPoints: [
+    "You have read the disclaimer set out above and you agree to be bound by its terms; and",
+    "You are a resident of India and are located in India.",
+  ],
+  confirmOutro: "If you cannot make these confirmations, you must press the button marked “I Do Not Confirm”.",
+  declineBtn: "I Do Not Confirm",
+  confirmBtn: "I Confirm",
+  declinedMsg: "You are not permitted to view the materials in this section of the website",
+  closeBtn: "Close",
+};
+
+/* ---------- statutory audio-visual (shown on the snapshot) ----------
+   One tab per video. The section is hidden entirely while this is empty. */
+export const IR_AV = [
+  { key:"en", label:"English", src:"/assets/investors/IEIL-DRHP-Statutory-AV-English.mp4",
+    poster:"/assets/investors/IEIL-DRHP-Statutory-AV-poster.jpg" },
+  { key:"hi", label:"हिन्दी (Hindi)", src:"/assets/investors/IEIL-DRHP-Statutory-AV-Hindi.mp4",
+    poster:"/assets/investors/IEIL-DRHP-Statutory-AV-poster.jpg" },
+];
 
 /* ---------- IR contact ---------- */
 export const IR_CONTACT = {

@@ -17,8 +17,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import ReactDOM from "react-dom";
 import { I, Reveal, ProjectsMapDark, PROJECT_REGIONS } from "./dataviz";
 import {
-  IR_STAGE, IR_SECTIONS, IR_KPIS, IR_HIGHLIGHTS, IR_DOCS, IR_BOARD,
-  IR_COMMITTEES, IR_MATRIX, IR_DISCLOSURES, IR_OPS, IR_CONTACT,
+  IR_SETTINGS, IR_SECTIONS, IR_KPIS, IR_HIGHLIGHTS, IR_DOCS, IR_BOARD,
+  IR_COMMITTEES, IR_MATRIX, IR_DISCLOSURES, IR_OPS, IR_CONTACT, IR_AV, IR_TEXT, IR_DISCLAIMER, irFigVal,
 } from "./ir-data";
 
 /* ---------- helpers ---------- */
@@ -46,21 +46,13 @@ const irDocs = (sec, grp) => IR_DOCS.filter(d => d.sec === sec && (!grp || d.grp
 const irSection = (key) => IR_SECTIONS.find(s => s.key === key) || IR_SECTIONS[0];
 
 /* A row marked from:"listing" exists only once the company is listed. While
-   IR_STAGE is "preipo" it renders as a locked placeholder instead of a file. */
-const irLocked = (d) => IR_STAGE !== "listed" && d && d.from === "listing";
+   IR_SETTINGS.stage is "preipo" it renders as a locked placeholder instead of a file. */
+const irLocked = (d) => IR_SETTINGS.stage !== "listed" && d && d.from === "listing";
 
 /* ---------- DRHP / DAP / DRHP advertisement — legal disclaimer gate ----------
    Shown on EVERY download click (no session/local memory, by legal instruction).
-   "I Confirm" downloads; "I Do Not Confirm" blocks it and shows the notice. */
-const IR_DRHP_DISCLAIMER = [
-  "The following disclaimer applies to the draft red herring prospectus dated September 24, 2026 (the “Draft Red Herring Prospectus”) filed with the Securities and Exchange Board of India (“SEBI”), BSE Limited and National Stock Exchange of India Limited hosted on this website in relation to the proposed initial public offering in India of the equity shares bearing face value of ₹2 each (“Equity Shares”) of Integrum Energy Infrastructure Limited (the “Company”) (the “Offer”). You are advised to read this disclaimer carefully before reading, accessing or making any other use of the Draft Red Herring Prospectus.",
-  "The Draft Red Herring Prospectus does not constitute an offer of securities for sale in any jurisdiction, including India, and any potential investors should not rely on the Draft Red Herring Prospectus. Neither the Company nor any of its affiliates is soliciting any action based on the Draft Red Herring Prospectus. The offer and sale of the Equity Shares to be offered in the Offer shall be made only pursuant to the Red Herring Prospectus (when available), if the investor is in India, or the Red Herring Prospectus and the accompanying preliminary international wrap (which contains, among other things, the selling restrictions for the Offer outside India) if the investor is outside India. No person outside India is eligible to bid for Equity Shares in the Offer unless that person has received the preliminary offering memorandum for the Offer, which comprises the Red Herring Prospectus and the preliminary international wrap.",
-  "The Equity Shares offered in the Offer have not been and will not be registered, listed or otherwise qualified in any jurisdiction except India and may not be offered or sold to persons outside of India except in compliance with the applicable laws of each such jurisdiction. In particular, the Equity Shares offered in the Offer have not been and will not be registered, listed or otherwise qualified in any jurisdiction except India and may not be offered or sold to persons outside of India except in compliance with the applicable laws of each such jurisdiction. In particular, the Equity Shares offered in the Offer have not been and will not be registered under the U.S. Securities Act of 1933, as amended (the “U.S. Securities Act”), or the securities laws of any state of the United States and may not be offered or sold in the United States, except pursuant to an exemption from, or in a transaction not subject to, the registration requirements of the U.S. Securities Act and applicable state securities laws. The Equity Shares offered in the Offer are being offered and sold only outside the United States in “offshore transactions” as defined in and in reliance on Regulation S under the U.S. Securities Act.",
-  "The copy of the Draft Red Herring Prospectus hosted on this website may not be distributed, directly or indirectly, outside India. You are hereby notified that any forwarding, delivery, distribution or reproduction of the Draft Red Herring Prospectus, in whole or in part, outside India is strictly prohibited. Failure to comply with this disclaimer may result in a violation of the applicable laws. If you access the Draft Red Herring Prospectus, you agree not to forward, deliver or distribute it, in whole or in part, to any person outside India.",
-  "You are accessing this website at your own risk. None of the Company, Mefcom Capital Markets Limited, Centrum Broking Limited (as successor to the merchant banking business of Centrum Capital Limited), Beeline Capital Advisors Private Limited (together, the “Book Running Lead Managers”) or their respective affiliates, directors, officers, agents, representatives, advisors or employees will be liable or have any responsibility of any kind for any loss or damage that you incur in the event of any failure or disruption of this website, or resulting from the act or omission of any other party involved in making this website or the data contained therein available to you, or from any other cause relating to your access to, inability to access, or use of the website or these materials.",
-  "The Company and its affiliates shall not be responsible for any loss or damage that could result from interception and interpretation by any third parties of any information being made available to you through this website. Our Company has taken all necessary steps to ensure that the contents of the Draft Red Herring Prospectus as appearing on this website are identical to the Draft Red Herring Prospectus filed with SEBI. You are reminded that documents transmitted in electronic form may be altered or changed during the process of transmission and consequently, none of the Company, Book Running Lead Managers, their respective affiliates, directors, officers, agents, representatives, advisors or employees accepts any liability or responsibility whatsoever in respect of alterations or changes which may have taken place during the course of transmission of the Draft Red Herring Prospectus in electronic format.",
-  "You are responsible for protecting against viruses and other destructive items. You are accessing this website at your own risk, and it is your responsibility to take precautions to ensure that it is free from viruses and other items of a destructive nature."
-];
+   "I Confirm" downloads; "I Do Not Confirm" blocks it and shows the notice.
+   The wording is IR_DISCLAIMER in ir-data.js (CMS-editable); this gate is not. */
 /* onConfirm (optional): what "I Confirm" does. Defaults to downloading
    doc.url; the DRHP audio-visuals pass a callback that starts playback. */
 function IRDisclaimer({ doc, onClose, onConfirm }) {
@@ -83,33 +75,29 @@ function IRDisclaimer({ doc, onClose, onConfirm }) {
       <div className="irdc-box" role="dialog" aria-modal="true" aria-labelledby="irdc-title">
         {declined ? (
           <div className="irdc-declined">
-            <p className="irdc-declined-msg">You are not permitted to view the materials in this section of the website</p>
-            <button className="btn btn-ghost" onClick={onClose} autoFocus>Close</button>
+            <p className="irdc-declined-msg">{IR_DISCLAIMER.declinedMsg}</p>
+            <button className="btn btn-ghost" onClick={onClose} autoFocus>{IR_DISCLAIMER.closeBtn}</button>
           </div>
         ) : (<>
           <div className="irdc-head">
-            <span className="irdc-eyebrow">Website screening and disclaimer</span>
-            <h3 id="irdc-title" className="irdc-title">Important Disclaimer</h3>
+            <span className="irdc-eyebrow">{IR_DISCLAIMER.eyebrow}</span>
+            <h3 id="irdc-title" className="irdc-title">{IR_DISCLAIMER.title}</h3>
             <span className="irdc-doc">{doc.t}</span>
           </div>
           <div className="irdc-body">
-            <p className="irdc-caps">PLEASE READ THIS DISCLAIMER CAREFULLY AND AGREE WITH THE TERMS AND CONDITIONS OF THIS DISCLAIMER BEFORE CONTINUING. IT APPLIES TO ALL PERSONS WHO VIEW THIS WEBSITE. PLEASE NOTE THAT THE DISCLAIMER SET OUT BELOW MAY BE ALTERED OR UPDATED. YOU SHOULD READ IT IN FULL EACH TIME YOU VISIT THE WEBSITE. BY ACCESSING THIS INFORMATION ON THIS WEBSITE, YOU AGREE TO THE TERMS AND CONDITIONS BELOW, INCLUDING ANY MODIFICATIONS THAT MAY BE MADE TO THEM FROM TIME TO TIME.</p>
-            <p className="irdc-caps">THESE MATERIALS ARE NOT DIRECTED AT OR INTENDED TO BE ACCESSED BY PERSONS OUTSIDE INDIA.</p>
-            <p className="irdc-caps">THE DRAFT RED HERRING PROSPECTUS HAS BEEN MADE AVAILABLE ON OUR WEBSITE TO COMPLY WITH THE SECURITIES AND EXCHANGE BOARD OF INDIA (ISSUE OF CAPITAL AND DISCLOSURE REQUIREMENTS) REGULATIONS, 2018, AS AMENDED.</p>
-            {IR_DRHP_DISCLAIMER.map((p, i) => <p key={i}>{p}</p>)}
-            <p><strong>Due to legal restrictions, access to this part of this website is only available to residents of India from within India.</strong></p>
-            <p><strong>If you are not in India, please exit this webpage.</strong></p>
-            <h4 className="irdc-h4">Confirmation of your acceptance of the terms and conditions</h4>
-            <p>By clicking on the “I Confirm” button below you represent to the Company that:</p>
+            {(IR_DISCLAIMER.caps || []).map((p, i) => <p key={"c" + i} className="irdc-caps">{p}</p>)}
+            {(IR_DISCLAIMER.paras || []).map((p, i) => <p key={"p" + i}>{p}</p>)}
+            {(IR_DISCLAIMER.notice || []).map((p, i) => <p key={"n" + i}><strong>{p}</strong></p>)}
+            <h4 className="irdc-h4">{IR_DISCLAIMER.confirmHeading}</h4>
+            <p>{IR_DISCLAIMER.confirmIntro}</p>
             <ol className="irdc-list">
-              <li>You have read the disclaimer set out above and you agree to be bound by its terms; and</li>
-              <li>You are a resident of India and are located in India.</li>
+              {(IR_DISCLAIMER.confirmPoints || []).map((p, i) => <li key={i}>{p}</li>)}
             </ol>
-            <p>If you cannot make these confirmations, you must press the button marked “I Do Not Confirm”.</p>
+            <p>{IR_DISCLAIMER.confirmOutro}</p>
           </div>
           <div className="irdc-foot">
-            <button className="btn btn-ghost" onClick={()=>setDeclined(true)}>I Do Not Confirm</button>
-            <button className="btn btn-primary" onClick={confirm}>I Confirm</button>
+            <button className="btn btn-ghost" onClick={()=>setDeclined(true)}>{IR_DISCLAIMER.declineBtn}</button>
+            <button className="btn btn-primary" onClick={confirm}>{IR_DISCLAIMER.confirmBtn}</button>
           </div>
         </>)}
       </div>
@@ -129,9 +117,9 @@ function IRDocRow({ d }) {
         {d.q && !locked && <span className="ir-doc-tag">{d.q}</span>}
       </span>
       <span className="ir-doc-date num">{locked ? "—" : irDate(d.d)}</span>
-      <span className="dm num">{locked ? "—" : (d.size ? "PDF · " + d.size : "PDF")}</span>
+      <span className="dm num">{locked ? "—" : (d.size ? IR_TEXT.fileType + " · " + d.size : IR_TEXT.fileType)}</span>
       {locked
-        ? <span className="ir-lock">Available on listing</span>
+        ? <span className="ir-lock">{IR_TEXT.listingLock}</span>
         : <a className="dl-arrow" href={d.url || "#"} onClick={(e)=>{ if (!d.url) { e.preventDefault(); return; } if (d.gated) { e.preventDefault(); setGate(true); } }} aria-label={"Download " + d.t}>{I.download()}</a>}
       {gate && ReactDOM.createPortal(<IRDisclaimer doc={d} onClose={()=>setGate(false)}/>, document.body)}
     </li>
@@ -169,31 +157,31 @@ function IRDocList({ docs, emptyNote }) {
       {docs.length > 0 && <div className="ir-filterbar">
         {years.length > 1 && (
           <select className="ir-select" value={year} onChange={e=>setYear(e.target.value)} aria-label="Filter by financial year">
-            <option value="all">All years</option>
+            <option value="all">{IR_TEXT.filterAllYears}</option>
             {years.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
         )}
         {hasQuarters && (
           <select className="ir-select" value={quarter} onChange={e=>setQuarter(e.target.value)} aria-label="Filter by quarter">
-            <option value="all">All quarters</option>
+            <option value="all">{IR_TEXT.filterAllQuarters}</option>
             {["Q1","Q2","Q3","Q4"].map(x => <option key={x} value={x}>{x}</option>)}
           </select>
         )}
         <span className="ir-searchwrap">
           {I.search({ width:15, height:15 })}
-          <input className="ir-search" value={q} onChange={e=>setQ(e.target.value)} placeholder="Filter documents…" aria-label="Filter documents by name"/>
+          <input className="ir-search" value={q} onChange={e=>setQ(e.target.value)} placeholder={IR_TEXT.filterPlaceholder} aria-label="Filter documents by name"/>
           {q && <button className="ir-clear" onClick={()=>setQ("")} aria-label="Clear filter">{I.x({ width:13, height:13 })}</button>}
         </span>
-        <span className="ir-count num">{filtered.length} {filtered.length === 1 ? "document" : "documents"}</span>
+        <span className="ir-count num">{filtered.length} {filtered.length === 1 ? IR_TEXT.documentOne : IR_TEXT.documentMany}</span>
       </div>}
 
       {filtered.length === 0
-        ? <div className="ir-empty">{emptyNote || "No documents match these filters."}</div>
+        ? <div className="ir-empty">{emptyNote || IR_TEXT.noMatch}</div>
         : <ul className="ir-doclist">{filtered.slice(0, shown).map((d,i) => <IRDocRow key={i} d={d}/>)}</ul>}
 
       {filtered.length > shown && (
         <button className="btn btn-ghost ir-loadmore" onClick={()=>setShown(s => s + 8)}>
-          Load more <span className="num">({shown} of {filtered.length})</span>
+          {IR_TEXT.loadMore} <span className="num">({shown} {IR_TEXT.loadMoreOf} {filtered.length})</span>
         </button>
       )}
     </div>
@@ -218,7 +206,7 @@ function IRGroupTabs({ groups, active, onPick }) {
 /* ---------- governance · board + committee matrix ---------- */
 function IRBoard() {
   if (!IR_BOARD.length) return (
-    <div className="ir-empty">Board and committee composition will be published here.</div>
+    <div className="ir-empty">{IR_TEXT.boardEmpty}</div>
   );
   return (
     <div>
@@ -235,11 +223,11 @@ function IRBoard() {
       </div>
 
       {IR_MATRIX.length > 0 && <React.Fragment>
-      <h3 className="ir-h3">Committee composition</h3>
+      <h3 className="ir-h3">{IR_TEXT.committeeTitle}</h3>
       <div className="ir-table-wrap">
         <table className="ir-table ir-matrix">
           <thead>
-            <tr><th>Director</th>{IR_COMMITTEES.map(c => <th key={c} className="ctr">{c}</th>)}</tr>
+            <tr><th>{IR_TEXT.directorCol}</th>{IR_COMMITTEES.map(c => <th key={c} className="ctr">{c}</th>)}</tr>
           </thead>
           <tbody>
             {IR_MATRIX.map((r,i) => (
@@ -247,8 +235,8 @@ function IRBoard() {
                 <td>{r.n}</td>
                 {r.roles.map((x,j) => (
                   <td key={j} className="ctr">
-                    {x === "C" ? <span className="mk chair" title="Chair">C</span>
-                      : x === "M" ? <span className="mk" title="Member">M</span>
+                    {x === "C" ? <span className="mk chair" title={IR_TEXT.chair}>C</span>
+                      : x === "M" ? <span className="mk" title={IR_TEXT.member}>M</span>
                       : <span className="mk none">—</span>}
                   </td>
                 ))}
@@ -257,7 +245,7 @@ function IRBoard() {
           </tbody>
         </table>
       </div>
-      <div className="ir-legend"><span><i className="mk chair">C</i> Chair</span><span><i className="mk">M</i> Member</span></div>
+      <div className="ir-legend"><span><i className="mk chair">C</i> {IR_TEXT.chair}</span><span><i className="mk">M</i> {IR_TEXT.member}</span></div>
       </React.Fragment>}
     </div>
   );
@@ -266,23 +254,23 @@ function IRBoard() {
 /* ---------- governance · statutory disclosure table ---------- */
 function IRDisclosures() {
   if (!IR_DISCLOSURES.length) return (
-    <div className="ir-empty">Statutory disclosures will be published here.</div>
+    <div className="ir-empty">{IR_TEXT.disclosuresEmpty}</div>
   );
   return (
     <div className="ir-table-wrap">
       <table className="ir-table">
-        <thead><tr><th className="sr">Sr.</th><th>Particulars</th><th className="rt">Reference</th></tr></thead>
+        <thead><tr><th className="sr">{IR_TEXT.srCol}</th><th>{IR_TEXT.particularsCol}</th><th className="rt">{IR_TEXT.referenceCol}</th></tr></thead>
         <tbody>
           {IR_DISCLOSURES.map((r,i) => (
             <tr key={i}>
               <td className="sr num">{i+1}</td>
               <td>{r.p}</td>
               <td className="rt">
-                {(r.a === "doc" || (r.a === "listing" && IR_STAGE === "listed"))
-                  ? <a className="ir-link" href={r.url || "#"} onClick={e=>{ if (!r.url) e.preventDefault(); }}>View {I.link({ width:13, height:13 })}</a>
-                  : r.a === "listing" ? <span className="ir-lock">On listing</span>
+                {(r.a === "doc" || (r.a === "listing" && IR_SETTINGS.stage === "listed"))
+                  ? <a className="ir-link" href={r.url || "#"} onClick={e=>{ if (!r.url) e.preventDefault(); }}>{IR_TEXT.viewLink} {I.link({ width:13, height:13 })}</a>
+                  : r.a === "listing" ? <span className="ir-lock">{IR_TEXT.onListing}</span>
                   : r.a === "pending" ? <span className="muted">—</span>
-                  : <span className="muted">Not applicable</span>}
+                  : <span className="muted">{IR_TEXT.notApplicable}</span>}
               </td>
             </tr>
           ))}
@@ -294,14 +282,12 @@ function IRDisclosures() {
 
 /* ---------- snapshot ---------- */
 /* ---------- snapshot · DRHP statutory audio-visual ---------- */
-const IR_AV = [
-  { key:"en", label:"English", src:"/assets/investors/IEIL-DRHP-Statutory-AV-English.mp4" },
-  { key:"hi", label:"हिन्दी (Hindi)", src:"/assets/investors/IEIL-DRHP-Statutory-AV-Hindi.mp4" },
-];
 
 function IRStatutoryAV() {
-  const [lang, setLang] = useState(IR_AV[0].key);
-  const cur = IR_AV.find(v => v.key === lang) || IR_AV[0];
+  // Videos added through the CMS may not carry a key — fall back to position.
+  const vids = IR_AV.map((v, i) => ({ ...v, key: v.key || "v" + i }));
+  const [lang, setLang] = useState(vids[0]?.key);
+  const cur = vids.find(v => v.key === lang) || vids[0];
   // Legal requirement: the DRHP disclaimer must be acknowledged before EVERY
   // play — no memory between plays or sessions. Any play that wasn't just
   // confirmed (Play button, clicking the picture, keyboard, replay after the
@@ -319,21 +305,22 @@ function IRStatutoryAV() {
     const v = videoRef.current;
     if (v) v.play().catch(() => { confirmedRef.current = false; });
   };
+  if (!cur) return null;
   return (
     <>
-      <h3 className="ir-h3" style={{ marginTop: 40 }}>Statutory audio-visual — DRHP</h3>
-      <p className="muted" style={{ maxWidth:640, marginTop:-4 }}>Draft Red Herring Prospectus audio-visual, in English and Hindi.</p>
-      <IRGroupTabs groups={IR_AV} active={lang} onPick={setLang}/>
+      <h3 className="ir-h3" style={{ marginTop: 40 }}>{IR_TEXT.avTitle}</h3>
+      <p className="muted" style={{ maxWidth:640, marginTop:-4 }}>{IR_TEXT.avLead}</p>
+      <IRGroupTabs groups={vids} active={cur.key} onPick={setLang}/>
       <Reveal className="ir-av">
         <video key={cur.key} ref={videoRef} controls preload="metadata" playsInline
                controlsList="nodownload noremoteplayback" disablePictureInPicture
                onContextMenu={(e)=>e.preventDefault()} onPlay={onPlay}
-               poster="/assets/investors/IEIL-DRHP-Statutory-AV-poster.jpg">
+               poster={cur.poster || undefined}>
           <source src={cur.src} type="video/mp4"/>
         </video>
       </Reveal>
       {gate && ReactDOM.createPortal(
-        <IRDisclaimer doc={{ t: `Statutory audio-visual — DRHP · ${cur.label}` }} onClose={()=>setGate(false)} onConfirm={playConfirmed}/>,
+        <IRDisclaimer doc={{ t: `${IR_TEXT.avTitle} · ${cur.label}` }} onClose={()=>setGate(false)} onConfirm={playConfirmed}/>,
         document.body)}
     </>
   );
@@ -347,8 +334,8 @@ function IRSnapshot({ nav }) {
     <div className="page-fade">
       {IR_OPS.length > 0 && (
         <Reveal className="snap-card ir-wide-card">
-          <h4>Capacity build-out</h4>
-          <div className="sc-sub">Commissioned, under construction and advanced pipeline.</div>
+          <h4>{IR_TEXT.opsTitle}</h4>
+          <div className="sc-sub">{IR_TEXT.opsSub}</div>
           <div style={{ marginTop:22, display:"flex", flexDirection:"column", gap:16 }}>
             {IR_OPS.map((r,i) => (
               <div key={i}>
@@ -367,8 +354,8 @@ function IRSnapshot({ nav }) {
       <Reveal className="geo-band" style={{ marginTop: IR_OPS.length ? 22 : 8 }}>
         <div className="geo-map-head">
           <div>
-            <h4>Where we operate</h4>
-            <div className="geo-sub">Four states across India's highest-resource wind and solar corridors</div>
+            <h4>{IR_TEXT.whereTitle}</h4>
+            <div className="geo-sub">{IR_TEXT.whereSub}</div>
           </div>
         </div>
         <div className="geo-split">
@@ -380,8 +367,8 @@ function IRSnapshot({ nav }) {
                   <span className="gs-dot"></span>
                   <span className="gs-name">{r.name}</span>
                   {r.status==="development"
-                    ? <span className="gs-n" style={{ fontSize:13, fontWeight:600 }}>Under development</span>
-                    : <span className="gs-n num">{r.n}<em>projects</em></span>}
+                    ? <span className="gs-n" style={{ fontSize:13, fontWeight:600 }}>{IR_TEXT.underDevelopment}</span>
+                    : <span className="gs-n num">{r.n}<em>{IR_TEXT.projectsLabel}</em></span>}
                 </div>
                 <div className="gs-track">
                   {r.status==="development"
@@ -392,7 +379,7 @@ function IRSnapshot({ nav }) {
             ))}
             <div className="geo-state-foot">
               <span className="gsf-ic">{I.compass({width:16,height:16})}</span>
-              <p>Wind, solar and hybrid assets sited on validated resource data, with transmission access secured before construction.</p>
+              <p>{IR_TEXT.whereFoot}</p>
             </div>
           </div>
         </div>
@@ -400,8 +387,8 @@ function IRSnapshot({ nav }) {
 
       <IRStatutoryAV/>
 
-      <h3 className="ir-h3" style={{ marginTop: 40 }}>Document library</h3>
-      <p className="muted" style={{ maxWidth:640, marginTop:-4 }}>Filed by section.</p>
+      <h3 className="ir-h3" style={{ marginTop: 40 }}>{IR_TEXT.libraryTitle}</h3>
+      <p className="muted" style={{ maxWidth:640, marginTop:-4 }}>{IR_TEXT.libraryLead}</p>
       <div className="ir-jump">
         {jump.map((s,i) => (
           <Reveal key={s.key} delay={i*50}>
@@ -412,7 +399,7 @@ function IRSnapshot({ nav }) {
                 <span className="dl-arrow">{I.arrow({ width:16, height:16 })}</span>
               </span>
               <span className="ir-jump-sub">{s.blurb}</span>
-              {s.n > 0 && <span className="ir-jump-n num">{s.n} {s.n === 1 ? "document" : "documents"}</span>}
+              {s.n > 0 && <span className="ir-jump-n num">{s.n} {s.n === 1 ? IR_TEXT.documentOne : IR_TEXT.documentMany}</span>}
             </a>
           </Reveal>
         ))}
@@ -427,20 +414,20 @@ function IRRail() {
     <div className="inv-bottom ir-rail">
       <Reveal>
         <div className="ir-sidebar">
-          <h4>Stay on the list.</h4>
-          <p style={{ color:"#9FB7CF", fontSize:14.5, marginTop:8, position:"relative" }}>Results, filings and the latest deck — straight to your inbox.</p>
-          <input className="ir-input" placeholder="you@fund.com" aria-label="Your email address"/>
-          <button className="btn btn-primary" style={{ width:"100%", marginTop:14 }}>Subscribe to IR updates</button>
-          <button className="btn btn-ghost" style={{ width:"100%", marginTop:10, color:"#fff", borderColor:"rgba(255,255,255,.28)" }}>Download latest investor deck {I.download({ width:16, height:16 })}</button>
+          <h4>{IR_TEXT.railTitle}</h4>
+          <p style={{ color:"#9FB7CF", fontSize:14.5, marginTop:8, position:"relative" }}>{IR_TEXT.railText}</p>
+          <input className="ir-input" placeholder={IR_TEXT.railPlaceholder} aria-label="Your email address"/>
+          <button className="btn btn-primary" style={{ width:"100%", marginTop:14 }}>{IR_TEXT.railSubscribe}</button>
+          <button className="btn btn-ghost" style={{ width:"100%", marginTop:10, color:"#fff", borderColor:"rgba(255,255,255,.28)" }}>{IR_TEXT.railDeck} {I.download({ width:16, height:16 })}</button>
         </div>
       </Reveal>
       <Reveal delay={80}>
         <div className="ir-contact">
-          <h4>Investor contact</h4>
+          <h4>{IR_TEXT.contactTitle}</h4>
           <div className="ir-contact-row"><span>{IR_CONTACT.name}</span></div>
           <div className="ir-contact-row muted">{IR_CONTACT.role}</div>
           <a className="ir-contact-row ir-link" href={"mailto:" + IR_CONTACT.email}>{IR_CONTACT.email}</a>
-          <a className="ir-contact-row ir-link" href={"tel:" + IR_CONTACT.phone.replace(/\s/g,"")}>{IR_CONTACT.phone}</a>
+          <a className="ir-contact-row ir-link" href={"tel:" + String(IR_CONTACT.phone || "").replace(/\s/g,"")}>{IR_CONTACT.phone}</a>
           <div className="ir-contact-row muted" style={{ fontSize:13 }}>{IR_CONTACT.addr}</div>
         </div>
       </Reveal>
@@ -467,18 +454,18 @@ export function Investors({ nav, sub }) {
       <section className="page-hero">
         <div className="shell">
           <div className="breadcrumb">
-            <a onClick={()=>nav("home")} style={{cursor:"pointer"}}>Home</a> {I.arrow({width:13,height:13})}
+            <a onClick={()=>nav("home")} style={{cursor:"pointer"}}>{IR_TEXT.breadcrumbHome}</a> {I.arrow({width:13,height:13})}
             {sec.key === "snapshot"
-              ? <span style={{color:"var(--ink-2)"}}>Investors</span>
+              ? <span style={{color:"var(--ink-2)"}}>{IR_TEXT.breadcrumbInvestors}</span>
               : <React.Fragment>
-                  <a onClick={()=>nav("investors")} style={{cursor:"pointer"}}>Investors</a> {I.arrow({width:13,height:13})}
+                  <a onClick={()=>nav("investors")} style={{cursor:"pointer"}}>{IR_TEXT.breadcrumbInvestors}</a> {I.arrow({width:13,height:13})}
                   <span style={{color:"var(--ink-2)"}}>{sec.label}</span>
                 </React.Fragment>}
             
           </div>
 
           <div style={{ maxWidth:760, marginTop:18 }}>
-            <span className="eyebrow">Investor relations</span>
+            <span className="eyebrow">{IR_TEXT.eyebrow}</span>
             <h1 style={{ fontSize: sec.key === "snapshot" ? "clamp(38px,5.2vw,62px)" : "clamp(32px,4.2vw,50px)", letterSpacing:"-.035em", marginTop:16, lineHeight:1.0 }}>{sec.title}</h1>
             <p className="lead" style={{ fontSize:18.5, maxWidth:640 }}>{sec.blurb}</p>
 
@@ -492,7 +479,7 @@ export function Investors({ nav, sub }) {
           {IR_KPIS.length > 0 && <div className="inv-keys">
             {IR_KPIS.map((x,i)=>(
               <Reveal key={i} delay={i*70}><div className="inv-key">
-                <div className="v num">{x.v}<span className="u">{x.u}</span></div>
+                <div className="v num">{irFigVal(x)}<span className="u">{x.u}</span></div>
                 <div className="k">{x.k}</div>
                 <div className="d num">{x.d}</div>
               </div></Reveal>
@@ -524,7 +511,7 @@ export function Investors({ nav, sub }) {
               {groupKind === "docs" && (
                 <IRDocList
                   docs={irDocs(sec.key, activeGroup.key)}
-                  emptyNote="Nothing filed in this category yet. Documents appear here as they are published."/>
+                  emptyNote={IR_TEXT.emptyNote}/>
               )}
             </div>
           )}

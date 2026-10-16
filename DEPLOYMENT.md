@@ -240,6 +240,87 @@ safety net as before.
 
 ---
 
+## 5a. Website admin (CMS)
+
+Editors sign in at **`/admin`** and change content through forms — company
+figures, investor documents, videos, board profiles — then publish. Layout
+and design stay in code; only the content changes.
+
+**How it works.** Each page's content is a JSON document in Postgres
+(`cms_content`). The site fetches the published documents from
+`GET /api/content` on load and renders them in place of the content built
+into the bundle (`src/content/cms.js`). Publishing needs **no rebuild and no
+redeploy** — visitors see the change on their next page load. If the API is
+unreachable the site falls back to its built-in content, so it never blanks.
+
+Drafts, publishing, history and restore all run through `server/`, which
+creates its tables on boot (`server/src/db/schema.sql`). Roles: an **editor**
+saves drafts; a **publisher** also publishes and restores earlier versions.
+
+### One-time setup
+
+1. **API on a subdomain of the site**, e.g. `https://api.integrumenergy.in`.
+   Admin sign-in uses a session cookie; keeping the API on the site's own
+   domain makes it a first-party cookie, which every browser (Safari
+   included) sends. `NODE_ENV=production` marks it `Secure; SameSite=None`.
+   `ALLOWED_ORIGINS` must list the site origin(s) — the admin runs there.
+
+2. **S3: make only the CMS prefix public.** Uploads land under
+   `CMS_UPLOAD_PREFIX` (default `cms/`) in `AWS_STORAGE_BUCKET_NAME`.
+   Résumés live in the same bucket and **must stay private**, so the policy
+   grants public read on `cms/*` only:
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [{
+       "Sid": "PublicReadCmsUploadsOnly",
+       "Effect": "Allow",
+       "Principal": "*",
+       "Action": "s3:GetObject",
+       "Resource": "arn:aws:s3:::integrum-s3/cms/*"
+     }]
+   }
+   ```
+
+   (Block Public Access must allow bucket policies for this to take effect.
+   Alternatively, serve `cms/*` through CloudFront with Origin Access Control
+   and set `CMS_PUBLIC_BASE_URL` to that domain — the bucket stays fully
+   private either way for résumés.)
+
+3. **S3 CORS** — uploads go straight from the admin's browser to S3 through
+   a 15-minute signed URL (large videos never pass through the API server):
+
+   ```json
+   [{
+     "AllowedOrigins": ["https://integrumenergy.in", "https://www.integrumenergy.in"],
+     "AllowedMethods": ["PUT"],
+     "AllowedHeaders": ["Content-Type"],
+     "MaxAgeSeconds": 3000
+   }]
+   ```
+
+4. **IAM** — the API's key needs `s3:PutObject` on `arn:aws:s3:::integrum-s3/cms/*`
+   in addition to what résumés already use.
+
+5. **Create the admin accounts** (from `server/`, against the production
+   `DATABASE_URL`). Each prints a one-time password; the user must choose
+   their own at first sign-in:
+
+   ```bash
+   npm run create-admin -- --email someone@example.com --name "Full Name" --role publisher
+   npm run create-admin -- --email someone@example.com --reset   # forgotten password
+   ```
+
+### Adding another page to the CMS
+
+1. Its data lives in a module under `src/` (like `figures.js`).
+2. Add it to `CONTENT_DEFS` in `src/content/cms.js` (which exports it edits).
+3. Add its form to `src/admin/schemas.js`.
+4. Add its key to `CONTENT_KEYS` in `server/src/cms/keys.js`.
+
+---
+
 ## 6. Post-deployment checklist
 
 Test on the live domain, not localhost:

@@ -19,6 +19,25 @@ export const ENQ_CONSUMPTION = [
   "50–100 million units / yr","Over 100 million units / yr","Not sure yet",
 ];
 
+/* ---------- form text (CMS-editable) ---------- */
+export const ENQ_TEXT = {
+  eyebrow: "Bring us your energy challenge",
+  title: "Tell us about your load. We'll come back with an approach.",
+  sub: "Share a few details and an energy advisor will assess your consumption, state regulations and the commercial models available to you.",
+  nameLabel: "Name", companyLabel: "Company", emailLabel: "Work email", phoneLabel: "Phone",
+  industryLabel: "Industry", industryPick: "Select industry",
+  consumptionLabel: "Average annual consumption", consumptionPick: "Select consumption",
+  locationLabel: "Location", locationPlaceholder: "City / district of your plant",
+  stateLabel: "State", statePick: "Select state",
+  notesLabel: "Anything else we should know", notesPlaceholder: "Current tariff, open-access status, sustainability targets, timelines",
+  submit: "Submit my details",
+  privacyNote: "We use these details only to prepare your assessment. See our",
+  privacyLink: "Privacy Policy",
+  doneTitle: "Thank you. Your details are with our energy advisory desk.",
+  doneText: "An advisor will review your consumption profile and state regulations, and come back within one business day.",
+  doneCta: "Read a comparable case study",
+};
+
 export function CustomerEnquiry({ nav, variant = "light" }) {
   const [f, setF] = useStateE({ name:"", company:"", email:"", phone:"", industry:"", consumption:"", location:"", state:"", notes:"" });
   const [err, setErr] = useStateE({});
@@ -48,9 +67,9 @@ export function CustomerEnquiry({ nav, variant = "light" }) {
     <div className={`enq-card enq-${variant} slidein`} id="energy-challenge">
       <div className="enq-done">
         <span className="enq-tick">{I.check({ width:26, height:26 })}</span>
-        <h3>Thank you. Your details are with our energy advisory desk.</h3>
-        <p>An advisor will review your consumption profile and state regulations, and come back within one business day.</p>
-        <button className="btn btn-ghost" style={{ marginTop:20 }} onClick={()=>nav("case")}>Read a comparable case study</button>
+        <h3>{ENQ_TEXT.doneTitle}</h3>
+        <p>{ENQ_TEXT.doneText}</p>
+        <button className="btn btn-ghost" style={{ marginTop:20 }} onClick={()=>nav("case")}>{ENQ_TEXT.doneCta}</button>
       </div>
     </div>
   );
@@ -58,58 +77,58 @@ export function CustomerEnquiry({ nav, variant = "light" }) {
   return (
     <div className={`enq-card enq-${variant}`} id="energy-challenge">
       <div className="enq-head">
-        <span className="eyebrow">Bring us your energy challenge</span>
-        <h3>Tell us about your load. We'll come back with an approach.</h3>
-        <p className="enq-sub">Share a few details and an energy advisor will assess your consumption, state regulations and the commercial models available to you.</p>
+        <span className="eyebrow">{ENQ_TEXT.eyebrow}</span>
+        <h3>{ENQ_TEXT.title}</h3>
+        <p className="enq-sub">{ENQ_TEXT.sub}</p>
       </div>
       <div className="enq-grid">
-        <label className="enq-f"><span>Name</span>
+        <label className="enq-f"><span>{ENQ_TEXT.nameLabel}</span>
           <input value={f.name} onChange={set("name")} className={err.name?"invalid":""} placeholder="Your full name"/>
           {err.name && <em className="field-err">{err.name}</em>}
         </label>
-        <label className="enq-f"><span>Company</span>
+        <label className="enq-f"><span>{ENQ_TEXT.companyLabel}</span>
           <input value={f.company} onChange={set("company")} className={err.company?"invalid":""} placeholder="Company name"/>
           {err.company && <em className="field-err">{err.company}</em>}
         </label>
-        <label className="enq-f"><span>Work email</span>
+        <label className="enq-f"><span>{ENQ_TEXT.emailLabel}</span>
           <input type="email" value={f.email} onChange={set("email")} className={err.email?"invalid":""} placeholder="name@company.com"/>
           {err.email && <em className="field-err">{err.email}</em>}
         </label>
-        <label className="enq-f"><span>Phone</span>
+        <label className="enq-f"><span>{ENQ_TEXT.phoneLabel}</span>
           <input value={f.phone} onChange={set("phone")} className={`num ${err.phone?"invalid":""}`} placeholder="+91 00000 00000"/>
           {err.phone && <em className="field-err">{err.phone}</em>}
         </label>
-        <label className="enq-f"><span>Industry</span>
+        <label className="enq-f"><span>{ENQ_TEXT.industryLabel}</span>
           <select value={f.industry} onChange={set("industry")} className={err.industry?"invalid":""}>
-            <option value="">Select industry</option>
+            <option value="">{ENQ_TEXT.industryPick}</option>
             {ENQ_INDUSTRIES.map(x=>(<option key={x} value={x}>{x}</option>))}
           </select>
           {err.industry && <em className="field-err">{err.industry}</em>}
         </label>
-        <label className="enq-f"><span>Average annual consumption</span>
+        <label className="enq-f"><span>{ENQ_TEXT.consumptionLabel}</span>
           <select value={f.consumption} onChange={set("consumption")} className={err.consumption?"invalid":""}>
-            <option value="">Select consumption</option>
+            <option value="">{ENQ_TEXT.consumptionPick}</option>
             {ENQ_CONSUMPTION.map(x=>(<option key={x} value={x}>{x}</option>))}
           </select>
           {err.consumption && <em className="field-err">{err.consumption}</em>}
         </label>
-        <label className="enq-f"><span>Location</span>
-          <input value={f.location} onChange={set("location")} className={err.location?"invalid":""} placeholder="City / district of your plant"/>
+        <label className="enq-f"><span>{ENQ_TEXT.locationLabel}</span>
+          <input value={f.location} onChange={set("location")} className={err.location?"invalid":""} placeholder={ENQ_TEXT.locationPlaceholder}/>
           {err.location && <em className="field-err">{err.location}</em>}
         </label>
-        <label className="enq-f"><span>State</span>
+        <label className="enq-f"><span>{ENQ_TEXT.stateLabel}</span>
           <select value={f.state} onChange={set("state")} className={err.state?"invalid":""}>
-            <option value="">Select state</option>
+            <option value="">{ENQ_TEXT.statePick}</option>
             {ENQ_STATES.map(x=>(<option key={x} value={x}>{x}</option>))}
           </select>
           {err.state && <em className="field-err">{err.state}</em>}
         </label>
-        <label className="enq-f enq-wide"><span>Anything else we should know <em className="enq-opt">(optional)</em></span>
-          <textarea rows="3" value={f.notes} onChange={set("notes")} placeholder="Current tariff, open-access status, sustainability targets, timelines"></textarea>
+        <label className="enq-f enq-wide"><span>{ENQ_TEXT.notesLabel} <em className="enq-opt">(optional)</em></span>
+          <textarea rows="3" value={f.notes} onChange={set("notes")} placeholder={ENQ_TEXT.notesPlaceholder}></textarea>
         </label>
       </div>
-      <button className="btn btn-nav-cta btn-lg enq-submit" onClick={submit} disabled={busy}>{busy ? "Sending…" : "Submit my details"} {!busy && I.arrow()}</button>
-      <p className="enq-note">We use these details only to prepare your assessment. See our <a onClick={()=>nav("privacy")} style={{cursor:"pointer"}}>Privacy Policy</a>.</p>
+      <button className="btn btn-nav-cta btn-lg enq-submit" onClick={submit} disabled={busy}>{busy ? "Sending…" : ENQ_TEXT.submit} {!busy && I.arrow()}</button>
+      <p className="enq-note">{ENQ_TEXT.privacyNote} <a onClick={()=>nav("privacy")} style={{cursor:"pointer"}}>{ENQ_TEXT.privacyLink}</a>.</p>
     </div>
   );
 }

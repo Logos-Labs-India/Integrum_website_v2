@@ -2,7 +2,7 @@
    cni.jsx — C&I buyer landing (deepest lane)
    ============================================================ */
 import { useState } from "react";
-import { I, Reveal, IMG } from "./dataviz";
+import { I, Reveal, IMG, media } from "./dataviz";
 
 export const INDUSTRY_DATA = {
   "Metals & mining": { tariff:"Optimized ₹/kWh", saving:"Higher savings", re:"Tariff visibility",
@@ -32,7 +32,7 @@ export const INDUSTRY_DATA = {
 };
 const IND_TABS = Object.keys(INDUSTRY_DATA);
 
-const MODELS = [
+export const MODELS = [
   { k:"CAPEX", title:"Build a renewable asset that delivers long-term value",
     desc:"The CAPEX model is designed for businesses that want to maximize long-term returns through complete asset ownership. Integrum delivers the project on a turnkey basis—from feasibility studies and engineering to procurement, construction, commissioning, and lifetime O&M support—ensuring seamless execution at every stage. By owning the asset, businesses can benefit from accelerated depreciation, GST credits, and attractive project IRRs while building a long-term energy asset that continuously reduces operating costs.",
     cta:"Ready to maximize the return on your renewable investment? Talk to our experts to evaluate the ideal CAPEX solution for your business.",
@@ -47,7 +47,7 @@ const MODELS = [
     meta:[["Ownership","Client (in books)"],["Upfront capital","Minimal to Zero"],["You pay","Managed service"],["Equity payback","9 months"]] },
 ];
 
-const TECH = [
+export const TECH = [
   { k:"Solar", ic:"bolt", flagship:false, tagline:"Harness the power of the sun to reduce energy costs",
     body:"Solar energy remains one of the most reliable and cost-effective pathways to achieving energy independence. Integrum designs, engineers, and delivers utility-scale and captive solar solutions tailored to your energy consumption patterns, site conditions, and financial objectives. Our portfolio includes rooftop, ground-mounted and open-access solar projects across diverse industries — every project backed by comprehensive feasibility studies, advanced energy simulations, and optimized system design. We partner with globally recognized module manufacturers, inverter suppliers, and Balance of System providers so every installation meets the highest standards of efficiency, reliability, and durability.",
     tags:["Rooftop","Ground-mount","Open access"] },
@@ -62,7 +62,7 @@ const TECH = [
     tags:["Peak shaving","Demand management","RE firming","Backup + arbitrage"] },
 ];
 
-const RISKS = [
+export const RISKS = [
   { k:"Price risk", ic:"trendUp", head:"Predictable costs. Protected project economics.",
     body:"We minimize price volatility through a predominantly fixed-price execution model. Strategic agreements with leading OEMs lock in pricing for key equipment, significantly reducing exposure to market fluctuations. While certain commodity-linked components, such as metal surcharges, may vary, these are addressed through predefined commercial arrangements. Our disciplined sourcing and mark-to-market approach ensure transparency, cost certainty, and long-term value." },
   { k:"Regulatory risk", ic:"shield", head:"Navigating regulatory complexity with confidence.",
@@ -73,21 +73,21 @@ const RISKS = [
     body:"Project performance begins with selecting the right site. Our in-house assessment framework leverages proven wind and solar resource analysis, extensive R&D and rigorous feasibility studies to identify high-performing locations. Coupled with flexible models such as Energy-as-a-Service, we consistently deliver generation that outperforms market benchmarks — maximizing yield and long-term returns." },
 ];
 
-const FAQS = [
+export const FAQS = [
   { q:"CAPEX vs OPEX vs EaaS — which fits my plant?", a:"If you have capital and want to own the asset and 100% of the savings, CAPEX wins on lifetime economics. If you'd rather keep capital free and just pay a lower tariff, OPEX / Group Captive (the IPP model) needs zero ownership. EaaS suits teams who want a guaranteed energy outcome with none of the operational overhead. We model all three for you in stage S, then you choose." },
   { q:"How long does a project take end-to-end?", a:"For a typical C&I hybrid plant, expect 4–14 months from feasibility sign-off to commissioning, depending on land, open-access approvals and grid connectivity. The cement-plant case study went from ₹7 to ₹3 a unit within 14 months of kickoff." },
   { q:"What's the O&M model?", a:"24×7 remote monitoring via the Energy Intelligence Platform, predictive maintenance, and contractual generation guarantees backed by SLAs. This is stage R of SPARK — and the reason our plants keep performing years after handover." },
   { q:"Can we expand later with BESS?", a:"Yes. The platform is BESS-ready: once storage is added, stage K (Keep optimizing) handles charge/discharge scheduling automatically — charging on surplus, discharging at peak tariff or during outages, and banking the rest." },
 ];
 
-const SOLVE = [
+export const SOLVE = [
   { k:"Cost", d:"Reduce my energy cost", go:"sol-a" },
   { k:"RE transition", d:"Increase my renewable share", go:"sol-b" },
   { k:"Build", d:"Develop and execute a project", go:"sol-a" },
   { k:"Optimise", d:"Improve existing asset performance", go:"sol-d" },
 ];
 
-const FAMILIES = [
+export const FAMILIES = [
   { n:"01", t:"Optimized Renewable Power", s:"Wind | Solar | Wind–Solar Hybrid | BESS | Open Access / Group Captive", go:"sol-a" },
   { n:"02", t:"Behind-the-Meter Energy", s:"On-site Solar | BESS | Demand Management", go:"sol-b" },
   { n:"03", t:"Energy-as-a-Service", s:"Integrated outcome without asset ownership", go:"sol-c" },
@@ -95,13 +95,13 @@ const FAMILIES = [
   { n:"05", t:"Power Markets", s:"Trading | Scheduling | Procurement | BESS optimisation", go:"sol-e" },
 ];
 
-const COMMERCIAL = [
+export const COMMERCIAL = [
   { k:"OWN", t:"CAPEX", d:"You own the asset and capture the full lifetime economics." },
   { k:"BUY POWER", t:"Group Captive / IPP", d:"You buy power under a long-term structure, with no asset on your books." },
   { k:"SUBSCRIBE", t:"Energy-as-a-Service", d:"You buy the energy outcome, fully managed, with minimal capital." },
 ];
 
-const SOL_FAMILIES = [
+export const SOL_FAMILIES = [
   { id:"sol-a", tag:"A", eyebrow:"01 · Optimized Renewable Power", h:"Renewable power designed around your load",
     copy:"We model your load, state regulations, renewable resources and tariff structure to identify the optimized energy mix — not simply the cheapest project.",
     listK:"Combine", list:["Wind","Solar","Wind–Solar Hybrid","BESS","Open Access / Group Captive"],
@@ -129,6 +129,55 @@ const SOL_FAMILIES = [
     cta:"Explore Power Markets", img:"powerMarkets" },
 ];
 
+/* ---------- page text (CMS-editable) ---------- */
+export const SOL_TEXT = {
+  breadcrumb: "Solutions",
+  heroEyebrow: "Solutions",
+  heroTitle: "Energy solutions built around your load.",
+  heroLead: "Wind, solar, storage and power markets combined to reduce cost, increase renewable share and improve long-term energy performance.",
+  heroCta: "Find my solution",
+  techTeaserLabel: "Our technologies",
+  techTeaserFlag: "Flagship",
+  techTeaserCta: "See the technology",
+  findEyebrow: "Find my solution",
+  findTitle: "What are you trying to solve?",
+  familiesTitle: "Principal solution families",
+  commEyebrow: "Commercial models",
+  commTitle: "Choose how you want to consume the energy.",
+  commLead: "The energy solution stays the same. The commercial structure adapts to your capital and risk appetite.",
+  techEyebrow: "The technology",
+  techTitle: "Solar, wind, hybrid and storage — engineered together.",
+  techLead: "We're technology-agnostic on components and rigorous on design. Hybrid is our flagship, because complementary wind and solar simply deliver more.",
+  techLink: "See how this sits inside 01 · Optimized Renewable Power",
+  techFlag: "Flagship",
+  impactEyebrow: "What buyers actually get",
+  impactTitle: "The outcomes that land on your balance sheet.",
+  impactLead: "What a solution is designed to deliver. Actual figures are modelled against your own load, state and structure in Scan & Develop (Stage S).",
+  riskEyebrow: "Risk management",
+  riskTitle: "The risks we take off your desk.",
+  riskLead: "Price, regulation, execution and generation — each one engineered out of your project, and onto our accountability.",
+  faqEyebrow: "Straight answers",
+  faqTitle: "FAQ",
+  stickyText: "Bring us your energy challenge.",
+  stickyCta: "Talk to an energy advisor",
+};
+
+export const SOL_CHIPS = ["Open access in 4 states", "CAPEX · OPEX · EaaS", "BESS-ready"];
+
+export const TECH_TEASER = [
+  { k:"Solar", d:"Rooftop, ground-mounted and open-access solar, engineered around your consumption." },
+  { k:"Wind", d:"Utility-scale and captive wind, sited on real resource data and evacuation capacity." },
+  { k:"Wind–Solar Hybrid", d:"Our flagship. Complementary generation for higher CUF and a optimized cost of energy.", flag:true },
+  { k:"BESS", d:"Battery energy storage to shift, firm and dispatch renewable generation." },
+];
+
+export const SOL_IMPACT = [
+  { n:"Higher", u:" savings", k:"Cost outcome", s:"A blended cost of energy below your current grid tariff, with long-term visibility." },
+  { n:"Higher", u:" RE share", k:"Renewable outcome", s:"A larger share of consumption met by renewable generation." },
+  { n:"Lower", u:" complexity", k:"Operating outcome", s:"One accountable partner instead of several suppliers." },
+  { n:"25-yr", u:"", k:"Lifecycle outcome", s:"Accountability that continues well past commissioning." },
+];
+
 export function CnILane({ nav }) {
   const [tab, setTab] = useState(0);
   const d = INDUSTRY_DATA[IND_TABS[tab]];
@@ -139,36 +188,29 @@ export function CnILane({ nav }) {
       {/* hero */}
       <section className="page-hero">
         <div className="shell">
-          <div className="breadcrumb"><a onClick={()=>nav("home")} style={{cursor:"pointer"}}>Home</a> {I.arrow({width:13,height:13})} <span style={{color:"var(--ink-2)"}}>Solutions</span></div>
+          <div className="breadcrumb"><a onClick={()=>nav("home")} style={{cursor:"pointer"}}>Home</a> {I.arrow({width:13,height:13})} <span style={{color:"var(--ink-2)"}}>{SOL_TEXT.breadcrumb}</span></div>
           <div className="lane-hero" style={{ marginTop:18 }}>
             <div>
-              <span className="eyebrow">Solutions</span>
-              <h1>Energy solutions built around your load.</h1>
-              <p className="lead">Wind, solar, storage and power markets combined to reduce cost, increase renewable share and improve long-term energy performance.</p>
+              <span className="eyebrow">{SOL_TEXT.heroEyebrow}</span>
+              <h1>{SOL_TEXT.heroTitle}</h1>
+              <p className="lead">{SOL_TEXT.heroLead}</p>
               <div className="tagstack">
-                <span className="chip">Open access in 4 states</span>
-                <span className="chip">CAPEX · OPEX · EaaS</span>
-                <span className="chip">BESS-ready</span>
+                {SOL_CHIPS.map((c,i)=>(<span className="chip" key={i}>{c}</span>))}
               </div>
-              <button className="btn btn-primary btn-lg" style={{ marginTop:22 }} onClick={()=>{ const el=document.getElementById("find-solution"); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }}>Find my solution {I.arrow()}</button>
+              <button className="btn btn-primary btn-lg" style={{ marginTop:22 }} onClick={()=>{ const el=document.getElementById("find-solution"); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }}>{SOL_TEXT.heroCta} {I.arrow()}</button>
             </div>
             <Reveal delay={100}>
               <div className="tech-teaser">
-                <span className="tt-k">Our technologies</span>
+                <span className="tt-k">{SOL_TEXT.techTeaserLabel}</span>
                 <div className="tt-list">
-                  {[
-                    { k:"Solar", d:"Rooftop, ground-mounted and open-access solar, engineered around your consumption." },
-                    { k:"Wind", d:"Utility-scale and captive wind, sited on real resource data and evacuation capacity." },
-                    { k:"Wind–Solar Hybrid", d:"Our flagship. Complementary generation for higher CUF and a optimized cost of energy.", flag:true },
-                    { k:"BESS", d:"Battery energy storage to shift, firm and dispatch renewable generation." },
-                  ].map((t,i)=>(
+                  {TECH_TEASER.map((t,i)=>(
                     <div className={"tt-item"+(t.flag?" is-flag":"")} key={i}>
-                      <div className="tt-top"><span className="tt-name">{t.k}</span>{t.flag && <span className="tt-flag">Flagship</span>}</div>
+                      <div className="tt-top"><span className="tt-name">{t.k}</span>{t.flag && <span className="tt-flag">{SOL_TEXT.techTeaserFlag}</span>}</div>
                       <p>{t.d}</p>
                     </div>
                   ))}
                 </div>
-                <button className="btn btn-nav-cta" style={{ width:"100%", marginTop:16 }} onClick={()=>{ const el=document.getElementById("sol-tech"); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }}>See the technology {I.arrow()}</button>
+                <button className="btn btn-nav-cta" style={{ width:"100%", marginTop:16 }} onClick={()=>{ const el=document.getElementById("sol-tech"); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }}>{SOL_TEXT.techTeaserCta} {I.arrow()}</button>
               </div>
             </Reveal>
           </div>
@@ -179,8 +221,8 @@ export function CnILane({ nav }) {
       <section className="section" id="find-solution" style={{ paddingBottom:"clamp(20px,2.4vw,32px)" }}>
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">Find my solution</span>
-            <h2>What are you trying to solve?</h2>
+            <span className="eyebrow">{SOL_TEXT.findEyebrow}</span>
+            <h2>{SOL_TEXT.findTitle}</h2>
           </Reveal>
           <div className="solve-row">
             {SOLVE.map((s,i)=>(
@@ -192,7 +234,7 @@ export function CnILane({ nav }) {
             ))}
           </div>
           <Reveal>
-            <h3 className="fam-title">Principal solution families</h3>
+            <h3 className="fam-title">{SOL_TEXT.familiesTitle}</h3>
             <div className="fam-grid">
               {FAMILIES.map((f,i)=>(
                 <button key={i} className="fam-card" onClick={()=>{ const el=document.getElementById(f.go); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }}>
@@ -229,7 +271,7 @@ export function CnILane({ nav }) {
               <button className="btn btn-primary" style={{ marginTop:22 }} onClick={()=>nav("contact")}>{f.cta} {I.arrow()}</button>
             </div>
             <div className="sol-fam-media">
-              <img src={IMG[f.img] || IMG.windField} alt={f.h} loading="lazy"/>
+              <img src={media(f.img) || IMG.windField} alt={f.h} loading="lazy"/>
             </div>
           </div>
         </section>
@@ -239,9 +281,9 @@ export function CnILane({ nav }) {
       <section className="section" style={{ background:"var(--surface-2)" }}>
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">Commercial models</span>
-            <h2>Choose how you want to consume the energy.</h2>
-            <p className="lead">The energy solution stays the same. The commercial structure adapts to your capital and risk appetite.</p>
+            <span className="eyebrow">{SOL_TEXT.commEyebrow}</span>
+            <h2>{SOL_TEXT.commTitle}</h2>
+            <p className="lead">{SOL_TEXT.commLead}</p>
           </Reveal>
           <div className="comm-row">
             {COMMERCIAL.map((c,i)=>(
@@ -274,10 +316,10 @@ export function CnILane({ nav }) {
       <section className="section" id="sol-tech">
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">The technology</span>
-            <h2>Solar, wind, hybrid and storage — engineered together.</h2>
-            <p className="lead">We're technology-agnostic on components and rigorous on design. Hybrid is our flagship, because complementary wind and solar simply deliver more.</p>
-            <button className="link-arrow" style={{ marginTop:14 }} onClick={()=>{ const el=document.getElementById("sol-a"); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }}>See how this sits inside 01 · Optimized Renewable Power {I.arrow()}</button>
+            <span className="eyebrow">{SOL_TEXT.techEyebrow}</span>
+            <h2>{SOL_TEXT.techTitle}</h2>
+            <p className="lead">{SOL_TEXT.techLead}</p>
+            <button className="link-arrow" style={{ marginTop:14 }} onClick={()=>{ const el=document.getElementById("sol-a"); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-80,behavior:"smooth"}); }}>{SOL_TEXT.techLink} {I.arrow()}</button>
           </Reveal>
           <div className="tech-grid">
             {TECH.map((t,i)=>(
@@ -287,7 +329,7 @@ export function CnILane({ nav }) {
                     <span className="tech-ico">{I[t.ic]({width:22,height:22})}</span>
                     <div className="tech-kwrap">
                       <span className="tech-k">{t.k}</span>
-                      {t.flagship && <span className="tech-flag">Flagship</span>}
+                      {t.flagship && <span className="tech-flag">{SOL_TEXT.techFlag}</span>}
                     </div>
                   </div>
                   <h4>{t.tagline}</h4>
@@ -304,17 +346,12 @@ export function CnILane({ nav }) {
       <section className="section sol-outcomes-sec">
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">What buyers actually get</span>
-            <h2>The outcomes that land on your balance sheet.</h2>
-            <p className="lead">What a solution is designed to deliver. Actual figures are modelled against your own load, state and structure in Scan &amp; Develop (Stage S).</p>
+            <span className="eyebrow">{SOL_TEXT.impactEyebrow}</span>
+            <h2>{SOL_TEXT.impactTitle}</h2>
+            <p className="lead">{SOL_TEXT.impactLead}</p>
           </Reveal>
           <div className="impact-grid">
-            {[
-              { n:"Higher", u:" savings", k:"Cost outcome", s:"A blended cost of energy below your current grid tariff, with long-term visibility." },
-              { n:"Higher", u:" RE share", k:"Renewable outcome", s:"A larger share of consumption met by renewable generation." },
-              { n:"Lower", u:" complexity", k:"Operating outcome", s:"One accountable partner instead of several suppliers." },
-              { n:"25-yr", u:"", k:"Lifecycle outcome", s:"Accountability that continues well past commissioning." },
-            ].map((c,i)=>(
+            {SOL_IMPACT.map((c,i)=>(
               <Reveal key={i} delay={i*60} className="impact-card">
                 <div className="impact-n num">{c.n}<span className="u">{c.u}</span></div>
                 <div className="impact-k">{c.k}</div>
@@ -329,9 +366,9 @@ export function CnILane({ nav }) {
       <section className="section" style={{ background:"var(--surface-2)" }}>
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">Risk management</span>
-            <h2>The risks we take off your desk.</h2>
-            <p className="lead">Price, regulation, execution and generation — each one engineered out of your project, and onto our accountability.</p>
+            <span className="eyebrow">{SOL_TEXT.riskEyebrow}</span>
+            <h2>{SOL_TEXT.riskTitle}</h2>
+            <p className="lead">{SOL_TEXT.riskLead}</p>
           </Reveal>
           <div className="risk-grid">
             {RISKS.map((r,i)=>(
@@ -351,7 +388,7 @@ export function CnILane({ nav }) {
       {/* FAQ */}
       <section className="section" style={{ background:"var(--surface-2)", paddingTop:0 }}>
         <div className="shell" style={{ maxWidth:1120 }}>
-          <Reveal className="sec-head"><span className="eyebrow">Straight answers</span><h2>FAQ</h2></Reveal>
+          <Reveal className="sec-head"><span className="eyebrow">{SOL_TEXT.faqEyebrow}</span><h2>{SOL_TEXT.faqTitle}</h2></Reveal>
           <div className="faq">
             {FAQS.map((f,i)=>(
               <div className={`faq-item ${open===i?"open":""}`} key={i}>
@@ -370,8 +407,8 @@ export function CnILane({ nav }) {
       {/* sticky CTA */}
       <div className="sticky-cta">
         <div className="shell sticky-cta-inner">
-          <div className="sc-text"><b>Bring us your energy challenge.</b></div>
-          <button className="btn btn-nav-cta" onClick={()=>nav("platform#energy-challenge")}>Talk to an energy advisor {I.arrow()}</button>
+          <div className="sc-text"><b>{SOL_TEXT.stickyText}</b></div>
+          <button className="btn btn-nav-cta" onClick={()=>nav("platform#energy-challenge")}>{SOL_TEXT.stickyCta} {I.arrow()}</button>
         </div>
       </div>
     </div>

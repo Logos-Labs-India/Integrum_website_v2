@@ -2,7 +2,8 @@
    spark.jsx — full SPARK framework page (5 stages, deep-linked)
    ============================================================ */
 import React, { useState as useStateH, useEffect } from "react";
-import { I } from "./dataviz";
+import { I, media } from "./dataviz";
+import { Rich } from "./content/Rich";
 
 export const SPARK_FULL = [
   { id:"s", L:"S", hex:"#014976", soft:"#DCEAF4", name:"Scan & Develop", phase:"Pre-project",
@@ -99,6 +100,23 @@ export const SPARK_FULL = [
     outcome:"Maximized lifetime value, improved returns and sustained operational excellence." },
 ];
 
+/* ---------- page text (CMS-editable) ---------- */
+export const SPARK_TEXT = {
+  heroEyebrow: "The SPARK framework",
+  heroTitle: "Every megawatt begins with a *SPARK*.",
+  heroSub: "Most contractors build and walk away. SPARK is how Integrum stays accountable across the entire arc — Scan, Plan, Acquire, Run and Keep optimising — so performance risk never gets split across vendors who blame each other.",
+  stageLabel: "Stage",
+  stageOf: "of",
+  objectiveLabel: "Objective",
+  activitiesLabel: "What we do",
+  optimizerLabel: "The Integrum optimizer",
+  outcomeLabel: "Key outcome",
+  closeTitle: "Ready to put SPARK to work on your load?",
+  closeLead: "Start with a Scan — we'll map your states, sites and regulatory fit, and come back with an investment-ready view.",
+  closeCta: "Talk to an advisor",
+  closeCta2: "See the solutions",
+};
+
 export function SparkPage({ nav, sub }) {
   const [active, setActive] = useStateH(sub || "s");
   const scrollToStage = (id, smooth=true) => {
@@ -134,9 +152,9 @@ export function SparkPage({ nav, sub }) {
       <section className="spark-hero">
         <div className="spark-hero-glow" aria-hidden="true"></div>
         <div className="shell">
-          <span className="eyebrow" style={{ color:"#F5B81C", marginTop:18, display:"inline-flex" }}>The SPARK framework</span>
-          <h1>Every megawatt begins with a <span className="sp-word">SPARK</span>.</h1>
-          <p className="spark-hero-sub">Most contractors build and walk away. SPARK is how Integrum stays accountable across the entire arc — Scan, Plan, Acquire, Run and Keep optimising — so performance risk never gets split across vendors who blame each other.</p>
+          <span className="eyebrow" style={{ color:"#F5B81C", marginTop:18, display:"inline-flex" }}>{SPARK_TEXT.heroEyebrow}</span>
+          <h1><Rich text={SPARK_TEXT.heroTitle} hl="sp-word"/></h1>
+          <p className="spark-hero-sub">{SPARK_TEXT.heroSub}</p>
           <div className="spark-journey">
             {SPARK_FULL.map((st,i)=>(
               <React.Fragment key={st.id}>
@@ -145,7 +163,7 @@ export function SparkPage({ nav, sub }) {
                   <span className="sj-name">{st.name}</span>
                   <span className="sj-phase">{st.phase}</span>
                 </button>
-                {i<4 && <span className="sj-link" aria-hidden="true">{I.arrow({width:18,height:18})}</span>}
+                {i<SPARK_FULL.length-1 && <span className="sj-link" aria-hidden="true">{I.arrow({width:18,height:18})}</span>}
               </React.Fragment>
             ))}
           </div>
@@ -172,27 +190,27 @@ export function SparkPage({ nav, sub }) {
             <div className="spark-detail-head">
               <span className="spark-detail-badge">{st.L}</span>
               <div>
-                <div className="spark-detail-step">Stage {i+1} of 5 · {st.phase}</div>
+                <div className="spark-detail-step">{SPARK_TEXT.stageLabel} {i+1} {SPARK_TEXT.stageOf} {SPARK_FULL.length} · {st.phase}</div>
                 <h2>{st.name}</h2>
                 <p className="spark-detail-tag">{st.tagline}</p>
               </div>
             </div>
             <div className="spark-detail-top">
               <div className="spark-detail-media">
-                <div className="spark-media-img" style={{ backgroundImage:`linear-gradient(155deg, color-mix(in srgb,${st.hex} 26%, transparent), transparent 55%), url(${st.img})` }}></div>
+                <div className="spark-media-img" style={{ backgroundImage:`linear-gradient(155deg, color-mix(in srgb,${st.hex} 26%, transparent), transparent 55%), url(${media(st.img)})` }}></div>
                 <span className="spark-media-tag" style={{ "--sc":st.hex }}><span className="smt-l">{st.L}</span>{st.name}</span>
               </div>
-              <p className="spark-detail-obj"><span className="sdo-k">Objective</span> {st.objective}</p>
+              <p className="spark-detail-obj"><span className="sdo-k">{SPARK_TEXT.objectiveLabel}</span> {st.objective}</p>
             </div>
             <div className="spark-detail-cols">
               <div className="spark-col">
-                <h4>{I.compass({width:17,height:17})} What we do</h4>
+                <h4>{I.compass({width:17,height:17})} {SPARK_TEXT.activitiesLabel}</h4>
                 <ul className="spark-list">
                   {st.activities.map((a,j)=>(<li key={j}>{I.check({width:15,height:15})}<span>{a}</span></li>))}
                 </ul>
               </div>
               <div className="spark-col spark-col-opt">
-                <h4>{I.bolt({width:17,height:17})} The Integrum optimizer</h4>
+                <h4>{I.bolt({width:17,height:17})} {SPARK_TEXT.optimizerLabel}</h4>
                 <ul className="spark-list">
                   {st.optimizer.map((a,j)=>(<li key={j}>{I.check({width:15,height:15})}<span>{a}</span></li>))}
                 </ul>
@@ -200,7 +218,7 @@ export function SparkPage({ nav, sub }) {
             </div>
             <div className="spark-outcome">
               <span className="spark-outcome-ico">{I.check({width:20,height:20})}</span>
-              <span className="spark-outcome-k">Key outcome</span>
+              <span className="spark-outcome-k">{SPARK_TEXT.outcomeLabel}</span>
               <span className="spark-outcome-v">{st.outcome}</span>
             </div>
           </div>
@@ -210,11 +228,11 @@ export function SparkPage({ nav, sub }) {
       {/* closing CTA */}
       <section className="section spark-close">
         <div className="shell" style={{ textAlign:"center", maxWidth:720 }}>
-          <h2>Ready to put SPARK to work on your load?</h2>
-          <p className="lead" style={{ marginInline:"auto" }}>Start with a Scan — we'll map your states, sites and regulatory fit, and come back with an investment-ready view.</p>
+          <h2>{SPARK_TEXT.closeTitle}</h2>
+          <p className="lead" style={{ marginInline:"auto" }}>{SPARK_TEXT.closeLead}</p>
           <div style={{ display:"flex", gap:14, justifyContent:"center", flexWrap:"wrap", marginTop:26 }}>
-            <button className="btn btn-nav-cta btn-lg" onClick={()=>nav("contact")}>Talk to an advisor {I.arrow()}</button>
-            <button className="btn btn-ghost btn-lg" onClick={()=>nav("cni")}>See the solutions</button>
+            <button className="btn btn-nav-cta btn-lg" onClick={()=>nav("contact")}>{SPARK_TEXT.closeCta} {I.arrow()}</button>
+            <button className="btn btn-ghost btn-lg" onClick={()=>nav("cni")}>{SPARK_TEXT.closeCta2}</button>
           </div>
         </div>
       </section>

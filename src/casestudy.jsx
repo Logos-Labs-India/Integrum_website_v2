@@ -4,7 +4,7 @@
    no proprietary numbers invented beyond what the client states).
    ============================================================ */
 import { useState } from "react";
-import { I, Reveal, IMG, VideoBG, VID, PhotoBG } from "./dataviz";
+import { I, Reveal, IMG, VideoBG, VID, PhotoBG, media } from "./dataviz";
 import { articleById, ArticlesSection, ArticleDetail } from "./articles";
 import { validateName, validateEmail, validatePhone, submitLead } from "./leads";
 import { CAREER_ROLES } from "./jobs";
@@ -212,6 +212,56 @@ export const CASES = [
   },
 ];
 
+/* ---------- page text (CMS-editable) ---------- */
+export const CASE_TEXT = {
+  indexBreadcrumb: "Case studies",
+  heroPoster: "/assets/hero-poster.png",
+  heroEyebrow: "Proof, not promises",
+  heroTitle: "Outcomes we have delivered.",
+  heroSub: "Measured results from operating customer solutions. Each engagement below follows the same arc — problem, Integrum intervention, measurable outcome.",
+  viewCase: "View case study",
+  resultsNote: "Results vary by state, load profile, regulatory framework and commercial structure.",
+  groupsEyebrow: "By outcome",
+  groupsTitle: "Grouped by what the engagement delivered.",
+  industryEyebrow: "By industry",
+  industryTitle: "Find the case study closest to you.",
+  industryCountOne: "case study",
+  industryCountMany: "case studies",
+  industryCountIn: "in",
+  industryCountTail: "— open any one for the full engagement, model and outcome.",
+  caseLabel: "Case study",
+  readCase: "Read the case",
+  sampleChip: "Illustrative sample",
+  outcomesTitle: "Outcomes at a glance",
+  sampleNote: "Illustrative sample — a representative scenario for this sector, not a specific named client engagement. Figures are indicative of the outcomes our approach targets.",
+  ctaTitle: "Want a number like this for your plant?",
+  ctaText: "Bring last month's bill — we'll model your path to a lower, predictable tariff.",
+  ctaBack: "All case studies",
+  ctaCta: "Talk to an energy advisor",
+  nextLabel: "Next case study",
+  nextRead: "Read",
+  steelChartNote: "Illustrative of the phased FY17–FY23 transition described above — share of consumption met by each sourcing structure, from 100% conventional to 95% renewable.",
+  contactBreadcrumb: "Contact",
+  contactEyebrow: "Start a conversation",
+  contactTitle: "Tell us who you are. We'll route you to the right desk.",
+  contactLead: "Whether you want a savings estimate, the investor deck, a supply conversation or a role — one form, no runaround.",
+  callLabel: "Call",
+  phone: "+91 76187 02052",
+  emailLabel: "Email",
+  email: "info@integrumenergy.in",
+  careersEmail: "Careers@integrumenergy.in",
+  officeLabel: "Registered office",
+  office: "736, 2nd Floor, 3rd Block,\nKoramangala, Bengaluru 560034",
+  formTitle: "Who are you?",
+  sentTitle: "Routed to the right desk.",
+  sentText: "We'll be in touch within one business day.",
+  sentBack: "Back to home",
+  btnInvestor: "Request the investor deck",
+  btnBuyer: "Book a 60-min energy consult",
+  btnCareers: "Submit my application",
+  btnDefault: "Send message",
+};
+
 /* power-mix transition chart for the green-steel case (FY17→FY23, to 95% RE) */
 function SteelTransitionChart() {
   const segs = [
@@ -250,7 +300,7 @@ function SteelTransitionChart() {
           </div>
         ))}
       </div>
-      <p className="muted" style={{ fontSize:13, marginTop:16 }}>Illustrative of the phased FY17–FY23 transition described above — share of consumption met by each sourcing structure, from 100% conventional to 95% renewable.</p>
+      <p className="muted" style={{ fontSize:13, marginTop:16 }}>{CASE_TEXT.steelChartNote}</p>
     </div>
   );
 }
@@ -266,7 +316,7 @@ export function CaseStudy({ nav, sub }) {
 }
 
 /* ---------- segmented index (industry tabs → case cards) ---------- */
-const CASE_SEGMENTS = [
+export const CASE_SEGMENTS = [
   { name:"Steel",
     blurb:"Continuous, high-load operations make power a steel producer's largest controllable cost — and its hardest emissions line to abate. Our work proves a fully renewable, fully fundable path.",
     stats:[["95%","Renewable share reached"],["7 yr","Phased transition"],["None","Government incentives used"]],
@@ -290,7 +340,7 @@ const CASE_SEGMENTS = [
 ];
 const caseById = (id) => CASES.find(c=>c.id===id);
 
-const CASE_HEADLINES = [
+export const CASE_HEADLINES = [
   { id:"graphite-india", hl:"₹60 Cr/year saved", seg:"Large graphite manufacturer", sol:"Wind + solar + open access", res:"₹84 Cr → ₹24 Cr annual energy cost", group:"Cost reduction" },
   { id:"khayati-steel", hl:"0% RE to 100% RE", seg:"Steel manufacturer", sol:"Hybrid renewable portfolio", res:"One of the lowest electricity costs in the segment", group:"Renewable penetration" },
   { id:"cloud-nine", hl:"₹3.25/unit", seg:"Healthcare portfolio", sol:"Multi-site energy optimisation", res:"Reduced from ₹8/unit", group:"Distributed / commercial energy" },
@@ -299,7 +349,7 @@ const CASE_HEADLINES = [
   { id:"gil-portfolio", hl:"Portfolio managed", seg:"Graphite manufacturer", sol:"Predictive portfolio management", res:"Renewable variability turned into commercial advantage", group:"Distributed / commercial energy" },
 ];
 
-const OUTCOME_GROUPS = [
+export const OUTCOME_GROUPS = [
   { k:"Cost reduction", d:"Lowering the delivered cost of energy against a high grid tariff." },
   { k:"Renewable penetration", d:"Moving a large share of consumption onto renewable generation." },
   { k:"Hybrid performance", d:"Improving the generation profile and transmission efficiency." },
@@ -312,13 +362,13 @@ function CaseIndex({ nav }) {
   return (
     <div className="page-fade lane-accent" style={{ "--p-color":"var(--amber)" }}>
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(36px,4vw,56px)" }}>
-        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster="/assets/hero-poster.png" overlay="linear-gradient(120deg, rgba(8,23,42,.82) 38%, rgba(8,23,42,.50) 100%)" pos="center 50%"/>
+        <VideoBG srcs={VID.site} starts={[0, 8, 0]} poster={media(CASE_TEXT.heroPoster)} overlay="linear-gradient(120deg, rgba(8,23,42,.82) 38%, rgba(8,23,42,.50) 100%)" pos="center 50%"/>
         <div className="shell">
-          <div className="breadcrumb" style={{ color:"#7E97B0" }}><a onClick={()=>nav("home")} style={{cursor:"pointer",color:"#9FB7CF"}}>Home</a> {I.arrow({width:13,height:13})} <span>Case studies</span></div>
+          <div className="breadcrumb" style={{ color:"#7E97B0" }}><a onClick={()=>nav("home")} style={{cursor:"pointer",color:"#9FB7CF"}}>Home</a> {I.arrow({width:13,height:13})} <span>{CASE_TEXT.indexBreadcrumb}</span></div>
           <div style={{ maxWidth:760, marginTop:20 }}>
-            <span className="eyebrow eyebrow-light">Proof, not promises</span>
-            <h1 style={{ color:"#fff", fontSize:"clamp(36px,5vw,58px)", letterSpacing:"-.035em", marginTop:16, lineHeight:1.03 }}>Outcomes we have delivered.</h1>
-            <p style={{ color:"#9FB7CF", fontSize:19, marginTop:18, maxWidth:640, lineHeight:1.6 }}>Measured results from operating customer solutions. Each engagement below follows the same arc — problem, Integrum intervention, measurable outcome.</p>
+            <span className="eyebrow eyebrow-light">{CASE_TEXT.heroEyebrow}</span>
+            <h1 style={{ color:"#fff", fontSize:"clamp(36px,5vw,58px)", letterSpacing:"-.035em", marginTop:16, lineHeight:1.03 }}>{CASE_TEXT.heroTitle}</h1>
+            <p style={{ color:"#9FB7CF", fontSize:19, marginTop:18, maxWidth:640, lineHeight:1.6 }}>{CASE_TEXT.heroSub}</p>
           </div>
         </div>
       </section>
@@ -333,21 +383,21 @@ function CaseIndex({ nav }) {
                 <Reveal key={h.id} delay={i*60}>
                   <div className="outcome" onClick={()=>nav("case/"+h.id)} style={{ cursor:"pointer" }}>
                     <div className="outcome-photo">
-                      <img src={IMG[kase.img] || IMG.windField} alt={h.seg} loading="lazy"/>
+                      <img src={media(kase.img) || IMG.windField} alt={h.seg} loading="lazy"/>
                       <span className="outcome-chip">{h.group}</span>
                     </div>
                     <div className="outcome-body">
                       <div className="o-metric num">{h.hl}</div>
                       <div className="o-metric-label">{h.seg} · {h.sol}</div>
                       <h3>{h.res}</h3>
-                      <div className="o-foot"><span className="link-arrow">View case study {I.arrow({width:15,height:15})}</span></div>
+                      <div className="o-foot"><span className="link-arrow">{CASE_TEXT.viewCase} {I.arrow({width:15,height:15})}</span></div>
                     </div>
                   </div>
                 </Reveal>
               );
             })}
           </div>
-          <p className="proof-note">Results vary by state, load profile, regulatory framework and commercial structure.</p>
+          <p className="proof-note">{CASE_TEXT.resultsNote}</p>
         </div>
       </section>
 
@@ -355,8 +405,8 @@ function CaseIndex({ nav }) {
       <section className="section" style={{ background:"var(--surface-2)", paddingTop:"clamp(36px,4vw,60px)" }}>
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">By outcome</span>
-            <h2>Grouped by what the engagement delivered.</h2>
+            <span className="eyebrow">{CASE_TEXT.groupsEyebrow}</span>
+            <h2>{CASE_TEXT.groupsTitle}</h2>
           </Reveal>
           <div className="og-grid">
             {OUTCOME_GROUPS.map((g,i)=>{
@@ -384,8 +434,8 @@ function CaseIndex({ nav }) {
       <section className="section" style={{ paddingTop:"clamp(40px,5vw,72px)" }}>
         <div className="shell">
           <Reveal className="sec-head">
-            <span className="eyebrow">By industry</span>
-            <h2>Find the case study closest to you.</h2>
+            <span className="eyebrow">{CASE_TEXT.industryEyebrow}</span>
+            <h2>{CASE_TEXT.industryTitle}</h2>
           </Reveal>
           <div className="itabs">
             {CASE_SEGMENTS.map((s,i)=>(<button key={s.name} className={`itab ${i===tab?"active":""}`} onClick={()=>setTab(i)}>{s.name}</button>))}
@@ -399,17 +449,18 @@ function CaseIndex({ nav }) {
                   <div className="ip-stat" key={i}><div className={`v num ${i===0?"amber":""}`}>{st[0]}</div><div className="k">{st[1]}</div></div>
                 ))}
               </div>
-              <div className="ip-reg"><span style={{color:"var(--green)",marginTop:1}}>{I.check()}</span><span><b>{seg.cases.length} case stud{seg.cases.length>1?"ies":"y"}</b> in {seg.name.toLowerCase()} — open any one for the full engagement, model and outcome.</span></div>
+              <div className="ip-reg"><span style={{color:"var(--green)",marginTop:1}}>{I.check()}</span><span><b>{seg.cases.length} {seg.cases.length>1 ? CASE_TEXT.industryCountMany : CASE_TEXT.industryCountOne}</b> {CASE_TEXT.industryCountIn} {seg.name.toLowerCase()} {CASE_TEXT.industryCountTail}</span></div>
             </div>
             <div className="ip-side slidein">
               {seg.cases.map(id=>{
                 const c = caseById(id);
+                if (!c) return null;
                 return (
                   <div className="ip-case" key={id} onClick={()=>nav("case/"+id)} style={{cursor:"pointer"}}>
-                    <span className="o-client" style={{fontSize:12.5,color:"var(--ink-3)"}}>Case study · {c.chip}</span>
+                    <span className="o-client" style={{fontSize:12.5,color:"var(--ink-3)"}}>{CASE_TEXT.caseLabel} · {c.chip}</span>
                     <h4 style={{ fontSize:19, marginTop:6, letterSpacing:"-.01em" }}>{c.title}</h4>
                     <div className="muted" style={{ fontSize:14, marginTop:8, lineHeight:1.55 }}>{c.summary}</div>
-                    <div style={{marginTop:14}}><span className="link-arrow" style={{fontSize:14}}>Read the case {I.arrow()}</span></div>
+                    <div style={{marginTop:14}}><span className="link-arrow" style={{fontSize:14}}>{CASE_TEXT.readCase} {I.arrow()}</span></div>
                   </div>
                 );
               })}
@@ -431,16 +482,16 @@ function CaseDetail({ nav, c, idx }) {
   return (
     <div className="page-fade">
       <section className="page-hero has-photo" style={{ background:"var(--navy)", color:"#EAF1F8", paddingBottom:"clamp(40px,5vw,64px)" }}>
-        <PhotoBG src={IMG[c.img]} overlay="linear-gradient(120deg, rgba(8,23,42,.81) 42%, rgba(8,23,42,.54) 100%)" pos="center"/>
+        <PhotoBG src={media(c.img)} overlay="linear-gradient(120deg, rgba(8,23,42,.81) 42%, rgba(8,23,42,.54) 100%)" pos="center"/>
         <div className="shell">
           <div className="breadcrumb" style={{ color:"#7E97B0" }}>
             <a onClick={()=>nav("home")} style={{cursor:"pointer",color:"#9FB7CF"}}>Home</a> {I.arrow({width:13,height:13})}
-            <a onClick={onBack} style={{cursor:"pointer",color:"#9FB7CF"}}>Case studies</a> {I.arrow({width:13,height:13})}
-            <span>{c.meta[0][1]}</span>
+            <a onClick={onBack} style={{cursor:"pointer",color:"#9FB7CF"}}>{CASE_TEXT.indexBreadcrumb}</a> {I.arrow({width:13,height:13})}
+            <span>{c.meta?.[0]?.[1]}</span>
           </div>
           <div style={{ maxWidth:820, marginTop:20 }}>
             <span className="chip" style={{ background:"rgba(255,255,255,.06)", color:"#EAF1F8", borderColor:"rgba(255,255,255,.18)" }}>{c.chip}</span>
-            {c.sample && <span className="chip" style={{ background:"rgba(236,180,40,.14)", color:"#F2C14E", borderColor:"rgba(236,180,40,.35)", marginLeft:8 }}>Illustrative sample</span>}
+            {c.sample && <span className="chip" style={{ background:"rgba(236,180,40,.14)", color:"#F2C14E", borderColor:"rgba(236,180,40,.35)", marginLeft:8 }}>{CASE_TEXT.sampleChip}</span>}
             <h1 style={{ color:"#fff", fontSize:"clamp(34px,4.6vw,56px)", letterSpacing:"-.035em", marginTop:18, lineHeight:1.04 }}>{c.title}</h1>
             <p style={{ color:"#9FB7CF", fontSize:19, marginTop:18, maxWidth:640, lineHeight:1.6 }}>{c.summary}</p>
             <div className="case-meta">
@@ -455,7 +506,7 @@ function CaseDetail({ nav, c, idx }) {
       <section className="section">
         <div className="case-body">
           <div className="case-section" style={{ borderTop:"none", paddingTop:8 }}>
-            <h3>Outcomes at a glance</h3>
+            <h3>{CASE_TEXT.outcomesTitle}</h3>
             <div className="case-impact">
               {c.metrics.map((m,i)=>(
                 <div className="ci-card" key={i}><div className={`v num ${m.green?"green":""}`}>{m.v}</div><div className="k">{m.k}</div></div>
@@ -488,27 +539,27 @@ function CaseDetail({ nav, c, idx }) {
 
           {c.sample && (
             <div className="case-section" style={{ paddingTop:18 }}>
-              <p className="muted" style={{ fontSize:13.5, fontStyle:"italic", lineHeight:1.6 }}>Illustrative sample — a representative scenario for this sector, not a specific named client engagement. Figures are indicative of the outcomes our approach targets.</p>
+              <p className="muted" style={{ fontSize:13.5, fontStyle:"italic", lineHeight:1.6 }}>{CASE_TEXT.sampleNote}</p>
             </div>
           )}
 
           <div className="case-section" style={{ display:"flex", gap:16, flexWrap:"wrap", alignItems:"center", justifyContent:"space-between" }}>
             <div>
-              <h3 style={{ fontSize:30 }}>Want a number like this for your plant?</h3>
-              <p style={{ marginTop:8 }}>Bring last month's bill — we'll model your path to a lower, predictable tariff.</p>
+              <h3 style={{ fontSize:30 }}>{CASE_TEXT.ctaTitle}</h3>
+              <p style={{ marginTop:8 }}>{CASE_TEXT.ctaText}</p>
             </div>
             <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
-              <button className="btn btn-ghost" onClick={onBack}>All case studies</button>
-              <button className="btn btn-nav-cta" onClick={()=>nav("cni")}>Talk to an energy advisor {I.arrow()}</button>
+              <button className="btn btn-ghost" onClick={onBack}>{CASE_TEXT.ctaBack}</button>
+              <button className="btn btn-nav-cta" onClick={()=>nav("cni")}>{CASE_TEXT.ctaCta} {I.arrow()}</button>
             </div>
           </div>
 
           <div className="case-section case-next" onClick={()=>nav("case/"+next.id)}>
             <div>
-              <div className="t3" style={{ fontSize:12.5, textTransform:"uppercase", letterSpacing:".08em" }}>Next case study</div>
+              <div className="t3" style={{ fontSize:12.5, textTransform:"uppercase", letterSpacing:".08em" }}>{CASE_TEXT.nextLabel}</div>
               <h3 style={{ marginTop:8, fontSize:24 }}>{next.title}</h3>
             </div>
-            <span className="link-arrow">Read {I.arrow()}</span>
+            <span className="link-arrow">{CASE_TEXT.nextRead} {I.arrow()}</span>
           </div>
         </div>
       </section>
@@ -560,29 +611,29 @@ export function Contact({ nav, sub }) {
     <div className="page-fade lane-accent" style={{ "--p-color":"#014976", "--accent":"#014976", "--accent-deep":"#013A5E", "--accent-soft":"#D8E7F1" }}>
       <section className="page-hero">
         <div className="shell">
-          <div className="breadcrumb"><a onClick={()=>nav("home")} style={{cursor:"pointer"}}>Home</a> {I.arrow({width:13,height:13})} <span style={{ color:"var(--ink-2)" }}>Contact</span></div>
+          <div className="breadcrumb"><a onClick={()=>nav("home")} style={{cursor:"pointer"}}>Home</a> {I.arrow({width:13,height:13})} <span style={{ color:"var(--ink-2)" }}>{CASE_TEXT.contactBreadcrumb}</span></div>
           <div className="lane-hero contact-grid">
             <div>
-              <span className="eyebrow">Start a conversation</span>
-              <h1 style={{ fontSize:"clamp(34px,4.6vw,56px)", letterSpacing:"-.035em", marginTop:16, lineHeight:1.03 }}>Tell us who you are. We'll route you to the right desk.</h1>
-              <p className="lead">Whether you want a savings estimate, the investor deck, a supply conversation or a role — one form, no runaround.</p>
+              <span className="eyebrow">{CASE_TEXT.contactEyebrow}</span>
+              <h1 style={{ fontSize:"clamp(34px,4.6vw,56px)", letterSpacing:"-.035em", marginTop:16, lineHeight:1.03 }}>{CASE_TEXT.contactTitle}</h1>
+              <p className="lead">{CASE_TEXT.contactLead}</p>
               <div style={{ marginTop:28, display:"flex", flexDirection:"column", gap:14 }}>
-                <div><div className="t3" style={{ fontSize:12, textTransform:"uppercase", letterSpacing:".08em" }}>Call</div><div className="num" style={{ fontSize:18, fontWeight:600, marginTop:3 }}>+91 76187 02052</div></div>
-                <div><div className="t3" style={{ fontSize:12, textTransform:"uppercase", letterSpacing:".08em" }}>Email</div><div style={{ fontSize:18, fontWeight:600, marginTop:3 }}>{reason==="Talent / careers" ? "Careers@integrumenergy.in" : "info@integrumenergy.in"}</div></div>
-                <div><div className="t3" style={{ fontSize:12, textTransform:"uppercase", letterSpacing:".08em" }}>Registered office</div><div style={{ fontSize:16, marginTop:3, lineHeight:1.5 }}>736, 2nd Floor, 3rd Block,<br/>Koramangala, Bengaluru 560034</div></div>
+                <div><div className="t3" style={{ fontSize:12, textTransform:"uppercase", letterSpacing:".08em" }}>{CASE_TEXT.callLabel}</div><div className="num" style={{ fontSize:18, fontWeight:600, marginTop:3 }}>{CASE_TEXT.phone}</div></div>
+                <div><div className="t3" style={{ fontSize:12, textTransform:"uppercase", letterSpacing:".08em" }}>{CASE_TEXT.emailLabel}</div><div style={{ fontSize:18, fontWeight:600, marginTop:3 }}>{reason==="Talent / careers" ? CASE_TEXT.careersEmail : CASE_TEXT.email}</div></div>
+                <div><div className="t3" style={{ fontSize:12, textTransform:"uppercase", letterSpacing:".08em" }}>{CASE_TEXT.officeLabel}</div><div style={{ fontSize:16, marginTop:3, lineHeight:1.5 }}>{CASE_TEXT.office.split("\n").map((l,i)=>(<span key={i}>{i>0 && <br/>}{l}</span>))}</div></div>
               </div>
             </div>
             <div className="card" style={{ padding:30 }}>
               {sent ? (
                 <div className="slidein" style={{ textAlign:"center", padding:"40px 0" }}>
                   <div style={{ width:56, height:56, borderRadius:"50%", background:"var(--green-soft)", color:"var(--green)", display:"grid", placeItems:"center", margin:"0 auto 18px" }}>{I.check({width:26,height:26})}</div>
-                  <h3 style={{ fontSize:22 }}>Routed to the right desk.</h3>
-                  <p className="muted" style={{ marginTop:8 }}>We'll be in touch within one business day.</p>
-                  <button className="btn btn-ghost" style={{ marginTop:20 }} onClick={()=>nav("home")}>Back to home</button>
+                  <h3 style={{ fontSize:22 }}>{CASE_TEXT.sentTitle}</h3>
+                  <p className="muted" style={{ marginTop:8 }}>{CASE_TEXT.sentText}</p>
+                  <button className="btn btn-ghost" style={{ marginTop:20 }} onClick={()=>nav("home")}>{CASE_TEXT.sentBack}</button>
                 </div>
               ) : (
                 <div>
-                  <h3 style={{ fontSize:22 }}>Who are you?</h3>
+                  <h3 style={{ fontSize:22 }}>{CASE_TEXT.formTitle}</h3>
                   <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginTop:16 }}>
                     {reasons.map(r=>(<button key={r} className={`itab ${reason===r?"active":""}`} onClick={()=>setReason(r)} style={ reason===r?{ background:"var(--p-color)", borderColor:"var(--p-color)" }:null }>{r}</button>))}
                   </div>
@@ -641,7 +692,7 @@ export function Contact({ nav, sub }) {
                   )}
                   <div className="field-l" style={{ marginTop:14 }}><label style={labelStyle}>How can we help? <em className="opt">(optional)</em></label><textarea rows="3" value={f.help} onChange={set("help")} style={{ ...inputStyle, resize:"vertical" }}></textarea></div>
                   {Object.keys(err).filter(k=>err[k]).length > 0 && <div className="form-alert error" style={{ marginTop:14, marginBottom:0 }}>Please complete the required fields above.</div>}
-                  <button className="btn btn-primary" style={{ width:"100%", marginTop:18, background:"var(--p-color)", color:"#fff", boxShadow:"none" }} onClick={submit} disabled={busy}>{busy ? "Sending…" : reason==="Investor / analyst" ? "Request the investor deck" : reason==="I'm a C&I buyer" ? "Book a 60-min energy consult" : reason==="Talent / careers" ? "Submit my application" : "Send message"} {!busy && I.arrow()}</button>
+                  <button className="btn btn-primary" style={{ width:"100%", marginTop:18, background:"var(--p-color)", color:"#fff", boxShadow:"none" }} onClick={submit} disabled={busy}>{busy ? "Sending…" : reason==="Investor / analyst" ? CASE_TEXT.btnInvestor : reason==="I'm a C&I buyer" ? CASE_TEXT.btnBuyer : reason==="Talent / careers" ? CASE_TEXT.btnCareers : CASE_TEXT.btnDefault} {!busy && I.arrow()}</button>
                 </div>
               )}
             </div>

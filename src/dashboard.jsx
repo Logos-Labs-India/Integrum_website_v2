@@ -2,7 +2,20 @@
    dashboard.jsx — customer login + sample dashboard
    ============================================================ */
 import React, { useState } from "react";
-import { PhotoBG, IMG, I, GenerationChart, BessRing, isFilled, isPhone, isEmail } from "./dataviz";
+import { PhotoBG, IMG, I, GenerationChart, BessRing, isFilled, isPhone, isEmail, media } from "./dataviz";
+
+/* ---------- sign-in page marketing panel (CMS-editable) ---------- */
+export const LOGIN_TEXT = {
+  image: "solarAerial",
+  live: "Live across your plants",
+  title: "Your energy. Visible, intelligent, always on.",
+  text: "Generation, consumption, banking ledger and BESS dispatch — every kilowatt-hour, accounted for.",
+};
+export const LOGIN_STATS = [
+  { v:"33", k:"plants monitored" },
+  { v:"24×7", k:"live telemetry" },
+  { v:"<5s", k:"data latency" },
+];
 
 export function Dashboard({ nav }) {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -52,19 +65,19 @@ export function Dashboard({ nav }) {
       <div className="page-fade lane-accent" style={{ "--p-color":"#004A7A", "--accent":"#004A7A", "--accent-deep":"#14517F", "--accent-soft":"#D6E7F4" }}>
         <div className="login-wrap">
           <div className="login-aside">
-            <PhotoBG src={IMG.solarAerial} overlay="linear-gradient(160deg, rgba(8,23,42,.76), rgba(8,23,42,.70))" pos="center"/>
+            <PhotoBG src={media(LOGIN_TEXT.image)} overlay="linear-gradient(160deg, rgba(8,23,42,.76), rgba(8,23,42,.70))" pos="center"/>
             <div style={{ position:"relative" }}>
               <div className="brand-chip" style={{ alignSelf:"flex-start" }}><img src="/assets/logo-integrum.svg" alt="Integrum Energy"/></div>
             </div>
             <div style={{ position:"relative" }}>
-              <span className="cc-live" style={{ color:"#7FE3C9" }}><span className="pulse-dot"></span> Live across your plants</span>
-              <h2 style={{ color:"#fff", fontSize:"clamp(30px,3.6vw,44px)", marginTop:18, letterSpacing:"-.03em", lineHeight:1.05 }}>Your energy. Visible, intelligent, always on.</h2>
-              <p style={{ color:"#9FB7CF", fontSize:17, marginTop:18, maxWidth:420, lineHeight:1.6 }}>Generation, consumption, banking ledger and BESS dispatch — every kilowatt-hour, accounted for.</p>
+              <span className="cc-live" style={{ color:"#7FE3C9" }}><span className="pulse-dot"></span> {LOGIN_TEXT.live}</span>
+              <h2 style={{ color:"#fff", fontSize:"clamp(30px,3.6vw,44px)", marginTop:18, letterSpacing:"-.03em", lineHeight:1.05 }}>{LOGIN_TEXT.title}</h2>
+              <p style={{ color:"#9FB7CF", fontSize:17, marginTop:18, maxWidth:420, lineHeight:1.6 }}>{LOGIN_TEXT.text}</p>
             </div>
             <div style={{ position:"relative", display:"flex", gap:28, flexWrap:"wrap" }}>
-              <div><div className="num" style={{ fontFamily:"var(--font-display)", fontSize:30, color:"#fff", fontWeight:600 }}>33</div><div style={{ color:"#7E97B0", fontSize:13 }}>plants monitored</div></div>
-              <div><div className="num" style={{ fontFamily:"var(--font-display)", fontSize:30, color:"#fff", fontWeight:600 }}>24×7</div><div style={{ color:"#7E97B0", fontSize:13 }}>live telemetry</div></div>
-              <div><div className="num" style={{ fontFamily:"var(--font-display)", fontSize:30, color:"#fff", fontWeight:600 }}>&lt;5s</div><div style={{ color:"#7E97B0", fontSize:13 }}>data latency</div></div>
+              {LOGIN_STATS.map((x,i)=>(
+                <div key={i}><div className="num" style={{ fontFamily:"var(--font-display)", fontSize:30, color:"#fff", fontWeight:600 }}>{x.v}</div><div style={{ color:"#7E97B0", fontSize:13 }}>{x.k}</div></div>
+              ))}
             </div>
           </div>
           <div className="login-form-wrap">
